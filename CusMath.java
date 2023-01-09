@@ -13,15 +13,15 @@ public class CusMath {
             double tempMin = 0.0;
             double tempMax = 0.0;
             if(min > max){
-                System.out.println("Fixing Min Max's");
+               // System.out.println("Fixing Min Max's");
                 tempMin = max;
                 tempMax = min;
                 max = tempMax;
                 min = tempMin;
             }
         }   
-        System.out.println(String.format("Fraction: %s, Min: %s, Max: %s",f,min,max));
-        System.out.println(max + f * (max-min));
+        //System.out.println(String.format("Fraction: %s, Min: %s, Max: %s",f,min,max));
+        //System.out.println(max + f * (max-min));
         return max + f * (max-min);
     }
 

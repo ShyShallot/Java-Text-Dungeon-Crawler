@@ -7,7 +7,7 @@ class Main {
 	public static void Game(){
 		Scanner input = new Scanner(System.in);
     	Game game = new Game();
-		//game.TestWeights();
+		//game.TestWeights(); Runs a test using a test AI to tune interp and weighting balancing
 		game.SetupInput(input);
 		game.Start();
 		if(game.over){

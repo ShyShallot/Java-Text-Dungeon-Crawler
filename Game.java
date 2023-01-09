@@ -176,8 +176,10 @@ class Game {
 	}
 
 	public void addItemsToList(){
-		Item Sword = new Sword();
-		itemList.add(Sword);
+		itemList.add(new Sword());
+		itemList.add(new Vial());
+		itemList.add(new LargeVial());
+		itemList.add(new Armor());
 	}
 
 
@@ -211,7 +213,7 @@ class Game {
 			return;
 		}
 		double[] weights = npc.itemDecideWeightTable();
-		System.out.println("NPC Health Percentage: "+ npc.healthPercentage() + ", Damage Weight: " + weights[0] + ", Heal Weight: " + weights[1]);
+		//System.out.println("NPC Health Percentage: "+ npc.healthPercentage() + ", Damage Weight: " + weights[0] + ", Heal Weight: " + weights[1]);
 		double damageItemWeight = weights[0]; // from 0 to 1 (For Percentage Multiply by 100)
 		double healthItemWeight = weights[1]; // from 0 to 1
 		if(npc.holdingGround){
@@ -247,7 +249,7 @@ class Game {
 
 
 	public boolean shouldBeMerchantRoom(){
-		if(Game.lastMerchantRoom >= 6){
+		if(Game.lastMerchantRoom >= CusMath.randomNum(3, 6)){
 			if(mainPlayer.inventory.size() == 0 || (mainPlayer.inventory.size() < itemList.size())){
 				if(Math.random() > 0.6){ // 40% chance for it to be a merchant room afterwards
 					return true;
@@ -267,8 +269,9 @@ class Game {
 			}
 		}
 		System.out.println(opponents);
-		while((!mainPlayer.dead) || currentRoom.activeNPCS.size() > 0){ 
+		while((!mainPlayer.dead) && currentRoom.activeNPCS.size() > 0){ 
 			for(int i=0;i<currentRoom.activeNPCS.size();i++){
+				System.out.println();
 				printOpponents();
 				AI currentNPC = currentRoom.activeNPCS.npcs.get(i);
 				System.out.println("Current Opponent: " + RED + currentNPC.name + RESET);
@@ -283,7 +286,10 @@ class Game {
 					mainPlayer.death(currentNPC);
 					over = true;
 					System.out.println("You died and made it through " + currentRound + " Rooms, Congrats and Better Luck next time!");
+					currentRound--;
+					break;
 				}
+				currentRoom.activeNPCS.GarbageCleanup();
 				healRandomPlayer(currentNPC);
 			}	
 		}

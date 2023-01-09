@@ -45,8 +45,8 @@ class AI extends Player {
 	}
 
 	public double[] itemDecideWeightTable(){
-		double[][] weightMatrix = {
-			// HP,  DMG   HEAL
+		double[][] weightMatrix = { // This is a matrix to define the weighting of using a Damage or Heal Based Item based off of health, Values will be interpolated if the health percentage is in the range
+			// HP,  DMG   HEAL USE ONLY 0 to 1 Values
 			{100.0, 1.0,  0.0}, 
 			{75.0,  0.8,  0.1}, 
 			{50.0,  0.65, 0.45},
@@ -55,10 +55,10 @@ class AI extends Player {
 			{0,  	0.0,  1.0}
 		};
 		int healthPercent = this.healthPercentage(); 
-		System.out.println("Health Percent: " + healthPercent);
+		//System.out.println("Health Percent: " + healthPercent);
 		double dmg = 0.0;
 		double heal = 0.0;
-		double frac = -0.5; // 0 is no interp, 1 is max interp, negatives will bias downwards, which is what we want is this case
+		double frac = -0.5; // Only go from -1 to 1, -1 will bias past the min, 0 is no bias, 1 will bias past the max
 		DecimalFormat df = new DecimalFormat("#.###");
 		for(int i=0;i<weightMatrix.length;i++){
 			if(healthPercent == weightMatrix[i][0]){

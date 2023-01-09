@@ -2,7 +2,7 @@ class Sword extends Item {
 
 	public Sword(int foundDurability){
 		name = "Sword";
-		dmg = 4;
+		dmg = 12;
 		description = "Deals " + dmg + " dmg points";
 		cost = 5;
 		durability = 3;
@@ -15,7 +15,7 @@ class Sword extends Item {
 
 	public Sword(){
 		name = "Sword";
-		dmg = 4;
+		dmg = 12;
 		description = "Deals " + dmg + " dmg points";
 		cost = 5;
 		durability = 3;
@@ -51,6 +51,7 @@ class Sword extends Item {
 		int durUsed = 1;
 		this.curDurability -= durUsed;
 		Game.aiRoll = this.dmg;
+		System.out.println(Game.aiRoll);
 		System.out.println(npc.name + " has used their " + this.name);
 	}
 }

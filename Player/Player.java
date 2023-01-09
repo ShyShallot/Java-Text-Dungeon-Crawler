@@ -38,7 +38,11 @@ class Player {
 	}
 	public void Damage(int dmg){
 		if(Armor != null){
+			if(Armor.durability <= 0){
+				Armor = null;
+			}
 			dmg -= Armor.block;
+			Armor.durability--;
 		}
 		if(holdingGround){
 			dmg /= 2;
