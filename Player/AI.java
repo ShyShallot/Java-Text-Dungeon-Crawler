@@ -28,26 +28,25 @@ class AI extends Player {
 		double frac = -0.5;
 		int healthPercentage = this.healthPercentage();
 		double[][] weightMatrix = {
-				{ 100.0, 0.0 },
-				{ 50.0, 0.15 },
-				{ 35.0, 0.25 },
-				{ 25.0, 0.5 },
-				{ 10.0, 0.75 },
-				{ 0.0, 1.0 }
+			{100.0, 0.0},
+			{50.0, 0.15},
+			{35.0, 0.25},
+			{25.0, 0.5},
+			{10.0, 0.75},
+			{0.0, 1.0}
 		};
-		for (int i = 0; i < weightMatrix.length; i++) {
-			if (healthPercentage == weightMatrix[i][0]) {
+		for(int i=0;i<weightMatrix.length;i++){
+			if(healthPercentage == weightMatrix[i][0]){
 				chance = weightMatrix[i][0];
 			}
-			if (i == weightMatrix.length - 1
-					&& (healthPercentage <= weightMatrix[i][0] && healthPercentage >= weightMatrix[i - 1][0])) {
-				chance = CusMath.linearInterp(frac, weightMatrix[i - 1][1], weightMatrix[i][1], false);
+			if(i == weightMatrix.length-1 && (healthPercentage <= weightMatrix[i][0] && healthPercentage >= weightMatrix[i-1][0])){
+				chance = CusMath.linearInterp(frac, weightMatrix[i-1][1], weightMatrix[i][1], false);
 			}
-			if (healthPercentage <= weightMatrix[i][0] && healthPercentage >= weightMatrix[i + 1][0]) {
-				chance = CusMath.linearInterp(frac, weightMatrix[i][1], weightMatrix[i + 1][1], false);
+			if(healthPercentage <= weightMatrix[i][0] && healthPercentage >= weightMatrix[i+1][0]){
+				chance = CusMath.linearInterp(frac, weightMatrix[i][1], weightMatrix[i+1][1],false);
 			}
 		}
-		if (chance >= Math.random() && !isPlayerHoldingGround) {
+		if(chance > Math.random() && !isPlayerHoldingGround){
 			this.Defend(Game.currentRound);
 		}
 	}
@@ -84,20 +83,10 @@ class AI extends Player {
 				heal = weightMatrix[i][2];
 				break;
 			}
-			if (i == weightMatrix.length - 1
-					&& (healthPercent <= weightMatrix[i][0] && healthPercent >= weightMatrix[i - 1][0])) { // If we are
-																											// at the
-																											// bottom of
-																											// the
-																											// matrix,
-																											// reverse
-																											// our
-																											// inputs
-																											// and go
-																											// one back
-				dmg = CusMath.linearInterp(frac, weightMatrix[i - 1][1], weightMatrix[i][1], false);
-				heal = CusMath.linearInterp(frac, weightMatrix[i - 1][2], weightMatrix[i][2], false);
-				break;
+			if(i == weightMatrix.length-1 && (healthPercent <= weightMatrix[i][0] && healthPercent >= weightMatrix[i-1][0])){ // If we are at the bottom of the matrix, reverse our inputs and go one back
+				dmg = CusMath.linearInterp(frac, weightMatrix[i-1][1], weightMatrix[i][1],false); 
+				heal = CusMath.linearInterp(frac, weightMatrix[i-1][2], weightMatrix[i][2], false);
+				continue;
 			}
 			if (healthPercent <= weightMatrix[i][0] && healthPercent >= weightMatrix[i + 1][0]) { // if the health
 																									// percentage is
