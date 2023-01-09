@@ -24,7 +24,7 @@ class AI extends Player {
 		}
 		double chance = 0.0;
 		double frac = -0.5;
-		healthPercentage = this.healthPercentage();
+		int healthPercentage = this.healthPercentage();
 		double[][] weightMatrix = {
 			{100.0, 0.0},
 			{50.0, 0.15},
