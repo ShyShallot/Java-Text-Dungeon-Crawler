@@ -1,29 +1,7 @@
 class Sword extends Item {
 
-	public Sword(int foundDurability){
-		name = "Sword";
-		dmg = 12;
-		description = "Deals " + dmg + " dmg points";
-		cost = 5;
-		durability = 3;
-		curDurability = foundDurability;
-		isArmor = false;
-		unUsable = false;
-		healthItem = false;
-		heal = 0;
-	}
-
 	public Sword(){
-		name = "Sword";
-		dmg = 12;
-		description = "Deals " + dmg + " dmg points";
-		cost = 5;
-		durability = 3;
-		curDurability = durability;
-		isArmor = false;
-		unUsable = false;
-		healthItem = false;
-		heal = 0;
+		super("Sword", "Deals 12 dmg points", 7, 12, 3, false, false);
 	}
 
 	public void useItem(Player player){
@@ -50,8 +28,6 @@ class Sword extends Item {
 		}
 		int durUsed = 1;
 		this.curDurability -= durUsed;
-		Game.aiRoll = this.dmg;
-		System.out.println(Game.aiRoll);
 		System.out.println(npc.name + " has used their " + this.name);
 	}
 }

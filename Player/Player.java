@@ -74,6 +74,9 @@ class Player {
 	
 
 	public void killedPlayer(Player playerKilled){
+		if(playerKilled.coins <= 0){
+			return;
+		}
 		this.coins += playerKilled.coins;
 		System.out.println(this.name + " killed " + playerKilled.name + " and took all of their " + playerKilled.coins + " Coin(s)");
 	}

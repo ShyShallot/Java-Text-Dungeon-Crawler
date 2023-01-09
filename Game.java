@@ -44,8 +44,10 @@ class Game {
 		System.out.println();
 		addItemsToList();
 		mainPlayer = new Player("You");
+		mainPlayer.addItemToInventory(new Sword());
 		while (!over) {
 			if(shouldBeMerchantRoom()){
+				System.out.println("You come across a merchant sitting in a room.");
 				MerchantRoom merchantRoom = new MerchantRoom();
 				merchantRoom.itemShop(false);
 				currentRound++;
@@ -182,7 +184,6 @@ class Game {
 		itemList.add(new Armor());
 	}
 
-
 	public void pickItem(){
 		if(mainPlayer.inventory.size() == 0){
 			return;
@@ -199,6 +200,7 @@ class Game {
 		System.out.println(itemList); 
 		String itemPicked = input.nextLine();
 		Item item = Items.getItemFromName(itemPicked);
+		System.out.println(item.name);
 		if(item == null){
 			System.out.println("You do not have that item.");
 			pickItem();
@@ -238,13 +240,17 @@ class Game {
 				}
 			}
 			if(!shouldUseDamage && (itm.healthItem)){
-				if(itm.heal >= maxHeal){
-					itemToUse = itm;
-					maxHeal = itm.heal;
+				Vial healItem = (Vial) itm;
+				if(healItem.heal >= maxHeal){
+					itemToUse = healItem;
+					maxHeal = healItem.heal;
 				}
 			}
 		}
 		itemToUse.useItem(npc);
+		if(!itemToUse.healthItem){
+			aiRoll = itemToUse.dmg + CusMath.randomNum(0,5);
+		}
 	}
 
 

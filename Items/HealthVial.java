@@ -1,18 +1,14 @@
 class Vial extends Item {
+	boolean healthTime;
+	int heal;
 	public Vial(){
-		name = "Health Vial";
-		dmg = 0;
-		description = "Heals you for " + heal + " hp";
-		heal = 8;
-		cost = 6;
-		durability = 1;
-		curDurability = durability;
-		isArmor = false;
-		unUsable = false;
-		healthItem = true;
+		super("Health Vial", "Heals you for 8 hp",6,0,1,false,true);
+		this.healthItem = true;
+		this.heal = 8;
 	}
 
 	public Vial(int heal, String name, int cost){
+		super(name, "Heals you for " + heal + " hp", cost,0,1,false,true);
 		this.heal = heal;
 		this.name = name;
 		this.cost = cost;
