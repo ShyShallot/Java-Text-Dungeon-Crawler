@@ -200,13 +200,19 @@ class Game {
 		System.out.println(itemList); 
 		String itemPicked = input.nextLine();
 		Item item = Items.getItemFromName(itemPicked);
-		System.out.println(item.name);
+		//System.out.println(item.name);
 		if(item == null){
 			System.out.println("You do not have that item.");
 			pickItem();
 		}
 		if(Items.doesPlayerHaveItem(mainPlayer, item)){
 			item.useItem(mainPlayer);
+			if(!item.healthItem){
+				if(item.isArmor){
+					return;
+				}
+				mainRoll = item.dmg + CusMath.randomNum(0,5);
+			}
 		}
 	}
 

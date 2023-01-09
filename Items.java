@@ -22,7 +22,7 @@ class Items {
     public static Item getItemFromName(String name){
 		Item searchItem = new Item();
 		for(Item item : Game.itemList){
-			if(item.name == name){
+			if(item.name.toLowerCase().equals(name)){
 				searchItem = item;
 			}
 		}
