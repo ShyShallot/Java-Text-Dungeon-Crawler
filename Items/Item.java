@@ -7,6 +7,8 @@ class Item {
 	int curDurability;
 	boolean unUsable;
 	boolean isArmor;
+	boolean healthItem;
+	int heal;
 
 	public void useItem(Player player){
 		return;

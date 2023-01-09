@@ -10,6 +10,8 @@ public class Armor extends Item{
         curDurability = durability;
         isArmor = true;
         unUsable = false;
+        healthItem = false;
+        heal = 0;
     }
 
     public void useItem(Player player){

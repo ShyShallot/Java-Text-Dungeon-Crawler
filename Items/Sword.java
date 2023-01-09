@@ -9,6 +9,8 @@ class Sword extends Item {
 		curDurability = foundDurability;
 		isArmor = false;
 		unUsable = false;
+		healthItem = false;
+		heal = 0;
 	}
 
 	public Sword(){
@@ -20,6 +22,8 @@ class Sword extends Item {
 		curDurability = durability;
 		isArmor = false;
 		unUsable = false;
+		healthItem = false;
+		heal = 0;
 	}
 
 	public void useItem(Player player){
@@ -32,11 +36,21 @@ class Sword extends Item {
 		}
 		int durUsed = 1;
 		this.curDurability -= durUsed;
-		if(player.getPlayerType() == "AI"){
-			Game.aiRoll = this.dmg;
-		} else {
-			Game.mainRoll = this.dmg;
-		}
+		Game.mainRoll = this.dmg;
 		System.out.println(player.name + " has used their " + this.name);
+	}
+
+	public void useItem(AI npc){
+		if(unUsable){
+			return;
+		}
+		if(curDurability <= 0){
+			unUsable = true;
+			return;
+		}
+		int durUsed = 1;
+		this.curDurability -= durUsed;
+		Game.aiRoll = this.dmg;
+		System.out.println(npc.name + " has used their " + this.name);
 	}
 }

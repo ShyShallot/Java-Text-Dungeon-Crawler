@@ -1,10 +1,9 @@
 import java.util.*;
 public class Room {
-	PlayerList activePlayers = new PlayerList();
+	AIList activeNPCS = new AIList();
 	
     public Room(){
-		activePlayers.addPlayer(Game.mainPlayer);
-		
+		fillRoom();
 	}
 
 	public void fillRoom(){
@@ -12,7 +11,7 @@ public class Room {
 		int size = randomInt(1,max);
 		for(int i=0; i<=size;i++){
 			AI npc = createRandomNPC();
-			activePlayers.addPlayer(npc);
+			activeNPCS.addPlayer(npc);
 		}
 	}
 	
@@ -20,7 +19,7 @@ public class Room {
     	String[] names = {"Goblin","Skeleton","Hog","Spider","Mage"};
     	String name = names[randomInt(0, names.length-1)];
     	AI npc = new AI(name);
-    	npc.health *= Game.currentRound*(1+((Game.difficulty+1)/10));
+    	npc.health = CusMath.randomNum(10, 50) * (Game.currentRound*(Game.difficulty/10)+1);
 		npc.coins = randomInt(0,(5*Game.difficulty+1));
     	if(npc.health > 500){
         	npc.health = 500;

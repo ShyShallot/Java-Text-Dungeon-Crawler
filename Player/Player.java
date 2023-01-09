@@ -3,7 +3,7 @@ import java.util.*;
 class Player {	
 	String name;
 	int id;
-	int health = 50;
+	int health = 100;
 	int maxHealth = 100;
 	int lastRoundDefended;
 	int coins;
@@ -12,8 +12,6 @@ class Player {
 	boolean dead;
 	ArrayList<Item> inventory = new ArrayList<Item>();
 	public Player(String name){
-		id = Game.playerList.size();
-		Game.playerList.addPlayer(this);
 		this.name = name;
 	}
 	public int Roll(){
@@ -73,6 +71,7 @@ class Player {
 
 	public void killedPlayer(Player playerKilled){
 		this.coins += playerKilled.coins;
+		System.out.println(this.name + " killed " + playerKilled.name + " and took all of their " + playerKilled.coins + " Coin(s)");
 	}
 
 	public void death(Player killer){

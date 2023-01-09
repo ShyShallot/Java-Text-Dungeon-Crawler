@@ -1,7 +1,7 @@
 import java.text.DecimalFormat;
 import java.util.*;
 class AI extends Player {
-	
+	int id;
 	public AI(String name){
 		super(name);
 	}

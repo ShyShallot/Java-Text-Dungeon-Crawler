@@ -7,12 +7,12 @@ class Game {
 	public static final String GREEN = "\u001B[32m";
 	public static final String YELLOW = "\u001B[33m";
 	// Player
-	public static PlayerList playerList = new PlayerList();
+	public static AIList npcList = new AIList();
 	public static Player mainPlayer;
 	// Round Data 
 	public static int currentRound = 1;
 	int lastRoundHealed;
-	public static int lastMerchanRoom;
+	public static int lastMerchantRoom;
 	// Roll
 	public static int mainRoll;
 	public static int aiRoll;
@@ -45,34 +45,15 @@ class Game {
 		addItemsToList();
 		mainPlayer = new Player("You");
 		while (!over) {
-			if ((currentRound > mainPlayer.lastRoundDefended) && mainPlayer.holdingGround) {
-				mainPlayer.unDefend();
-			}
-			if ((currentRound > aiPlayer.lastRoundDefended) && aiPlayer.holdingGround) {
-				aiPlayer.unDefend();
-			}
-			if (!aiPlayer.shouldAiDefend(mainPlayer.holdingGround, currentRound)) {
-				aiRoll = aiPlayer.aiRoll(aiRollBias);
+			if(shouldBeMerchantRoom()){
+				MerchantRoom merchantRoom = new MerchantRoom();
+				merchantRoom.itemShop(false);
+				currentRound++;
 			} else {
-				aiRoll = 5;
+				currentRoom = new Room();
+				currentRoom.activeNPCS.renameDupes();
+				TurnCombat();
 			}
-			Action();
-			AIuseItem(aiPlayer);
-			useItem(mainPlayer);
-			DecideDamage();
-			if (mainPlayer.health <= 0) {
-				over = true;
-				System.out.println("You Lost after " + currentRound++ + " rounds, better luck next time");
-				return;
-			}
-			if (aiPlayer.health <= 0) {
-				over = true;
-				System.out.println("You Beat the opponent after " + currentRound++ + " rounds. Congrats!");
-				return;
-			}
-			healRandomPlayer();
-			giveCoins();
-			currentRound++;
 		}
 	}
 
@@ -83,20 +64,20 @@ class Game {
 		aiDecideItem(testNPC);
 	}
 
-	public void DecideDamage() {
+	public void DecideDamage(AI npc) {
 		int diff;
 		if(!SpecialDamage()){
 			if(!mainPlayer.holdingGround){
-				System.out.println("You Rolled a " + mainRoll + ", The Ai Rolled a " + aiRoll);
+				System.out.println("You Rolled a " + mainRoll + ", The " + npc.name + " Rolled a " + aiRoll);
 			} else {
-				System.out.println("You Defended" + ", The Ai Rolled a " + aiRoll);
+				System.out.println("You Defended" + ", The " + npc.name + " Rolled a " + aiRoll);
 			}
 		}
 		if (mainRoll > aiRoll && !mainPlayer.holdingGround) {
 			diff = Math.abs(mainRoll - aiRoll);
-			aiPlayer.Damage(diff);
-			System.out.print(randomString.generateRollString("You", "The Opponent", diff));
-			if (aiPlayer.holdingGround) {
+			npc.Damage(diff);
+			System.out.print(randomString.generateRollString(mainPlayer.name, "The " + npc.name, diff));
+			if (npc.holdingGround) {
 				System.out.print(", however they defended and it was reduced to: " + RED + (diff / 2) + RESET + " dmg");
 			}
 		} else if(mainRoll == aiRoll){
@@ -104,7 +85,7 @@ class Game {
 		} else {
 			diff = Math.abs(aiRoll - mainRoll);
 			mainPlayer.Damage(diff);
-			System.out.print(randomString.generateRollString("Opponent", "You", diff));
+			System.out.print(randomString.generateRollString(("The " + npc.name), mainPlayer.name, diff));
 			if (mainPlayer.holdingGround) {
 				System.out.print(", however you defended and it was reduced to: " + RED + (diff / 2) + RESET + " dmg");
 			}
@@ -114,18 +95,22 @@ class Game {
 
 	public void Action(Player enemy) {
 		System.out.println();
-		System.out.println("Current Round: " + currentRound + ", Your Current Health: " + GREEN + mainPlayer.health
-				+ RESET + ", Opponents Health: " + GREEN + enemy.health + RESET + ", Defend or roll or Use an Item?");
+		System.out.print("Current Round: " + currentRound + ", Your Current Health: " + GREEN + mainPlayer.health
+				+ RESET + " The " + RED + enemy.name + "'s" + RESET + " Health: " + GREEN + enemy.health + RESET + ", Defend or roll?");
+		if(mainPlayer.inventory.size() > 0){
+			System.out.print(" Or Use an Item?");
+		}
+		System.out.println();
 		String action = input.nextLine();
 		if (action.toLowerCase().equals("roll")) {
-			this.mainRoll = mainPlayer.Roll();
+			mainRoll = mainPlayer.Roll();
 		}
 		if (action.toLowerCase().equals("defend")) {
 			mainPlayer.Defend(currentRound);
 			mainRoll = 5;
 		}
-		if(action.toLowerCase().equals("use an item") || action.toLowerCase().equals("item")){
-			useItem();
+		if(action.toLowerCase().equals("use an item") || action.toLowerCase().equals("item") && mainPlayer.inventory.size() > 0){
+			pickItem();
 			System.out.println();
 			return;
 		}
@@ -136,7 +121,7 @@ class Game {
 		System.out.println();
 	}
 
-	public void healRandomPlayer() {
+	public void healRandomPlayer(Player player) {
 		if (Math.random() > randomHealChance && (currentRound - lastRoundHealed) >= 2) { // 10% chance to randomly heal
 			int health = randomInt(5, 10);
 			double healChance = Math.random() - aiHealBias;
@@ -144,8 +129,8 @@ class Game {
 				System.out.println("You were randomly healed " + GREEN + health + RESET + " hp");
 				mainPlayer.Heal(health);
 			} else {
-				System.out.println("The AI was randomly healed and gained " + GREEN + health + RESET + " hp");
-				aiPlayer.Heal(health);
+				System.out.println(player.name + " was randomly healed and gained " + GREEN + health + RESET + " hp");
+				player.Heal(health);
 			}
 			lastRoundHealed = currentRound;
 		}
@@ -196,25 +181,6 @@ class Game {
 	}
 
 
-	public void AIuseItem(Player player){
-		if(player.inventory.size() <= 0){
-			return;
-		}	
-		if(Items.doesPlayerHaveItem(player, "Sword")){
-			if(aiRoll <= 10){
-				Item sword = Items.getItemFromName("Sword", player);
-				if(sword.useItem(player)){
-					aiRoll += sword.dmg;
-					System.out.println("The Opponent used their Sword, They have " + sword.curDurability + " turns left until it breaks");
-				} else {
-					int swordIndex = player.getItemInvIndex(sword);
-					player.removeItemFromInventory(swordIndex);
-				}
-				
-			}
-		}
-	}
-
 	public void pickItem(){
 		if(mainPlayer.inventory.size() == 0){
 			return;
@@ -236,11 +202,14 @@ class Game {
 			pickItem();
 		}
 		if(Items.doesPlayerHaveItem(mainPlayer, item)){
-			useItem(mainPlayer, item);
+			item.useItem(mainPlayer);
 		}
 	}
 
 	public void aiDecideItem(AI npc){
+		if(npc.inventory.size() == 0){
+			return;
+		}
 		double[] weights = npc.itemDecideWeightTable();
 		System.out.println("NPC Health Percentage: "+ npc.healthPercentage() + ", Damage Weight: " + weights[0] + ", Heal Weight: " + weights[1]);
 		double damageItemWeight = weights[0]; // from 0 to 1 (For Percentage Multiply by 100)
@@ -248,17 +217,37 @@ class Game {
 		if(npc.holdingGround){
 			return;
 		}
-	}
-
-	public void useItem(Player player, Item item){
-		if(Items.doesPlayerHaveItem(player, item)){
-			item.useItem(player);
+		int maxDamage = 0;
+		int maxHeal = 0;
+		Item itemToUse = new Item();
+		boolean shouldUseDamage = false;
+		if(damageItemWeight >= (healthItemWeight + CusMath.random(0.3))){
+			shouldUseDamage = true;
 		}
+		for(int i=0;i<npc.inventory.size();i++){
+			Item itm = npc.inventory.get(i);
+			if(itm.unUsable || itm.isArmor){
+				continue;
+			}
+			if(shouldUseDamage && (!itm.healthItem)){
+				if(itm.dmg > maxDamage){
+					itemToUse = itm;
+					maxDamage = itm.dmg;
+				}
+			}
+			if(!shouldUseDamage && (itm.healthItem)){
+				if(itm.heal >= maxHeal){
+					itemToUse = itm;
+					maxHeal = itm.heal;
+				}
+			}
+		}
+		itemToUse.useItem(npc);
 	}
 
 
 	public boolean shouldBeMerchantRoom(){
-		if(Game.lastMerchanRoom >= 6){
+		if(Game.lastMerchantRoom >= 6){
 			if(mainPlayer.inventory.size() == 0 || (mainPlayer.inventory.size() < itemList.size())){
 				if(Math.random() > 0.6){ // 40% chance for it to be a merchant room afterwards
 					return true;
@@ -269,18 +258,49 @@ class Game {
 	}
 
 	public void TurnCombat(){
-		while((!mainPlayer.dead) || currentRoom.activePlayers.size() > 1){ // if currentRoom.size() returns anything above 1 we know that there are still NPCs left
-			for(int i=0;i<currentRoom.activePlayers.size();i++){
-				Player currentPlayer = currentRoom.activePlayers.players.get(i);
+		String opponents = "You enter a new Room and find ";
+		for(int i=0;i<currentRoom.activeNPCS.size();i++){
+			if(i < currentRoom.activeNPCS.size()-1){
+				opponents += "A " + RED + currentRoom.activeNPCS.npcs.get(i).name + RESET + ", ";
+			} else {
+				opponents += "and A " + RED + currentRoom.activeNPCS.npcs.get(i).name + RESET;
 			}
 		}
-	}
-
-	public void PlayerTurn(){
-		for(int i=0;i<currentRoom.activePlayers.size();i++){
-			Player enemy = currentRoom.activePlayers.players.get(i);
-			Action(enemy);
+		System.out.println(opponents);
+		while((!mainPlayer.dead) || currentRoom.activeNPCS.size() > 0){ 
+			for(int i=0;i<currentRoom.activeNPCS.size();i++){
+				printOpponents();
+				AI currentNPC = currentRoom.activeNPCS.npcs.get(i);
+				System.out.println("Current Opponent: " + RED + currentNPC.name + RESET);
+				currentNPC.AIAction();
+				aiDecideItem(currentNPC);
+				Action(currentNPC);
+				DecideDamage(currentNPC);
+				if(currentNPC.health <= 0){
+					currentNPC.death(mainPlayer);
+				}
+				if(mainPlayer.health <= 0){
+					mainPlayer.death(currentNPC);
+					over = true;
+					System.out.println("You died and made it through " + currentRound + " Rooms, Congrats and Better Luck next time!");
+				}
+				healRandomPlayer(currentNPC);
+			}	
 		}
+		currentRound++;
 	}
 
+	public void printOpponents(){
+		String totalRoomHealth = "";
+			for(int i=0;i<currentRoom.activeNPCS.size();i++){
+				AI curNpc = currentRoom.activeNPCS.get(i);
+				if(i<currentRoom.activeNPCS.size()-1){
+					totalRoomHealth += RED + curNpc.name + "'s" + RESET + " Health: " + GREEN + curNpc.health + RESET + " HP, ";
+				} else {
+					totalRoomHealth += RED + curNpc.name + "'s" + RESET + " Health: " + GREEN + curNpc.health + RESET + " HP.";
+				}
+				
+			}
+			System.out.println(totalRoomHealth);
+	}
 }
