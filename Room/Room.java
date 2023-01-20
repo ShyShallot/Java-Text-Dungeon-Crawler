@@ -1,8 +1,15 @@
 import java.util.*;
 public class Room {
 	AIList activeNPCS = new AIList();
+	HashMap<String, int[]> typeHealthMap = new HashMap<String, int[]>();
 	
     public Room(){
+		typeHealthMap.put("Mage", new int[]{25, 35, 60});
+		typeHealthMap.put("Knight", new int[]{35, 55, 90}); 
+		typeHealthMap.put("Hog",new int[]{30, 50, 100});
+		typeHealthMap.put("Goblin", new int[]{15, 25, 45});
+		typeHealthMap.put("Spider", new int[]{10, 20, 40});
+		typeHealthMap.put("Skeleton", new int[]{20,30,35});
 		fillRoom();
 	}
 
@@ -20,23 +27,18 @@ public class Room {
 	public AI createRandomNPC(){ 
     	Type[] types = {new Goblin(), new Hog(), new Skeleton(), new Mage(), new Skeleton(), new Spider(), new Knight()};
     	Type type = types[CusMath.randomNum(0, types.length-1)];
-		int health = CusMath.randomNum(type.baseHealth()/2, type.baseHealth()*2);
-		int maxHealth = CusMath.randomNum(type.baseMaxHealth()/2,type.baseMaxHealth()*2);
-		if(maxHealth < health){
-			maxHealth = health;
-		}
-		type.getStatProps().setHealth(health, maxHealth);
 		type.getStatProps().setSpeed(CusMath.randomNum(type.baseSpeed()/2, type.baseSpeed()*2));
     	AI npc = new AI(type.getName(), type);
-		npc.setHealth(npc.getType().baseHealth(),npc.getType().baseMaxHealth());
+		calculateHealthValues(npc);
+		npc.setHealth(npc.getType().baseHealth(),npc.getType().baseHealth());
 		npc.mana(npc.getType().baseMana());
-		uniqueItems(npc);
-		npc.addCoins(CusMath.randomNum(0,(5*Game.difficulty+1)));
+		npc.addCoins(CusMath.randomNum(0,(8*Game.difficulty+1)));
     	return npc;
 	}
 
 	public void fillNPCInventory(AI npc){
 		npc.addItemToInventory(npc.getType().getMainWeapon());
+		npc.setArmor(npc.getType().getMainArmor());
 		if(npc.getType().getName() == "Hog" || npc.getType().getName() == "Spider"){
 			return;
 		}
@@ -68,17 +70,21 @@ public class Room {
 		return heal;
 	}
 
-	public void uniqueItems(AI npc){
-		String npcType = npc.getType().getName();
-		switch(npcType){
-			case "Goblin":
-				npc.setArmor(new GoblinArmor());
-				break;
-			case "Knight":
-				npc.setArmor(new Armor());
-				break;
+	public void calculateHealthValues(AI npc){
+		String typeName = npc.getType().getName();
+		//System.out.println("NPC Type: " + typeName);
+		int gameDiff = Game.difficulty;
+		//System.out.println("Difficulty: " + gameDiff);
+		if(gameDiff == 0){
+			int maxHealth = typeHealthMap.get(typeName)[gameDiff];
+			//System.out.println("Max Health: " + maxHealth);
+			npc.getType().getStatProps().setHealth(CusMath.randomNum(0, maxHealth));
+		} else {
+			int maxHealth = typeHealthMap.get(typeName)[gameDiff];
+			int minHealth = typeHealthMap.get(typeName)[gameDiff-1];
+			//System.out.println("Max Health: " + maxHealth + " Min Health: " + minHealth);
+			npc.getType().getStatProps().setHealth(CusMath.randomNum(minHealth, maxHealth));
 		}
-		
 	}
 
 }

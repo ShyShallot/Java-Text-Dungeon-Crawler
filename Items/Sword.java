@@ -10,18 +10,8 @@ public class Sword extends Item {
 	}
 
 	public void useItem(Player player, Player target){
-		if(this.isUseable()){
-			return;
-		}
-		if(this.durability() == 0){
-			this.setUseState(true);
-			return;
-		}
-		int durUsed = 1;
-		this.setDurability(-durUsed);
-		
 		if(player.getName() == "You"){
-			System.out.println(player.getName() + " has used your " + this.getName());
+			System.out.println(player.getName() + " used your " + this.getName());
 		} else {
 			System.out.println(player.getName() + " has used their " + this.getName());
 		}

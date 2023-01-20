@@ -62,10 +62,18 @@ class Player {
 	}
 	public void Damage(int dmg, int dmgType, Player dealer){
 		if(Armor != null){
-			if(Armor.durability() <= 0){
+			if(Armor.durability() == 0){
 				Armor = null;
+				return;
 			}
-			dmg = Armor.damageBlocked(dmg, dmgType);
+			int amountBlocked = Armor.damageBlocked(dmg, dmgType);
+			if(this.getName() == "You"){
+				System.out.println(String.format("Your %s blocks %s%s%s of the %s Damage (%s%s%s -> %s%s%s)",Armor.getName(),Game.RED,dmg-amountBlocked,Game.RESET, Items.getDamageTypeName(dmgType), Game.RED,dmg,Game.RESET,Game.RED,amountBlocked,Game.RESET));
+			} else 
+			if(Armor.getName() != "Skeleton Armor"){
+				System.out.println(String.format("%s's %s blocks %s%s%s of the %s Damage (%s%s%s -> %s%s%s)",this.getName(),Armor.getName(),Game.RED,dmg-amountBlocked,Game.RESET, Items.getDamageTypeName(dmgType), Game.RED,dmg,Game.RESET,Game.RED,amountBlocked,Game.RESET));
+			}
+			dmg = amountBlocked;
 			Armor.setDurability(-1);
 		}
 		if(this.holdingGround){
@@ -76,9 +84,12 @@ class Player {
 			this.health = 0;
 		}
 		if(dealer == null){
-			System.out.println(String.format("%s felt the effects %s and took%s %s dmg%s!",this.getName(),Items.getDamageTypeName(dmgType),Game.RED,dmg,Game.RESET));
+			if(dmg == 0){
+				System.out.println(String.format("%s is immune to the effects of %s and didn't take any damage.", this.getName(),Items.getDamageTypeName(dmgType)));
+			}
+			System.out.println(String.format("%s felt the effects of %s and took%s %s dmg%s! (%s%s%s --> %s%s%s)",this.getName(),Items.getDamageTypeName(dmgType),Game.RED,dmg,Game.RESET,Game.GREEN,this.health+dmg,Game.RESET,Game.GREEN,this.health,Game.RESET));
 		} else {
-			System.out.println(String.format("%s dealt %s%s%s damage to %s!",dealer.getName(),Game.RED,dmg,Game.RESET,this.getName()));
+			System.out.println(String.format("%s dealt %s%s%s damage to %s! (%s%s%s --> %s%s%s)",dealer.getName(),Game.RED,dmg,Game.RESET,this.getName(),Game.GREEN,this.health+dmg,Game.RESET,Game.GREEN,this.health,Game.RESET));
 		}
 	}
 
@@ -112,16 +123,16 @@ class Player {
 	}
 
 	public void killedPlayer(Player playerKilled){
-		if(playerKilled.coins <= 0){
-			return;
+		if(playerKilled.coins > 0){
+			this.coins += playerKilled.coins;
+			System.out.println(this.name + " killed " + playerKilled.getName() + " and took all of their " + playerKilled.getCoins() + " Coin(s)");
+		} else{
+			System.out.println(this.name + " killed " + Game.RED + playerKilled.getName() + Game.RESET);
 		}
-		this.coins += playerKilled.coins;
-		System.out.println(this.name + " killed " + playerKilled.name + " and took all of their " + playerKilled.coins + " Coin(s)");
 	}
 
-	public void death(Player killer, Player killedPlayer){
+	public void death(Player killer){
 		this.dead = true;
-		killer.killedPlayer(killedPlayer);
 	}
 
 	public int healthPercentage(){

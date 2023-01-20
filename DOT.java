@@ -3,12 +3,16 @@ public class DOT {
     private ArrayList<DOTMatrix> players = new ArrayList<>();
 
     public void dealOutDamage(int currentRound){
+        //System.out.println("Dealing out DOT Damage for Round " + currentRound);
         if(players.size() == 0){
+            //System.out.println("Array is Empty");
             return;
         }
         for(int i=0;i<players.size();i++){
             DOTMatrix currentMatrix = players.get(i);
-            if((currentMatrix.started()+currentMatrix.time()) >= currentRound){
+            //System.out.println(currentMatrix.toString());
+            if((currentRound > currentMatrix.shouldEnd())){
+                System.out.println(String.format("%s no longer feel the effects of %s", currentMatrix.target().getName(), Items.getDamageTypeName(currentMatrix.damageType())));
                 players.remove(i);
                 continue;
             }
@@ -17,10 +21,12 @@ public class DOT {
     }
 
     public void addPlayer(Player target, int damage, int damageType, int rounds, int currentRound){
+        //System.out.println("Adding Player " + target.getName() + " to Damage Over Time");
         if(isPlayerInForDamageType(target, damageType)){
             return;
         }
         DOTMatrix playerDOT = new DOTMatrix(target, damage, damageType, rounds, currentRound);
+        //System.out.println(playerDOT.toString());
         players.add(playerDOT);
         return;
     }
@@ -43,6 +49,10 @@ public class DOT {
             }
         }
         return isTrue;
+    }
+
+    public void reset(){
+        players.clear();
     }
 }
 
@@ -80,6 +90,14 @@ class DOTMatrix{
 
     public int started(){
         return this.started;
+    }
+
+    public int shouldEnd(){
+        return this.started+this.roundsDOTApplies;
+    }
+
+    public String toString(){
+        return String.format("Target: %s, Damage: %s, DamageType %s, Time: %s, Started: %s", target.getName(), this.damage, Items.getDamageTypeName(this.damageType),this.roundsDOTApplies,this.started);
     }
 
 }

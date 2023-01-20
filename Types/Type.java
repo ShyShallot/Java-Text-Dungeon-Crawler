@@ -2,6 +2,7 @@ import java.util.*;
 public class Type {
     private String typeName;
     private Item mainWeapon;
+    private Armor mainArmor;
     private ArrayList<Item> prohibitedWeapons;
     private BaseProperties baseStats;
 
@@ -21,6 +22,26 @@ public class Type {
         this.baseStats.setSpeed(speed);
         this.baseStats.setMana(mana);
         this.mainWeapon = mainWeapon;
+    }
+
+    public Type(String name, int health, int maxHealth, int speed, int mana ,Item mainWeapon, Armor mainArmor){
+        this.baseStats = new BaseProperties(health, maxHealth, speed, mana);
+        this.typeName = name;
+        this.baseStats.setHealth(health, maxHealth);
+        this.baseStats.setSpeed(speed);
+        this.baseStats.setMana(mana);
+        this.mainWeapon = mainWeapon;
+        this.mainArmor = mainArmor;
+    }
+
+    public Type(String name, int health, int speed, int mana ,Item mainWeapon, Armor mainArmor){
+        this.baseStats = new BaseProperties(health, speed, mana);
+        this.typeName = name;
+        this.baseStats.setHealth(health);
+        this.baseStats.setSpeed(speed);
+        this.baseStats.setMana(mana);
+        this.mainWeapon = mainWeapon;
+        this.mainArmor = mainArmor;
     }
 
     public Type(String name, int health, int maxHealth, int speed, int mana){
@@ -46,6 +67,14 @@ public class Type {
 
     public void setMainWeapon(){
         this.mainWeapon = null;
+    }
+
+    public void setMainArmor(Armor armor){
+        this.mainArmor = armor;
+    }
+
+    public Armor getMainArmor(){
+        return this.mainArmor;
     }
 
     public void addIllegalWeapon(Item weap){
@@ -110,6 +139,10 @@ public class Type {
         return String.format("Type Name: %s, Base Props: %s", this.typeName, this.baseStats.toString());
     }
 
+    public String toString(boolean player){
+        return String.format("Type Name: %s, Base Props: %s", this.typeName, this.baseStats.toString(player));
+    }
+
 }
 
 
@@ -169,6 +202,16 @@ class BaseProperties {
 
     public String toString(){
         return String.format("Health %s, Max Health %s, Speed %s, Mana %s",this.baseHealth, this.baseMaxHealth, this.baseSpeed, this.baseMana);
+    }
+    
+    public String toString(boolean player){
+        int health = this.baseHealth;
+        int maxHealth = this.baseMaxHealth;
+        if(player){
+            health *= 2;
+            maxHealth *=2;
+        }
+        return String.format("Health %s, Max Health %s, Speed %s, Mana %s",health, maxHealth, this.baseSpeed, this.baseMana);
     }
 
 }

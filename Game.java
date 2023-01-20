@@ -25,6 +25,8 @@ class Game {
 	public static Scanner input;
 	public static ArrayList<Item> itemList = new ArrayList<Item>();
 	public static DOT DOTList = new DOT();
+	public static Type[] playableTypeList = {new Goblin(), new Knight(), new Mage()};
+
 	// Input
 	public void SetupInput(Scanner in) {
 		input = in;
@@ -36,14 +38,13 @@ class Game {
 
 	// START OF MAIN GAME FUNCTIONS
 	public void Start() {
+		Types.createTypeLib();
 		System.out.println("Welcome to Defend n Roll, A simple text fight game, where you can either defend for one turn and reduce dmg by 50% or roll. Damage is determined by the difference between the 2 rolls, who ever has the lowest roll, gets the damage.");
 		System.out.println();
-		
 		setDifficulty();
+		setPlayerType();
 		System.out.println();
 		addItemsToList();
-		mainPlayer = new Player("You", 100 ,new Knight());
-		mainPlayer.addItemToInventory(new Sword());
 		while (!over) {
 			if(shouldBeMerchantRoom()){
 				System.out.println("You come across a merchant sitting in a room.");
@@ -140,6 +141,29 @@ class Game {
 		}
 	}
 
+	public static void setPlayerType(){
+		System.out.println("What class would you like to pick?");
+		String pickList = "";
+		for(int i=0;i<playableTypeList.length;i++){
+			if(i == playableTypeList.length-1){
+				pickList += playableTypeList[i].getName() + ", Stats: " + playableTypeList[i].getStatProps().toString(true) + ", Main Weapon: " + playableTypeList[i].getMainWeapon().getName() + ".";
+				continue;
+			}
+			pickList += playableTypeList[i].getName() + ", Stats: " + playableTypeList[i].getStatProps().toString(true) + ", Main Weapon: " + playableTypeList[i].getMainWeapon().getName() +", \n";
+		}
+		System.out.println(pickList);
+		String pick = input.nextLine();
+		Type selectedType = Types.getTypeFromName(pick);
+		if(selectedType == null){
+			System.out.println("Was unable to find that type.");
+			setPlayerType();
+		}
+		System.out.println("You selected the " + selectedType.getName());
+		mainPlayer = new Player("You", selectedType.baseHealth()*2 ,selectedType);
+		mainPlayer.addItemToInventory(selectedType.getMainWeapon());
+		mainPlayer.setArmor(mainPlayer.getType().getMainArmor());
+	}
+
 	public void addItemsToList(){
 		itemList.add(new Sword());
 		itemList.add(new Vial());
@@ -164,7 +188,7 @@ class Game {
 		}
 		System.out.println(itemList); 
 		String itemPicked = input.nextLine();
-		Item item = Items.getItemFromName(itemPicked);
+		Item item = Items.getItemFromName(itemPicked, mainPlayer);
 		//System.out.println(item.name);
 		if(item == null){
 			System.out.println("You do not have that item.");
@@ -194,6 +218,9 @@ class Game {
 			shouldUseDamage = true;
 			//System.out.println("AI wants to use Damage Item");
 		}
+		if(!doesPlayerHaveHeal(npc)){
+			shouldUseDamage = true;
+		}
 		for(int i=0;i<npc.getInventory().size();i++){
 			Item itm = npc.getInventory().get(i);
 			//System.out.println("Calculating use for " + itm.getName());
@@ -220,6 +247,21 @@ class Game {
 		}
 		npc.setHand(itemToUse);
 		//System.out.println("Set hand to: " + itemToUse.getName());
+	}
+
+	public boolean doesPlayerHaveHeal(Player player){
+		int heals = 0;
+		for(int i=0;i<player.getInventory().size();i++){
+			Item itm = player.getInventory().get(i);
+			if(itm.isHeal()){
+				heals++;
+			}
+		}
+		if(heals > 0 ){
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 
@@ -255,20 +297,23 @@ class Game {
 				Action(currentNPC);
 				DecideDamage(currentNPC);
 				if(currentNPC.getHealth() <= 0){
-					currentNPC.death(mainPlayer,currentNPC);
+					currentNPC.death(mainPlayer);
+					mainPlayer.killedPlayer(currentNPC);
 				}
 				if(mainPlayer.getHealth() <= 0){
-					mainPlayer.death(currentNPC,mainPlayer);
+					mainPlayer.death(currentNPC);
 					over = true;
-					System.out.println("You died and made it through " + currentRound + " Rooms, Congrats and Better Luck next time!");
+					System.out.println("You died and made it through " + Game.GREEN + currentRound + Game.RESET + " Rooms, Congrats and Better Luck next time!");
 					currentRound--;
 					break;
 				}
+				DOTList.dealOutDamage(currentSubRound);
 				currentRoom.activeNPCS.GarbageCleanup();
 				healRandomPlayer(currentNPC);
 				currentSubRound++;
 			}	
 		}
+		DOTList.reset();
 		currentSubRound = 1;
 		currentRound++;
 	}

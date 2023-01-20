@@ -4,7 +4,7 @@ public class Armor extends Item{
     double[] armorEff = {0.5, 0.8, 0.7, 0.6,1.0,1.0,0.55,0.65}; // Lower Numbers are better protection, higher numbers are worse as this is practically a multiplication table
     public Armor(){
         super("Iron Armor", "Blocks 8 Damage", 12, 2, true);
-		this.block = 6;
+		this.block = 3;
     }
 
     public Armor(String name,String description,int cost, int durability, int block){
@@ -27,7 +27,11 @@ public class Armor extends Item{
     }
 
     public int damageBlocked(int incomingDamage, int dmgType){
-        return this.block + (int)((double)incomingDamage*(armorEffectiveness(dmgType)));
+        int damageBlocked = ((int)((double)incomingDamage*(armorEffectiveness(dmgType))+0.5)) - CusMath.randomNum(0,(int)(this.block*armorEffectiveness(dmgType)));
+        if(damageBlocked < 0){
+            damageBlocked = 0;
+        }
+        return damageBlocked;
     }
 
     public int getBlock(){

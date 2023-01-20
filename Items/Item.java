@@ -79,34 +79,7 @@ public class Item {
 	}
 
 	public String resolveDamageType(){ 
-		String type = "";
-		switch (this.dmgType){ // PLEASE ADD ANY NEW TYPE AT THE END
-			case 0:
-				type = "Physical";
-				break;
-			case 1:
-				type = "Magic";
-				break;
-			case 2:
-				type = "Fire";
-				break;
-			case 3:
-				type = "Water";
-				break;
-			case 4:
-				type = "Poison";
-				break;
-			case 5:
-				type = "Bleed";
-				break;
-			case 6:
-				type = "Explosion";
-				break;
-			case 7:
-				type = "Ranged";
-				break;
-		}
-		return type;
+		return Items.getDamageTypeName(this.dmgType);
 	}
 
 	public String getName(){

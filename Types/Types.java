@@ -5,13 +5,18 @@ public class Types {
     public static void createTypeLib(){
         typeLib.add(new Mage());
         typeLib.add(new Skeleton());
+        typeLib.add(new Knight());
+        typeLib.add(new Goblin());
+        typeLib.add(new Hog());
+        typeLib.add(new Spider());
     }
 
     public static Type getTypeFromName(String name){
-        Type returnType = new Type();
+        Type returnType = null;
         for(int i=0; i<typeLib.size();i++){
             Type type = typeLib.get(i);
-            if(type.getName().equals(name)){
+            //System.out.println(type.getName() + ", " + name);
+            if(type.getName().toLowerCase().equals(name.toLowerCase())){
                 returnType = type;
             }
         }
