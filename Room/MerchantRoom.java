@@ -16,9 +16,9 @@ public class MerchantRoom extends Room {
 	public void itemShop(boolean recall){
 		if(!recall){
 			String itemsString = "";
-			System.out.println("Which Item would you like to purchese? You have " + Game.YELLOW + Game.mainPlayer.coins + Game.RESET + " Coins." + " To skip type none");
+			System.out.println("Which Item would you like to purchese? You have " + Game.YELLOW + Game.mainPlayer.getCoins() + Game.RESET + " Coins." + " To skip type none");
 			for(Item item : availItems){
-				itemsString += item.name + ", Description: " + item.description + ", " + "Cost: " + item.cost + " Coins \n";
+				itemsString += item.getName() + ", Description: " + item.getDescription() + ", " + "Cost: " + item.getCost() + " Coins \n";
 			}
 			itemsString.substring(0,(itemsString.length()-2));
 			itemsString += ".";
@@ -32,11 +32,11 @@ public class MerchantRoom extends Room {
 			System.out.println("Could not find that item.");
 			itemShop(true);
 		}
-		if(itemPicked.cost >= Game.mainPlayer.coins){
+		if(itemPicked.getCost() >= Game.mainPlayer.getCoins()){
 			System.out.println("You do not have enough coins for that item.");
 			itemShop(true);
 		}
-		System.out.println("You have bought " + itemPicked.name + " for " + itemPicked.cost + " Coins");
+		System.out.println("You have bought " + itemPicked.getName() + " for " + itemPicked.getCost() + " Coins");
 		Game.mainPlayer.addItemToInventory(itemPicked);
 		return;
 	}

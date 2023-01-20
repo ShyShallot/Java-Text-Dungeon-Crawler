@@ -1,33 +1,23 @@
 import java.text.DecimalFormat;
 import java.util.*;
-
 class AI extends Player {
-	int id;
 
-	public AI(String name) {
-		super(name);
-	}
-
-	public int Roll(int bias) {
-		int biasRoll = CusMath.randomNum(1, bias);
-		int roll = CusMath.randomNum(1, 20) + biasRoll;
-		if (roll > 20) {
-			roll = 20;
-		}
-		return roll;
+	public AI(String name, Type type) {
+		super(name, type);
 	}
 
 	public void shouldDefend(boolean isPlayerHoldingGround) { // AI FUNC only
-		if (Game.currentRound - this.lastRoundDefended < 2) {
+		if (Game.currentRound - this.lastRoundDefended() < 2) {
 			return;
 		}
-		if (this.holdingGround) {
+		if (this.isHoldingGround()) {
 			return;
 		}
 		double chance = 0.0;
 		double frac = -0.5;
 		int healthPercentage = this.healthPercentage();
 		double[][] weightMatrix = {
+			// HP   Chance to Defend 
 			{100.0, 0.0},
 			{50.0, 0.15},
 			{35.0, 0.25},
@@ -52,10 +42,7 @@ class AI extends Player {
 	}
 
 	public void AIAction() {
-		shouldDefend(Game.mainPlayer.holdingGround);
-		if (!this.holdingGround) {
-			Game.aiRoll = Roll(Game.aiRollBias);
-		}
+		shouldDefend(Game.mainPlayer.isHoldingGround());
 	}
 
 	public double[] itemDecideWeightTable() {
@@ -71,7 +58,7 @@ class AI extends Player {
 				{ 0, 0.0, 1.0 }
 		};
 		int healthPercent = this.healthPercentage();
-		// System.out.println("Health Percent: " + healthPercent);
+		//System.out.println("Health Percent: " + healthPercent);
 		double dmg = 0.0;
 		double heal = 0.0;
 		double frac = -0.5; // Only go from -1 to 1, -1 will bias past the min, 0 is no bias, 1 will bias
@@ -82,21 +69,13 @@ class AI extends Player {
 				dmg = weightMatrix[i][1];
 				heal = weightMatrix[i][2];
 				break;
-			}
-			if(i == weightMatrix.length-1 && (healthPercent <= weightMatrix[i][0] && healthPercent >= weightMatrix[i-1][0])){ // If we are at the bottom of the matrix, reverse our inputs and go one back
+			}// If we are at the bottom of the matrix, reverse our inputs and go one back
+			if(i == weightMatrix.length-1 && (healthPercent <= weightMatrix[i][0] && healthPercent >= weightMatrix[i-1][0])){ 
 				dmg = CusMath.linearInterp(frac, weightMatrix[i-1][1], weightMatrix[i][1],false); 
 				heal = CusMath.linearInterp(frac, weightMatrix[i-1][2], weightMatrix[i][2], false);
-				continue;
 			}
-			if (healthPercent <= weightMatrix[i][0] && healthPercent >= weightMatrix[i + 1][0]) { // if the health
-																									// percentage is
-																									// within a range
-				dmg = CusMath.linearInterp(frac, weightMatrix[i][1], weightMatrix[i + 1][1], false); // Interpolate our
-																										// damage based
-																										// on the
-																										// position of
-																										// our range by
-																										// health
+			if (healthPercent <= weightMatrix[i][0] && healthPercent >= weightMatrix[i + 1][0]) { // if the health percentage is within a range
+				dmg = CusMath.linearInterp(frac, weightMatrix[i][1], weightMatrix[i + 1][1], false); // Interpolate our damage based on the position of our range by health
 				heal = CusMath.linearInterp(frac, weightMatrix[i][2], weightMatrix[i + 1][2], false);
 			}
 		}
@@ -106,4 +85,5 @@ class AI extends Player {
 		}
 		return decide;
 	}
+
 }

@@ -14,60 +14,71 @@ public class Room {
 			fillNPCInventory(npc);
 			activeNPCS.addPlayer(npc);
 		}
+		activeNPCS.sortBySpeed();
 	}
 	
 	public AI createRandomNPC(){ 
-    	String[] names = {"Goblin","Skeleton","Hog","Spider","Mage"};
-    	String name = names[CusMath.randomNum(0, names.length-1)];
-    	AI npc = new AI(name);
-    	npc.health = CusMath.randomNum(10, 50) * (Game.currentRound*(Game.difficulty/10)+1);
-		npc.maxHealth = npc.health;
-		npc.coins = CusMath.randomNum(0,(5*Game.difficulty+1));
-    	if(npc.health > 500){
-        	npc.health = 500;
-    	}
+    	Type[] types = {new Goblin(), new Hog(), new Skeleton(), new Mage(), new Skeleton(), new Spider(), new Knight()};
+    	Type type = types[CusMath.randomNum(0, types.length-1)];
+		int health = CusMath.randomNum(type.baseHealth()/2, type.baseHealth()*2);
+		int maxHealth = CusMath.randomNum(type.baseMaxHealth()/2,type.baseMaxHealth()*2);
+		if(maxHealth < health){
+			maxHealth = health;
+		}
+		type.getStatProps().setHealth(health, maxHealth);
+		type.getStatProps().setSpeed(CusMath.randomNum(type.baseSpeed()/2, type.baseSpeed()*2));
+    	AI npc = new AI(type.getName(), type);
+		npc.setHealth(npc.getType().baseHealth(),npc.getType().baseMaxHealth());
+		npc.mana(npc.getType().baseMana());
+		uniqueItems(npc);
+		npc.addCoins(CusMath.randomNum(0,(5*Game.difficulty+1)));
     	return npc;
 	}
 
 	public void fillNPCInventory(AI npc){
-		if(npc.name == "Hog" || npc.name == "Spider"){
+		npc.addItemToInventory(npc.getType().getMainWeapon());
+		if(npc.getType().getName() == "Hog" || npc.getType().getName() == "Spider"){
 			return;
 		}
-		double[] weights = itemClassWeight(npc);
-		double dmg = weights[0];
-		double heal = weights[1];
+		double heal = healItemChance(npc);
 		for(int i=0; i<Game.itemList.size();i++){
 			Item itm = Game.itemList.get(i);
-			if(itm.healthItem){
+			if(itm.isHeal()){
 				if(Math.random() <= heal){
-					npc.inventory.add(itm);
-				}
-			} else {
-				if(Math.random() <= dmg){
-					npc.inventory.add(itm);
+					int amt = CusMath.randomNum(1, 5);
+					for(int y=0;y<amt;y++){
+						npc.addItemToInventory(itm);
+					}
 				}
 			}
 		}
 	}
 
-	public double[] itemClassWeight(AI npc){	
+	public double healItemChance(AI npc){	
 							//DMG  HEAL
-		double[] itmWeight = {0.0,0.0};
-		switch (npc.name){
+		double heal = 0.0;
+		switch (npc.getType().getName()){
 			case "Goblin":
-				itmWeight[0] = 0.8;
-				itmWeight[1] = 0.2;
-				break;
-			case "Skeleton":
-				itmWeight[0] = 1.0;
-				itmWeight[1] = 0.0;
+				heal = 0.35;
 				break;
 			case "Mage":
-				itmWeight[0] = 0.45;
-				itmWeight[1] = 0.55;
+				heal = 0.65;
 				break;
 		}
-		return itmWeight;
+		return heal;
+	}
+
+	public void uniqueItems(AI npc){
+		String npcType = npc.getType().getName();
+		switch(npcType){
+			case "Goblin":
+				npc.setArmor(new GoblinArmor());
+				break;
+			case "Knight":
+				npc.setArmor(new Armor());
+				break;
+		}
+		
 	}
 
 }

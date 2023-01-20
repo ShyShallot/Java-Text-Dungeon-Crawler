@@ -1,5 +1,7 @@
+
+
 public class LargeVial extends Vial {
 	public LargeVial(){
-		super(12, "Large Vial", 15);
+		super(12, "Large Vial", 15,8);
 	}
 }

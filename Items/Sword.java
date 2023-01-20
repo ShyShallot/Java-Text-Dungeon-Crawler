@@ -1,33 +1,35 @@
-class Sword extends Item {
+
+public class Sword extends Item {
 
 	public Sword(){
-		super("Sword", "Deals 12 dmg points", 7, 12, 3, false, false);
+		super("Sword", "Deals 12 dmg points", 7,0, 12,0,3, false, false);
 	}
 
-	public void useItem(Player player){
-		if(unUsable){
+	public Sword(String name, String description, int dmg, int cost, int durability, int dmgType){
+		super(name,description,cost,0,dmg,dmgType,durability,false,false);
+	}
+
+	public void useItem(Player player, Player target){
+		if(this.isUseable()){
 			return;
 		}
-		if(curDurability <= 0){
-			unUsable = true;
+		if(this.durability() == 0){
+			this.setUseState(true);
 			return;
 		}
 		int durUsed = 1;
-		this.curDurability -= durUsed;
-		Game.mainRoll = this.dmg;
-		System.out.println(player.name + " has used their " + this.name);
+		this.setDurability(-durUsed);
+		
+		if(player.getName() == "You"){
+			System.out.println(player.getName() + " has used your " + this.getName());
+		} else {
+			System.out.println(player.getName() + " has used their " + this.getName());
+		}
+		damagePlayer(player,target);
 	}
 
-	public void useItem(AI npc){
-		if(unUsable){
-			return;
-		}
-		if(curDurability <= 0){
-			unUsable = true;
-			return;
-		}
-		int durUsed = 1;
-		this.curDurability -= durUsed;
-		System.out.println(npc.name + " has used their " + this.name);
-	}
+	public void damagePlayer(Player user, Player target){
+        int damage = CusMath.randomNum(this.getDamage()-5, this.getDamage());
+        target.Damage(damage, this.getDamageType(),user);
+    }
 }
