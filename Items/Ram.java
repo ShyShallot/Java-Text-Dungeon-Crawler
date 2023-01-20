@@ -4,7 +4,7 @@ public class Ram extends Item {
     }
 
     public void useItem(Player user, Player target){
-        System.out.println(user.getName() + " has bitten " + target.getName() + "!");
+        System.out.println(user.getName() + " has rammed into " + target.getName() + "!");
         target.Damage(this.getDamage(), this.getDamageType(),user);
 
     } 

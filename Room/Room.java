@@ -32,7 +32,10 @@ public class Room {
 		calculateHealthValues(npc);
 		npc.setHealth(npc.getType().baseHealth(),npc.getType().baseHealth());
 		npc.mana(npc.getType().baseMana());
-		npc.addCoins(CusMath.randomNum(0,(8*Game.difficulty+1)));
+		int coins = CusMath.randomNum(0,(8*Game.difficulty+1));
+		//System.out.println("Coins: " + coins);
+		npc.addCoins(coins);
+		//System.out.println("Coins: " + npc.getCoins());
     	return npc;
 	}
 
@@ -78,7 +81,7 @@ public class Room {
 		if(gameDiff == 0){
 			int maxHealth = typeHealthMap.get(typeName)[gameDiff];
 			//System.out.println("Max Health: " + maxHealth);
-			npc.getType().getStatProps().setHealth(CusMath.randomNum(0, maxHealth));
+			npc.getType().getStatProps().setHealth(CusMath.randomNum(5, maxHealth));
 		} else {
 			int maxHealth = typeHealthMap.get(typeName)[gameDiff];
 			int minHealth = typeHealthMap.get(typeName)[gameDiff-1];

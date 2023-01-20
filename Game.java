@@ -266,11 +266,9 @@ class Game {
 
 
 	public boolean shouldBeMerchantRoom(){
-		if(Game.lastMerchantRoom >= CusMath.randomNum(3, 6)){
-			if(mainPlayer.getInventory().size() == 0 || (mainPlayer.getInventory().size() < itemList.size())){
-				if(Math.random() > 0.6){ // 40% chance for it to be a merchant room afterwards
-					return true;
-				}
+		if(Game.lastMerchantRoom >= CusMath.randomNum(1, 6)){
+			if(Math.random() > 0.4){ // 40% chance for it to be a merchant room afterwards
+				return true;
 			}
 		}
 		return false;
@@ -297,8 +295,9 @@ class Game {
 				Action(currentNPC);
 				DecideDamage(currentNPC);
 				if(currentNPC.getHealth() <= 0){
-					currentNPC.death(mainPlayer);
+					//System.out.println(currentNPC.getName() + " has " + currentNPC.getCoins() + " Coins");
 					mainPlayer.killedPlayer(currentNPC);
+					currentNPC.death(mainPlayer);
 				}
 				if(mainPlayer.getHealth() <= 0){
 					mainPlayer.death(currentNPC);
@@ -313,9 +312,22 @@ class Game {
 				currentSubRound++;
 			}	
 		}
+		if(over){
+			return;
+		}
+		System.out.println("Congrats on clearing Room " + currentRound + "!");
+		mainPlayer.Heal((mainPlayer.getMaxHealth()/2));
 		DOTList.reset();
 		currentSubRound = 1;
 		currentRound++;
+		if(currentRound > 5 && difficulty < 1){
+			difficulty = 1;
+			System.out.println("You have progressed through enough rooms that the Game Difficulty changed to Medium");
+		}
+		if(currentRound > 10 && difficulty < 2){
+			difficulty = 2;
+			System.out.println("You have progressed through enough rooms that the Game Difficulty changed to Hard");
+		}
 	}
 
 	public void printOpponents(){

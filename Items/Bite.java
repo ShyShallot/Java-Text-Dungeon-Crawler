@@ -33,5 +33,9 @@ public class Bite extends Item {
     public String damageString(){
         return this.damageString;
     }
+
+    public void setDamageString(String dmgString){
+        this.damageString = dmgString;
+    }
     
 }

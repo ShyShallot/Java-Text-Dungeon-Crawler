@@ -60,12 +60,9 @@ class Player {
 		}
 		this.health += hp;
 	}
+
 	public void Damage(int dmg, int dmgType, Player dealer){
 		if(Armor != null){
-			if(Armor.durability() == 0){
-				Armor = null;
-				return;
-			}
 			int amountBlocked = Armor.damageBlocked(dmg, dmgType);
 			if(this.getName() == "You"){
 				System.out.println(String.format("Your %s blocks %s%s%s of the %s Damage (%s%s%s -> %s%s%s)",Armor.getName(),Game.RED,dmg-amountBlocked,Game.RESET, Items.getDamageTypeName(dmgType), Game.RED,dmg,Game.RESET,Game.RED,amountBlocked,Game.RESET));
@@ -74,7 +71,6 @@ class Player {
 				System.out.println(String.format("%s's %s blocks %s%s%s of the %s Damage (%s%s%s -> %s%s%s)",this.getName(),Armor.getName(),Game.RED,dmg-amountBlocked,Game.RESET, Items.getDamageTypeName(dmgType), Game.RED,dmg,Game.RESET,Game.RED,amountBlocked,Game.RESET));
 			}
 			dmg = amountBlocked;
-			Armor.setDurability(-1);
 		}
 		if(this.holdingGround){
 			dmg /= 2;
@@ -123,9 +119,9 @@ class Player {
 	}
 
 	public void killedPlayer(Player playerKilled){
-		if(playerKilled.coins > 0){
+		if(playerKilled.getCoins() > 0){
 			this.coins += playerKilled.coins;
-			System.out.println(this.name + " killed " + playerKilled.getName() + " and took all of their " + playerKilled.getCoins() + " Coin(s)");
+			System.out.println(this.name + " killed " + Game.RED + playerKilled.getName() + Game.RESET + " and took all of their " + Game.YELLOW + playerKilled.getCoins() + Game.RESET + " Coin(s)");
 		} else{
 			System.out.println(this.name + " killed " + Game.RED + playerKilled.getName() + Game.RESET);
 		}
@@ -193,7 +189,7 @@ class Player {
 	}
 
 	public void addCoins(int amt){
-		this.coins += coins;
+		this.coins += amt;
 	}
 
 	public boolean isHoldingGround(){
