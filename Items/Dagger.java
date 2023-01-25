@@ -1,6 +1,6 @@
 public class Dagger extends Bite{
     public Dagger(){
-        super("Dagger", "A Small Dagger that deals Bleed", 3, 0, 3, 3, " Has Stabbed ");
+        super("Dagger", "A Small Dagger that deals Bleed", 3, 0, 3, 3, 0.4 , " Has Stabbed ");
     }
 
     public void useItem(Player user, Player target){

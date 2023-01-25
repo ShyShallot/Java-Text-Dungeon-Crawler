@@ -87,6 +87,10 @@ class Game {
 			if(npc.isDead()){
 				return;
 			}
+			if(Math.random()+(mainPlayer.getType().baseSpeed()*CusLib.randomNum(0.01, 0.02)) > CusLib.randomNum(0.7, 0.9)){
+				System.out.println("You were faster than " + npc.getName() + " and blocked their attack!");
+				return;
+			}
 			npc.getHand().useItem(npc, mainPlayer);
 		}	
 	} 
@@ -328,9 +332,6 @@ class Game {
 				currentRoom.activeNPCS.GarbageCleanup();
 				healRandomPlayer(currentNPC);
 				currentSubRound++;
-				if(Math.random() > 0.75){
-					currentRoom.treasureChest();
-				}
 				System.out.println();
 			}	
 		}
@@ -338,6 +339,9 @@ class Game {
 			return;
 		}
 		System.out.println("Congrats on clearing Room " + currentRound + "!");
+		if(Math.random() > 0.75){
+			currentRoom.treasureChest();
+		}
 		mainPlayer.Heal((mainPlayer.getMaxHealth()/2));
 		DOTList.reset();
 		currentSubRound = 1;

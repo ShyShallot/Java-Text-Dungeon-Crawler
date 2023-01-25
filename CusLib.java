@@ -33,13 +33,10 @@ public class CusLib {
         return max + f * (max-min);
     }
 
-    public static double random(double max){
-        double ran = Math.random()-(max/2);
-        if(ran > max){
-            ran = max;
-        }
-        return ran;
-    }
+    public static double randomNum(double min, double max){
+		return Math.random()*(max-min+1)+min;
+	}
+
 
     public static String colorText(String text, String color){
         String finalColor = getColor(color);
