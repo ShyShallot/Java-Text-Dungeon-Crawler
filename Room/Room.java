@@ -15,7 +15,7 @@ public class Room {
 
 	public void fillRoom(){
 		int max = 3 + Game.difficulty;
-		int size = CusMath.randomNum(1,max);
+		int size = CusLib.randomNum(1,max);
 		for(int i=0; i<=size;i++){
 			AI npc = createRandomNPC();
 			fillNPCInventory(npc);
@@ -26,13 +26,13 @@ public class Room {
 	
 	public AI createRandomNPC(){ 
     	Type[] types = {new Goblin(), new Hog(), new Skeleton(), new Mage(), new Skeleton(), new Spider(), new Knight()};
-    	Type type = types[CusMath.randomNum(0, types.length-1)];
-		type.getStatProps().setSpeed(CusMath.randomNum(type.baseSpeed()/2, type.baseSpeed()*2));
+    	Type type = types[CusLib.randomNum(0, types.length-1)];
+		type.getStatProps().setSpeed(CusLib.randomNum(type.baseSpeed()/2, type.baseSpeed()*2));
     	AI npc = new AI(type.getName(), type);
 		calculateHealthValues(npc);
 		npc.setHealth(npc.getType().baseHealth(),npc.getType().baseHealth());
 		npc.mana(npc.getType().baseMana());
-		int coins = CusMath.randomNum(0,(8*Game.difficulty+1));
+		int coins = CusLib.randomNum(0,(8*Game.difficulty+1));
 		//System.out.println("Coins: " + coins);
 		npc.addCoins(coins);
 		//System.out.println("Coins: " + npc.getCoins());
@@ -50,7 +50,7 @@ public class Room {
 			Item itm = Game.itemList.get(i);
 			if(itm.isHeal()){
 				if(Math.random() <= heal){
-					int amt = CusMath.randomNum(1, 5);
+					int amt = CusLib.randomNum(1, 5);
 					for(int y=0;y<amt;y++){
 						npc.addItemToInventory(itm);
 					}
@@ -81,13 +81,62 @@ public class Room {
 		if(gameDiff == 0){
 			int maxHealth = typeHealthMap.get(typeName)[gameDiff];
 			//System.out.println("Max Health: " + maxHealth);
-			npc.getType().getStatProps().setHealth(CusMath.randomNum(5, maxHealth));
+			npc.getType().getStatProps().setHealth(CusLib.randomNum(5, maxHealth));
 		} else {
 			int maxHealth = typeHealthMap.get(typeName)[gameDiff];
 			int minHealth = typeHealthMap.get(typeName)[gameDiff-1];
 			//System.out.println("Max Health: " + maxHealth + " Min Health: " + minHealth);
-			npc.getType().getStatProps().setHealth(CusMath.randomNum(minHealth, maxHealth));
+			npc.getType().getStatProps().setHealth(CusLib.randomNum(minHealth, maxHealth));
 		}
+	}
+
+	public void treasureChest(){
+		System.out.println("You found a treasure chest, would you like to open it? y/n");
+		String open = Game.input.nextLine();
+		if(open != "y" || open != "yes"){
+			System.out.println("You don't open the chest and you continue on your way");
+			return;
+		}
+		int diff = Game.difficulty;
+		double mimicChance = 0.35;
+		if(diff == 1){
+			mimicChance = .4;
+		} else if(diff == 2){
+			mimicChance = .55;
+		}
+		if(Math.random() > mimicChance){
+			int dmg = 8;
+			System.out.println("You open the chest and it turns out to be a " + CusLib.colorText("Mimic Chest", "red") + "! it deals " + CusLib.colorText(dmg, "red") + " to you!");
+			Game.mainPlayer.Damage(dmg);
+			return;
+		}
+		ArrayList<Item> items = new ArrayList<>();
+		int maxSize = CusLib.randomNum(0, 4-diff);
+		while(items.size() < maxSize){
+			for(Item item : Game.itemList){
+				if(items.size() >= maxSize){
+					break;
+				}
+				if(Game.mainPlayer.getType().isItemIllegal(item)){
+					continue;
+				}
+				if(item.isArmor()){
+					continue;
+				}
+				if(Math.random() > 0.4){
+					items.add(item);
+				}
+			}
+		}
+
+		String itemsFound = "You found: ";
+		for(Item item: items){
+			itemsFound += ("a " + item.getName() +", ");
+			Game.mainPlayer.addItemToInventory(item);
+		}
+		itemsFound.substring(0,(itemsFound.length()-2));
+		itemsFound += ".";
+		System.out.println(itemsFound);
 	}
 
 }

@@ -3,7 +3,7 @@ public class Type {
     private String typeName;
     private Item mainWeapon;
     private Armor mainArmor;
-    private ArrayList<Item> prohibitedWeapons;
+    private ArrayList<Item> prohibitedWeapons = new ArrayList<>();
     private BaseProperties baseStats;
 
     public Type(String name, int health, int maxHealth, int speed, int mana ,Item mainWeapon){
@@ -115,6 +115,17 @@ public class Type {
         return this.prohibitedWeapons;
     }
 
+    public boolean isItemIllegal(Item item){
+        boolean illegal = false;
+        for(Item itm : this.prohibitedWeapons){
+            if(item.getName() == itm.getName()){
+                illegal = true;
+                break;
+            }
+        }
+        return illegal;
+    }
+
     public BaseProperties getStatProps(){
         return this.baseStats;
     }
@@ -201,7 +212,7 @@ class BaseProperties {
     }
 
     public String toString(){
-        return String.format("Health %s, Max Health %s, Speed %s, Mana %s",this.baseHealth, this.baseMaxHealth, this.baseSpeed, this.baseMana);
+        return String.format("Health %s, Max Health %s, Speed %s, Mana %s",CusLib.colorText(this.baseHealth, "green"), CusLib.colorText(this.baseMaxHealth,"blue"), CusLib.colorText(this.baseSpeed,"yellow"), CusLib.colorText(this.baseMana,"cyan"));
     }
     
     public String toString(boolean player){
@@ -211,7 +222,7 @@ class BaseProperties {
             health *= 2;
             maxHealth *=2;
         }
-        return String.format("Health %s, Max Health %s, Speed %s, Mana %s",health, maxHealth, this.baseSpeed, this.baseMana);
+        return String.format("Health %s, Max Health %s, Speed %s, Mana %s",CusLib.colorText(health, "green"), CusLib.colorText(maxHealth,"blue"), CusLib.colorText(this.baseSpeed,"yellow"), CusLib.colorText(this.baseMana,"cyan"));
     }
 
 }

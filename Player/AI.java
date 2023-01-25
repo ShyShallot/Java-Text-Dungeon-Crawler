@@ -30,10 +30,10 @@ class AI extends Player {
 				chance = weightMatrix[i][0];
 			}
 			if(i == weightMatrix.length-1 && (healthPercentage <= weightMatrix[i][0] && healthPercentage >= weightMatrix[i-1][0])){
-				chance = CusMath.linearInterp(frac, weightMatrix[i-1][1], weightMatrix[i][1], false);
+				chance = CusLib.linearInterp(frac, weightMatrix[i-1][1], weightMatrix[i][1], false);
 			}
 			if(healthPercentage <= weightMatrix[i][0] && healthPercentage >= weightMatrix[i+1][0]){
-				chance = CusMath.linearInterp(frac, weightMatrix[i][1], weightMatrix[i+1][1],false);
+				chance = CusLib.linearInterp(frac, weightMatrix[i][1], weightMatrix[i+1][1],false);
 			}
 		}
 		if(chance > Math.random() && !isPlayerHoldingGround){
@@ -71,12 +71,12 @@ class AI extends Player {
 				break;
 			}// If we are at the bottom of the matrix, reverse our inputs and go one back
 			if(i == weightMatrix.length-1 && (healthPercent <= weightMatrix[i][0] && healthPercent >= weightMatrix[i-1][0])){ 
-				dmg = CusMath.linearInterp(frac, weightMatrix[i-1][1], weightMatrix[i][1],false); 
-				heal = CusMath.linearInterp(frac, weightMatrix[i-1][2], weightMatrix[i][2], false);
+				dmg = CusLib.linearInterp(frac, weightMatrix[i-1][1], weightMatrix[i][1],false); 
+				heal = CusLib.linearInterp(frac, weightMatrix[i-1][2], weightMatrix[i][2], false);
 			}
 			if (healthPercent <= weightMatrix[i][0] && healthPercent >= weightMatrix[i + 1][0]) { // if the health percentage is within a range
-				dmg = CusMath.linearInterp(frac, weightMatrix[i][1], weightMatrix[i + 1][1], false); // Interpolate our damage based on the position of our range by health
-				heal = CusMath.linearInterp(frac, weightMatrix[i][2], weightMatrix[i + 1][2], false);
+				dmg = CusLib.linearInterp(frac, weightMatrix[i][1], weightMatrix[i + 1][1], false); // Interpolate our damage based on the position of our range by health
+				heal = CusLib.linearInterp(frac, weightMatrix[i][2], weightMatrix[i + 1][2], false);
 			}
 		}
 		double[] decide = { dmg, heal };

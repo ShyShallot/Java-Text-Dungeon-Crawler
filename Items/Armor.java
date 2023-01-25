@@ -27,7 +27,7 @@ public class Armor extends Item{
     }
 
     public int damageBlocked(int incomingDamage, int dmgType){
-        int damageBlocked = ((int)((double)incomingDamage*(armorEffectiveness(dmgType))+0.5)) - CusMath.randomNum(0,(int)(this.block*armorEffectiveness(dmgType)));
+        int damageBlocked = ((int)((double)incomingDamage*(armorEffectiveness(dmgType))+0.5)) - CusLib.randomNum(0,(int)(this.block*armorEffectiveness(dmgType)));
         if(damageBlocked < 0){
             damageBlocked = 0;
         }

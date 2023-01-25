@@ -13,7 +13,7 @@ public class Skeleton extends Type{
     }
 
     public Skeleton(){
-        super("Skeleton",15,10,8);
+        super("Skeleton",15,12,8);
         this.setMainWeapon(new Sword());
         this.setMainArmor(new SkeletonArmor());
     }

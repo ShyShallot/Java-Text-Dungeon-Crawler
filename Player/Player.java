@@ -52,23 +52,21 @@ class Player {
 		this.holdingGround = false;
 	}
 	public void Heal(int hp){
+		this.health += hp;
 		if(this.health >= this.maxHealth){
+			this.health = this.maxHealth;
 			return;
 		}
-		if(this.health + hp >= this.maxHealth){
-			hp = (this.health + hp) - this.maxHealth;
-		}
-		this.health += hp;
 	}
 
 	public void Damage(int dmg, int dmgType, Player dealer){
 		if(Armor != null){
 			int amountBlocked = Armor.damageBlocked(dmg, dmgType);
 			if(this.getName() == "You"){
-				System.out.println(String.format("Your %s blocks %s%s%s of the %s Damage (%s%s%s -> %s%s%s)",Armor.getName(),Game.RED,dmg-amountBlocked,Game.RESET, Items.getDamageTypeName(dmgType), Game.RED,dmg,Game.RESET,Game.RED,amountBlocked,Game.RESET));
+				System.out.println(String.format("Your %s blocks %s of the %s Damage (%s -> %s)",CusLib.colorText(Armor.getName(),"blue"),CusLib.colorText(dmg-amountBlocked, "red"), Items.getDamageTypeName(dmgType), CusLib.colorText(dmg, "red"),CusLib.colorText(amountBlocked, "red")));
 			} else 
 			if(Armor.getName() != "Skeleton Armor"){
-				System.out.println(String.format("%s's %s blocks %s%s%s of the %s Damage (%s%s%s -> %s%s%s)",this.getName(),Armor.getName(),Game.RED,dmg-amountBlocked,Game.RESET, Items.getDamageTypeName(dmgType), Game.RED,dmg,Game.RESET,Game.RED,amountBlocked,Game.RESET));
+				System.out.println(String.format("%s's %s blocks %s of the %s Damage (%s -> %s)",this.getName(),CusLib.colorText(Armor.getName(),"blue"),CusLib.colorText(dmg-amountBlocked, "red"), Items.getDamageTypeName(dmgType), CusLib.colorText(dmg, "red"),CusLib.colorText(amountBlocked, "red")));
 			}
 			dmg = amountBlocked;
 		}
@@ -83,9 +81,29 @@ class Player {
 			if(dmg == 0){
 				System.out.println(String.format("%s is immune to the effects of %s and didn't take any damage.", this.getName(),Items.getDamageTypeName(dmgType)));
 			}
-			System.out.println(String.format("%s felt the effects of %s and took%s %s dmg%s! (%s%s%s --> %s%s%s)",this.getName(),Items.getDamageTypeName(dmgType),Game.RED,dmg,Game.RESET,Game.GREEN,this.health+dmg,Game.RESET,Game.GREEN,this.health,Game.RESET));
+			System.out.println(String.format("%s felt the effects of %s and took %s dmg! (%s --> %s)",this.getName(),Items.getDamageTypeName(dmgType),CusLib.colorText(dmg, "red"),CusLib.colorText(this.health+dmg,"green"),CusLib.colorText(this.health,"green")));
 		} else {
-			System.out.println(String.format("%s dealt %s%s%s damage to %s! (%s%s%s --> %s%s%s)",dealer.getName(),Game.RED,dmg,Game.RESET,this.getName(),Game.GREEN,this.health+dmg,Game.RESET,Game.GREEN,this.health,Game.RESET));
+			System.out.println(String.format("%s dealt %s damage to %s! (%s --> %s)",dealer.getName(),CusLib.colorText(dmg,"red"),this.getName(),CusLib.colorText(this.health+dmg,"green"),CusLib.colorText(this.health, "green")));
+		}
+	}
+
+	public void Damage(int dmg){
+		if(Armor != null){
+			int amountBlocked = Armor.damageBlocked(dmg, 0);
+			if(this.getName() == "You"){
+				System.out.println(String.format("Your %s blocks %s of the %s Damage (%s -> %s)",CusLib.colorText(Armor.getName(),"blue"),CusLib.colorText(dmg-amountBlocked, "red"), Items.getDamageTypeName(0), CusLib.colorText(dmg, "red"),CusLib.colorText(amountBlocked, "red")));
+			} else 
+			if(Armor.getName() != "Skeleton Armor"){
+				System.out.println(String.format("%s's %s blocks %s of the %s Damage (%s -> %s)",this.getName(),CusLib.colorText(Armor.getName(),"blue"),CusLib.colorText(dmg-amountBlocked, "red"), Items.getDamageTypeName(0), CusLib.colorText(dmg, "red"),CusLib.colorText(amountBlocked, "red")));
+			}
+			dmg = amountBlocked;
+		}
+		if(this.holdingGround){
+			dmg /= 2;
+		}
+		this.health -= dmg;
+		if(this.health < 0 ){
+			this.health = 0;
 		}
 	}
 
@@ -121,9 +139,9 @@ class Player {
 	public void killedPlayer(Player playerKilled){
 		if(playerKilled.getCoins() > 0){
 			this.coins += playerKilled.coins;
-			System.out.println(this.name + " killed " + Game.RED + playerKilled.getName() + Game.RESET + " and took all of their " + Game.YELLOW + playerKilled.getCoins() + Game.RESET + " Coin(s)");
+			System.out.println(this.name + " killed " + CusLib.colorText(playerKilled.getName(),"red") + " and took all of their " + CusLib.colorText(playerKilled.getCoins(),"yellow") + " Coin(s)");
 		} else{
-			System.out.println(this.name + " killed " + Game.RED + playerKilled.getName() + Game.RESET);
+			System.out.println(this.name + " killed " + CusLib.colorText(playerKilled.getName(),"red"));
 		}
 	}
 
@@ -132,7 +150,7 @@ class Player {
 	}
 
 	public int healthPercentage(){
-		return CusMath.percentage(this.health, this.maxHealth);
+		return CusLib.percentage(this.health, this.maxHealth);
 	}
 
 	public String getName(){

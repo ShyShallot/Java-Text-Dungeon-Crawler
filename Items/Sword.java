@@ -19,7 +19,7 @@ public class Sword extends Item {
 	}
 
 	public void damagePlayer(Player user, Player target){
-        int damage = CusMath.randomNum(this.getDamage()-5, this.getDamage());
+        int damage = CusLib.randomNum(this.getDamage()-5, this.getDamage());
         target.Damage(damage, this.getDamageType(),user);
     }
 }

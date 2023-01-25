@@ -2,10 +2,7 @@ import java.util.*;
 
 class Game {
 	// Color Strings
-	public static final String RESET = "\u001B[0m";
-	public static final String RED = "\u001B[31m";
-	public static final String GREEN = "\u001B[32m";
-	public static final String YELLOW = "\u001B[33m";
+	
 	// Player
 	public static int playersCreated = 0;
 	public static Player mainPlayer;
@@ -33,8 +30,6 @@ class Game {
 	}
 	// Room
 	Room currentRoom;
-	// Strings
-	RandomStrings randomString = new RandomStrings();
 
 	// START OF MAIN GAME FUNCTIONS
 	public void Start() {
@@ -65,28 +60,44 @@ class Game {
 		aiDecideItem(testNPC);
 	}
 
+	public void addItemsToList(){ // Note this is a list of Items that only the player can get, DO NOT INCLUDE NON PLAYER WEAPONS/ITEMS like bite
+		itemList.add(new Sword());
+		itemList.add(new Vial());
+		itemList.add(new LargeVial());
+		itemList.add(new Armor());
+		itemList.add(new Bow());
+		itemList.add(new TitaniumArmor());
+		itemList.add(new Club());
+		itemList.add(new Dagger());
+	}
+
 	public void DecideDamage(AI npc) {
 		//System.out.println(String.format("AI: %s, Player %s", npc.getType().toString(), mainPlayer.getType().toString()));
 		//System.out.println(String.format("Player Hand: %s, AI Hand: %s",mainPlayer.getHand().getName(), npc.getHand().getName()));
 		if(npc.getType().baseSpeed() > mainPlayer.getType().baseSpeed()){
 			//System.out.println("NPC Speed is faster than player");
 			npc.getHand().useItem(npc,mainPlayer);
+			if(mainPlayer.isDead()){
+				return;
+			}
 			mainPlayer.getHand().useItem(mainPlayer,npc);
 		} else {
 			//System.out.println("NPC Speed is slower than player");
 			mainPlayer.getHand().useItem(mainPlayer,npc);
+			if(npc.isDead()){
+				return;
+			}
 			npc.getHand().useItem(npc, mainPlayer);
 		}	
 	} 
 
 	public void Action(Player enemy) {
 		System.out.println();
-		System.out.print("Current Round: " + currentRound + ", Your Current Health: " + GREEN + mainPlayer.getHealth()
-				+ RESET + " The " + RED + enemy.getName() + "'s" + RESET + " Health: " + GREEN + enemy.getHealth() + RESET + ", Defend or use an Item?");
+		System.out.print("Current Round: " + currentSubRound + ", Your Current Health: " + CusLib.colorText(mainPlayer.getHealth(), "green") + " The " + CusLib.colorText(enemy.getName() + "'s", "red") + " Health: " + CusLib.colorText(enemy.getHealth(), "green") + ", Defend or use an Item?");
 		System.out.println();
 		String action = input.nextLine();
 		if (action.toLowerCase().equals("defend")) {
-			mainPlayer.Defend(currentRound);
+			mainPlayer.Defend(currentSubRound);
 		}
 		if(action.toLowerCase().equals("use an item") || action.toLowerCase().equals("item") && mainPlayer.getInventory().size() > 0){
 			pickItem();
@@ -101,17 +112,20 @@ class Game {
 	}
 
 	public void healRandomPlayer(Player player) {
-		if (Math.random() > randomHealChance && (currentRound - lastRoundHealed) >= 2) { // 10% chance to randomly heal
+		if(player.isDead()){
+			return;
+		}
+		if (Math.random() > randomHealChance && (currentSubRound - lastRoundHealed) >= 2) { // 10% chance to randomly heal
 			int health = randomInt(5, 10);
 			double healChance = Math.random() - aiHealBias;
 			if (healChance > 0.5) { // heal player
-				System.out.println("You were randomly healed " + GREEN + health + RESET + " hp");
+				System.out.println("You were randomly healed " + CusLib.colorText(health, "green") + " hp");
 				mainPlayer.Heal(health);
 			} else {
-				System.out.println(player.getName() + " was randomly healed and gained " + GREEN + health + RESET + " hp");
+				System.out.println(player.getName() + " was randomly healed and gained " + CusLib.colorText(health, "green") + " hp");
 				player.Heal(health);
 			}
-			lastRoundHealed = currentRound;
+			lastRoundHealed = currentSubRound;
 		}
 	}
 
@@ -143,13 +157,14 @@ class Game {
 
 	public static void setPlayerType(){
 		System.out.println("What class would you like to pick?");
+		System.out.println();
 		String pickList = "";
 		for(int i=0;i<playableTypeList.length;i++){
 			if(i == playableTypeList.length-1){
-				pickList += playableTypeList[i].getName() + ", Stats: " + playableTypeList[i].getStatProps().toString(true) + ", Main Weapon: " + playableTypeList[i].getMainWeapon().getName() + ".";
+				pickList += CusLib.colorText(playableTypeList[i].getName(), "red") + ", Stats: " + playableTypeList[i].getStatProps().toString(true) + ", Main Weapon: " + playableTypeList[i].getMainWeapon().getName() + ".";
 				continue;
 			}
-			pickList += playableTypeList[i].getName() + ", Stats: " + playableTypeList[i].getStatProps().toString(true) + ", Main Weapon: " + playableTypeList[i].getMainWeapon().getName() +", \n";
+			pickList += CusLib.colorText(playableTypeList[i].getName(), "red") + ", Stats: " + playableTypeList[i].getStatProps().toString(true) + ", Main Weapon: " + playableTypeList[i].getMainWeapon().getName() +", \n";
 		}
 		System.out.println(pickList);
 		String pick = input.nextLine();
@@ -157,20 +172,12 @@ class Game {
 		if(selectedType == null){
 			System.out.println("Was unable to find that type.");
 			setPlayerType();
+			return;
 		}
 		System.out.println("You selected the " + selectedType.getName());
 		mainPlayer = new Player("You", selectedType.baseHealth()*2 ,selectedType);
 		mainPlayer.addItemToInventory(selectedType.getMainWeapon());
 		mainPlayer.setArmor(mainPlayer.getType().getMainArmor());
-	}
-
-	public void addItemsToList(){
-		itemList.add(new Sword());
-		itemList.add(new Vial());
-		itemList.add(new LargeVial());
-		itemList.add(new Armor());
-		itemList.add(new Bow());
-		itemList.add(new TitaniumArmor());
 	}
 
 	public void pickItem(){
@@ -233,7 +240,12 @@ class Game {
 				if(itm.getDamage() > maxDamage){
 					//System.out.println("Item does max Damage");
 					itemToUse = itm;
-					maxDamage = itm.getDamage();
+					if(mainPlayer.getArmor() != null){
+						maxDamage = (int)((double)itm.getDamage() * (double)mainPlayer.getArmor().armorEffectiveness(itm.getDamageType()));
+					} else {
+						maxDamage = itm.getDamage();
+					}
+					
 				}
 			}
 			if(!shouldUseDamage && (itm.isHeal())){
@@ -266,7 +278,7 @@ class Game {
 
 
 	public boolean shouldBeMerchantRoom(){
-		if(Game.lastMerchantRoom >= CusMath.randomNum(1, 6)){
+		if(Game.lastMerchantRoom >= CusLib.randomNum(1, 6)){
 			if(Math.random() > 0.4){ // 40% chance for it to be a merchant room afterwards
 				return true;
 			}
@@ -278,18 +290,24 @@ class Game {
 		String opponents = "You enter a new Room and find ";
 		for(int i=0;i<currentRoom.activeNPCS.size();i++){
 			if(i < currentRoom.activeNPCS.size()-1){
-				opponents += "A " + RED + currentRoom.activeNPCS.npcs.get(i).getName() + RESET + ", ";
+				opponents += "A " + CusLib.colorText(currentRoom.activeNPCS.npcs.get(i).getName(), "red") + ", ";
 			} else {
-				opponents += "and A " + RED + currentRoom.activeNPCS.npcs.get(i).getName() + RESET;
+				opponents += "and A " + CusLib.colorText(currentRoom.activeNPCS.npcs.get(i).getName(), "red") + ".";
 			}
 		}
 		System.out.println(opponents);
 		while((!mainPlayer.isDead()) && currentRoom.activeNPCS.size() > 0){ 
 			for(int i=0;i<currentRoom.activeNPCS.size();i++){
+				AI currentNPC = currentRoom.activeNPCS.get(i);
+				if(currentSubRound > mainPlayer.lastRoundDefended()+1){
+					mainPlayer.unDefend();
+				}
+				if(currentSubRound > currentNPC.lastRoundDefended()+1){
+					currentNPC.unDefend();
+				}
 				System.out.println();
 				printOpponents();
-				AI currentNPC = currentRoom.activeNPCS.npcs.get(i);
-				System.out.println("Current Opponent: " + RED + currentNPC.getName() + RESET);
+				System.out.println("Current Opponent: " + CusLib.colorText(currentNPC.getName(), "red"));
 				currentNPC.AIAction();
 				aiDecideItem(currentNPC);
 				Action(currentNPC);
@@ -302,7 +320,7 @@ class Game {
 				if(mainPlayer.getHealth() <= 0){
 					mainPlayer.death(currentNPC);
 					over = true;
-					System.out.println("You died and made it through " + Game.GREEN + currentRound + Game.RESET + " Rooms, Congrats and Better Luck next time!");
+					System.out.println("You died and made it through " + CusLib.colorText(currentRound, "green") + " Rooms, Congrats and Better Luck next time!");
 					currentRound--;
 					break;
 				}
@@ -310,6 +328,10 @@ class Game {
 				currentRoom.activeNPCS.GarbageCleanup();
 				healRandomPlayer(currentNPC);
 				currentSubRound++;
+				if(Math.random() > 0.75){
+					currentRoom.treasureChest();
+				}
+				System.out.println();
 			}	
 		}
 		if(over){
@@ -335,9 +357,9 @@ class Game {
 		for(int i=0;i<currentRoom.activeNPCS.size();i++){
 			AI curNpc = currentRoom.activeNPCS.get(i);
 			if(i<currentRoom.activeNPCS.size()-1){
-				totalRoomHealth += RED + curNpc.getName() + "'s" + RESET + " Health: " + GREEN + curNpc.getHealth() + RESET + " HP, ";
+				totalRoomHealth += CusLib.colorText(curNpc.getName() + "'s", "red") + " Health: " + CusLib.colorText(curNpc.getHealth(), "green") + " HP, ";
 			} else {
-				totalRoomHealth += RED + curNpc.getName() + "'s" + RESET + " Health: " + GREEN + curNpc.getHealth() + RESET + " HP.";
+				totalRoomHealth += CusLib.colorText(curNpc.getName() + "'s", "red") + " Health: " + CusLib.colorText(curNpc.getHealth(), "green") + " HP.";
 			}
 				
 		}

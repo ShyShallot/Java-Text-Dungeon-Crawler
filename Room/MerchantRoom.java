@@ -16,7 +16,7 @@ public class MerchantRoom extends Room {
 	public void itemShop(boolean recall){
 		if(!recall){
 			String itemsString = "";
-			System.out.println("Which Item would you like to purchese? You have " + Game.YELLOW + Game.mainPlayer.getCoins() + Game.RESET + " Coins." + " To skip type none");
+			System.out.println("Which Item would you like to purchese? You have " + CusLib.colorText(Game.mainPlayer.getCoins(), "yellow") + " Coins." + " To skip type none");
 			for(Item item : availItems){
 				itemsString += item.getName() + ", Description: " + item.getDescription() + ", " + "Cost: " + item.getCost() + " Coins \n";
 			}
