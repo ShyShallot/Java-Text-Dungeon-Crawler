@@ -34,7 +34,14 @@ public class CusLib {
     }
 
     public static double randomNum(double min, double max){
-		return Math.random()*(max-min+1)+min;
+        double ran = Math.random()*(max-min+1)+min;
+        if(ran < min){
+            ran = min;
+        }
+        if(ran > max){
+            ran = max;
+        }
+		return ran;
 	}
 
 

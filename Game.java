@@ -77,18 +77,23 @@ class Game {
 		if(npc.getType().baseSpeed() > mainPlayer.getType().baseSpeed()){
 			//System.out.println("NPC Speed is faster than player");
 			npc.getHand().useItem(npc,mainPlayer);
-			if(mainPlayer.isDead()){
+			if(mainPlayer.getHealth() <= 0){ // player isnt marked as dead just yet so we have to check for health instead
 				return;
 			}
 			mainPlayer.getHand().useItem(mainPlayer,npc);
 		} else {
 			//System.out.println("NPC Speed is slower than player");
 			mainPlayer.getHand().useItem(mainPlayer,npc);
-			if(npc.isDead()){
+			if(npc.getHealth() <= 0){
 				return;
 			}
-			if(Math.random()+(mainPlayer.getType().baseSpeed()*CusLib.randomNum(0.01, 0.02)) > CusLib.randomNum(0.7, 0.9)){
-				System.out.println("You were faster than " + npc.getName() + " and blocked their attack!");
+			System.out.println(mainPlayer.getType().baseSpeed());
+			double speedBonus = (mainPlayer.getType().baseSpeed())*CusLib.randomNum(0.01, 0.02); // these were just so that i could debug
+			double random = Math.random()+speedBonus;
+			double celing = CusLib.randomNum(0.7, 0.9);
+			System.out.println(speedBonus + ", " + random + ", " + celing);
+			if(random > celing){
+				System.out.println("You were faster than " + npc.getName() + " and dodged their attack!");
 				return;
 			}
 			npc.getHand().useItem(npc, mainPlayer);
@@ -187,6 +192,12 @@ class Game {
 	public void pickItem(){
 		if(mainPlayer.getInventory().size() == 0){
 			return;
+		}
+		if(mainPlayer.getInventory().size() == 1){
+			if(mainPlayer.getInventory().get(0).getName() == mainPlayer.getType().getMainWeapon().getName()){
+				mainPlayer.setHand(mainPlayer.getInventory().get(0));
+				return;
+			}
 		}
 		System.out.println("Which item would you like to use?");
 		String itemList = "";
@@ -328,6 +339,7 @@ class Game {
 					currentRound--;
 					break;
 				}
+				System.out.println();
 				DOTList.dealOutDamage(currentSubRound);
 				currentRoom.activeNPCS.GarbageCleanup();
 				healRandomPlayer(currentNPC);

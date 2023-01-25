@@ -22,6 +22,9 @@ public class DOT {
 
     public void addPlayer(Player target, int damage, int damageType, int rounds, int currentRound){
         //System.out.println("Adding Player " + target.getName() + " to Damage Over Time");
+        if(target.getHealth() == 0){
+            return;
+        }
         if(target.getName() == "You"){
             System.out.println(String.format("%s are now under the affects of %s", target.getName(),Items.getDamageTypeName(damageType)));
         } else {
