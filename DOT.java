@@ -1,6 +1,7 @@
 import java.util.*;
 public class DOT {
     private ArrayList<DOTMatrix> players = new ArrayList<>();
+    private ArrayList<HOTMatrix> playersHOT = new ArrayList<>();
 
     public void dealOutDamage(int currentRound){
         //System.out.println("Dealing out DOT Damage for Round " + currentRound);
@@ -39,6 +40,16 @@ public class DOT {
         return;
     }
 
+    public void addHealPlayer(Player target, int heal, int rounds, int currentRound){
+        if(target.getHealth() <= 0){
+            return;
+        }
+        HOTMatrix playerHOT = new HOTMatrix(target,heal,rounds,currentRound);
+        playersHOT.add(playerHOT);
+        return;
+
+    }
+
     public int size(){
         return players.size();
     }
@@ -54,6 +65,19 @@ public class DOT {
                 if(cur.damageType() == damageType){
                     isTrue = true;
                 }
+            }
+        }
+        return isTrue;
+    }
+
+    public boolean isPlayerAlreadyHOT(Player player){
+        if(playersHOT.size() == 0){
+            return false;
+        }
+        boolean isTrue = false;
+        for(int i=0;i<playersHOT.size();i++){
+            if(player.getID() == playersHOT.get(i).target().getID()){
+                isTrue = true;
             }
         }
         return isTrue;
@@ -108,4 +132,42 @@ class DOTMatrix{
         return String.format("Target: %s, Damage: %s, DamageType %s, Time: %s, Started: %s", target.getName(), this.damage, Items.getDamageTypeName(this.damageType),this.roundsDOTApplies,this.started);
     }
 
+}
+
+class HOTMatrix {
+    private Player target;
+    private int heal;
+    private int roundsDOTApplies;
+    private int started;
+
+    HOTMatrix(Player target, int heal, int rounds, int started){
+        this.target = target;
+        this.heal = heal;
+        this.roundsDOTApplies = rounds;
+        this.started = started;
+    }
+
+    public Player target(){
+        return this.target;
+    }
+
+    public int heal(){
+        return this.heal;
+    }
+
+    public int time(){
+        return this.roundsDOTApplies;
+    }
+
+    public int started(){
+        return this.started;
+    }
+
+    public int shouldEnd(){
+        return this.started+this.roundsDOTApplies;
+    }
+
+    public String toString(){
+        return String.format("Target: %s, heal: %s, Time: %s, Started: %s", target.getName(), this.heal, this.roundsDOTApplies, this.started);
+    }
 }

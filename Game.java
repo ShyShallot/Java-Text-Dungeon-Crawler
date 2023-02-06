@@ -22,7 +22,9 @@ class Game {
 	public static Scanner input;
 	public static ArrayList<Item> itemList = new ArrayList<Item>();
 	public static DOT DOTList = new DOT();
+	public static StunList stunList = new StunList();
 	public static Type[] playableTypeList = {new Goblin(), new Knight(), new Mage()};
+	public static CastSpellList castList = new CastSpellList();
 
 	// Input
 	public void SetupInput(Scanner in) {
@@ -76,14 +78,14 @@ class Game {
 		//System.out.println(String.format("Player Hand: %s, AI Hand: %s",mainPlayer.getHand().getName(), npc.getHand().getName()));
 		if(npc.getType().baseSpeed() > mainPlayer.getType().baseSpeed()){
 			//System.out.println("NPC Speed is faster than player");
-			npc.getHand().useItem(npc,mainPlayer);
+			playerUseItem(npc,mainPlayer);
 			if(mainPlayer.getHealth() <= 0){ // player isnt marked as dead just yet so we have to check for health instead
 				return;
 			}
-			mainPlayer.getHand().useItem(mainPlayer,npc);
+			playerUseItem(mainPlayer,npc);
 		} else {
 			//System.out.println("NPC Speed is slower than player");
-			mainPlayer.getHand().useItem(mainPlayer,npc);
+			playerUseItem(mainPlayer,npc);
 			if(npc.getHealth() <= 0){
 				return;
 			}
@@ -96,28 +98,76 @@ class Game {
 				System.out.println("You were faster than " + npc.getName() + " and dodged their attack!");
 				return;
 			}
-			npc.getHand().useItem(npc, mainPlayer);
+			playerUseItem(npc,mainPlayer);
 		}	
 	} 
 
+
+	public void playerUseItem(Player player, Player target){
+		if(stunList.isPlayerStunned(player)){
+			return;
+		}
+		if(castList.isPlayerCastingSpell(player)){
+			return;
+		}
+		player.getHand().useItem(player, target);
+	}
+
+
 	public void Action(Player enemy) {
 		System.out.println();
-		System.out.print("Current Round: " + currentSubRound + ", Your Current Health: " + CusLib.colorText(mainPlayer.getHealth(), "green") + " The " + CusLib.colorText(enemy.getName() + "'s", "red") + " Health: " + CusLib.colorText(enemy.getHealth(), "green") + ", Defend or use an Item?");
+		if(stunList.isPlayerStunned(mainPlayer)){
+			System.out.println("You're stunned, your turn was skipped");
+			return;
+		}
+		if(castList.isPlayerCastingSpell(mainPlayer)){
+			System.out.println("You're busy casting a spell, you were skipped.");
+			return;
+		}
+		System.out.print("Current Round: " + currentSubRound + ", Your Current Health: " + CusLib.colorText(mainPlayer.getHealth(), "green") + ", Your Current Level: " + mainPlayer.level() + " (" + mainPlayer.getXp() + "/" + (1000*(mainPlayer.level())) + ")" + " The " + CusLib.colorText(enemy.getName() + "'s", "red") + " Health: " + CusLib.colorText(enemy.getHealth(), "green") + ", ");
+		if(mainPlayer.getType().getName() == "Mage"){
+			ActionMage(enemy);
+			return;
+		}
+		System.out.print("Defend or Use an Item?");
 		System.out.println();
 		String action = input.nextLine();
 		if (action.toLowerCase().equals("defend")) {
 			mainPlayer.Defend(currentSubRound);
+			return;
 		}
 		if(action.toLowerCase().equals("use an item") || action.toLowerCase().equals("item") && mainPlayer.getInventory().size() > 0){
 			pickItem();
 			System.out.println();
 			return;
 		}
-		if (!action.toLowerCase().equals("roll") && !action.toLowerCase().equals("defend")) {
+		if (!action.toLowerCase().equals("item") && !action.toLowerCase().equals("defend")) {
 			System.out.println("Unknown Command");
 			this.Action(enemy);
+			return;
 		}
 		System.out.println();
+	}
+
+	public void ActionMage(Player enemy){
+		if(castList.isPlayerCastingSpell(mainPlayer)){
+			return;
+		}
+		System.out.print("Defend or Cast a Spell?" + " Your Mana: " + mainPlayer.getMana());
+		System.out.println();
+		String action = input.nextLine().toLowerCase();
+		
+		if(action.equals("defend")){
+			mainPlayer.Defend(currentSubRound);
+			return;
+		}
+		if(action.equals("cast a spell") || action.equals("spell")){
+			pickSpell();
+			return;
+		}
+		System.out.println("Unknown Command!");
+		this.Action(enemy);
+		return;
 	}
 
 	public void healRandomPlayer(Player player) {
@@ -170,10 +220,10 @@ class Game {
 		String pickList = "";
 		for(int i=0;i<playableTypeList.length;i++){
 			if(i == playableTypeList.length-1){
-				pickList += CusLib.colorText(playableTypeList[i].getName(), "red") + ", Stats: " + playableTypeList[i].getStatProps().toString(true) + ", Main Weapon: " + playableTypeList[i].getMainWeapon().getName() + ".";
+				pickList += CusLib.colorText(playableTypeList[i].getName(), "green") + ", Stats: " + playableTypeList[i].getStatProps().toString(true) + ", Main Weapon: " + playableTypeList[i].getMainWeapon().getName() + ".";
 				continue;
 			}
-			pickList += CusLib.colorText(playableTypeList[i].getName(), "red") + ", Stats: " + playableTypeList[i].getStatProps().toString(true) + ", Main Weapon: " + playableTypeList[i].getMainWeapon().getName() +", \n";
+			pickList += CusLib.colorText(playableTypeList[i].getName(), "green") + ", Stats: " + playableTypeList[i].getStatProps().toString(true) + ", Main Weapon: " + playableTypeList[i].getMainWeapon().getName() +", \n";
 		}
 		System.out.println(pickList);
 		String pick = input.nextLine();
@@ -187,6 +237,7 @@ class Game {
 		mainPlayer = new Player("You", selectedType.baseHealth()*2 ,selectedType);
 		mainPlayer.addItemToInventory(selectedType.getMainWeapon());
 		mainPlayer.setArmor(mainPlayer.getType().getMainArmor());
+		mainPlayer.addMana(selectedType.baseMana());
 	}
 
 	public void pickItem(){
@@ -219,8 +270,38 @@ class Game {
 		mainPlayer.setHand(item);
 	}
 
+	public void pickSpell(){
+		System.out.println("Which spell would you like to cast?");
+		String spells = "";
+		for(int i=0;i<SpellsList.getSpells().size();i++){
+			Spell spell = SpellsList.getSpells().get(i);
+			if(spell.canPlayerCast(mainPlayer)){
+				if( i == SpellsList.getSpells().size()-1){
+					spells += spell + ".";
+				} else {
+					spells += spell + ", \n";
+				}
+			}
+		}
+		System.out.println(spells);
+		String selectedSpellString = input.nextLine();
+		Spell selectedSpell = Spells.spellFromString(selectedSpellString);
+		if(selectedSpell == null){
+			System.out.println("Couldn't find that spell!");
+			pickSpell();
+			return;
+		}
+		mainPlayer.setSpell(selectedSpell);
+		System.out.println();
+		System.out.println("You selected to cast " + selectedSpell.name() + " It will take " + selectedSpell.turnsToCast() + " turns to cast.");
+		return;
+	}
+
 	public void aiDecideItem(AI npc){
 		if(npc.getInventory().size() == 0){
+			return;
+		}
+		if(stunList.isPlayerStunned(npc)){
 			return;
 		}
 		double[] weights = npc.itemDecideWeightTable();
@@ -242,6 +323,10 @@ class Game {
 		}
 		if(!doesPlayerHaveHeal(npc)){
 			shouldUseDamage = true;
+		}
+		if(npc.getType().getName() == "Mage"){
+			npc.setSpell(npc.decideSpell(mainPlayer, shouldUseDamage));
+			return;
 		}
 		for(int i=0;i<npc.getInventory().size();i++){
 			Item itm = npc.getInventory().get(i);
@@ -313,6 +398,7 @@ class Game {
 		System.out.println(opponents);
 		while((!mainPlayer.isDead()) && currentRoom.activeNPCS.size() > 0){ 
 			for(int i=0;i<currentRoom.activeNPCS.size();i++){
+				stunList.checkStuns();
 				AI currentNPC = currentRoom.activeNPCS.get(i);
 				if(currentSubRound > mainPlayer.lastRoundDefended()+1){
 					mainPlayer.unDefend();
@@ -339,12 +425,11 @@ class Game {
 					currentRound--;
 					break;
 				}
-				System.out.println();
+				castList.castSpells();
 				DOTList.dealOutDamage(currentSubRound);
 				currentRoom.activeNPCS.GarbageCleanup();
 				healRandomPlayer(currentNPC);
 				currentSubRound++;
-				System.out.println();
 			}	
 		}
 		if(over){

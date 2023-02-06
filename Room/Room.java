@@ -31,7 +31,7 @@ public class Room {
     	AI npc = new AI(type.getName(), type);
 		calculateHealthValues(npc);
 		npc.setHealth(npc.getType().baseHealth(),npc.getType().baseHealth());
-		npc.mana(npc.getType().baseMana());
+		npc.addMana(npc.getType().baseMana());
 		int coins = CusLib.randomNum(0,(8*Game.difficulty+1));
 		//System.out.println("Coins: " + coins);
 		npc.addCoins(coins);

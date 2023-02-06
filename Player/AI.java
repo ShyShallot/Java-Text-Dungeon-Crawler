@@ -86,4 +86,31 @@ class AI extends Player {
 		return decide;
 	}
 
+	public Spell decideSpell(Player opponent, boolean shouldHeal){
+		if(this.getType().getName() != "Mage"){
+			return null;
+		}
+		ArrayList<Spell> spells = SpellsList.getSpells();
+		Spell betterSpell = new Orb();
+		for(Spell spell : spells){
+			if(!spell.canPlayerCast(this)){
+				continue;
+			}
+			if(shouldHeal){
+				if(spell.heal() > betterSpell.heal()){
+					if(spell.turnsToCast() < betterSpell.turnsToCast() && Math.random() > 0.5){
+						betterSpell = spell;
+					}
+				}
+			} else {
+				if(spell.damage() * opponent.getArmor().armorEffectiveness(spell.damageType()) > betterSpell.damage() * opponent.getArmor().armorEffectiveness(spell.damageType())){
+					if(spell.turnsToCast() < spell.turnsToCast() && Math.random() > 0.5){
+						betterSpell = spell;
+					}
+				}
+			}
+		}
+		return betterSpell;
+	}
+
 }

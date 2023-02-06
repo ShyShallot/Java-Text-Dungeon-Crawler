@@ -7,14 +7,12 @@ public class Staff extends Item{
         super(name,description,cost,dmg,1,-1);
     }
 
-    public void useItem(Player player, Player target){
-        System.out.println(player.getName() + " Casted a Physical Spell on " + target.getName());
-        player.mana(-this.getManaCost());
-        damagePlayer(player,target);
+    public void useItem(Player player, Player target, boolean initCast){
+        player.getSpell().castSpell(player, target, initCast);
     }
 
-    public void damagePlayer(Player user, Player target){
-        int damage = CusLib.randomNum(this.getDamage()-5, this.getDamage());
-        target.Damage(damage, this.getDamageType(),user);
+    public void useItem(Player player, Player target){
+        player.getSpell().castSpell(player, target, true);
     }
+
 }

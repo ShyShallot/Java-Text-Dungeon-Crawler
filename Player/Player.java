@@ -2,6 +2,8 @@ import java.util.*;
 class Player {	
 	private String name;
 	private int id;
+	private int xp = 0;
+	private int level = 1;
 	private int health;
 	private int maxHealth;
 	private int mana;
@@ -12,7 +14,9 @@ class Player {
 	private boolean dead;
 	private ArrayList<Item> inventory = new ArrayList<Item>();
 	private Item inHand;
+	private Spell spell;
 	private Type type;
+	private HashMap<String, Skill> skills = new HashMap<>();
 
 	public Player(String name, Type type){
 		this.name = name;
@@ -111,10 +115,6 @@ class Player {
 		}
 	}
 
-	public void mana(int mana){
-		this.mana += mana;
-	}
-	
 	public void addItemToInventory(Item item){
 		inventory.add(item);
 	}
@@ -147,6 +147,8 @@ class Player {
 		} else{
 			System.out.println(this.name + " killed " + CusLib.colorText(playerKilled.getName(),"red"));
 		}
+		int xp = (int)((CusLib.randomNum(50, 150))*(CusLib.randomNum(1, 2.5)));
+		this.giveXp(xp);
 	}
 
 	public void death(Player killer){
@@ -198,6 +200,14 @@ class Player {
 		return this.mana;
 	}
 
+	public void removeMana(int amt){
+		this.mana -= amt;
+	}
+
+	public void addMana(int amt){
+		this.mana += amt;
+	}
+
 	public int lastRoundDefended(){
 		return this.lastRoundDefended;
 	}
@@ -242,4 +252,55 @@ class Player {
 		return this.type;
 	}
 
+	public int getXp(){
+		return this.xp;
+	}
+
+	public void giveXp(int amt){
+		this.xp += amt;
+		if(this.xp >= 1000*(this.level)){
+			this.addLevel(1);
+		}
+		System.out.println(String.format("%s gained %s xp", this.name, amt));
+	}
+
+	public int level(){
+		return this.level;
+	}
+
+	public void addLevel(int lvl){
+		this.level += lvl;
+		System.out.println(String.format("%s leveled up to %s", this.name, this.level));
+	}
+
+	public void learnSkill(Skill skill){
+		if(skills.containsKey(skill.name())){
+			System.out.println("You already know that skill.");
+			return;
+		}
+		if(this.level >= skill.getLevel()){
+			if(skill.canLearnSkill(this)){
+				this.skills.put(skill.name(),skill);
+				System.out.println("You learned " + CusLib.colorText(skill.name(), "yellow") + "!");
+			}
+		} else {
+			System.out.println("You aren't high enough level for that skill.");
+		}
+	}
+
+	public void addSkill(Skill skill){
+		this.skills.put(skill.name(),skill);
+	}
+
+	public boolean hasSkill(Skill skill){
+		return this.skills.containsKey(skill.name());
+	}
+
+	public Spell getSpell(){
+		return this.spell;
+	}
+
+	public void setSpell(Spell spell){
+		this.spell = spell;
+	}
 }
