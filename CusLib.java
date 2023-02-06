@@ -45,19 +45,9 @@ public class CusLib {
 	}
 
 
-    public static String colorText(String text, String color){
+    public static <T> String colorText(T text, String color){
         String finalColor = getColor(color);
         return String.format("%s%s%s",finalColor,text,RESET);
-    }
-
-    public static String colorText(int num, String color){
-        String finalColor = getColor(color);
-        return String.format("%s%s%s",finalColor,num,RESET);
-    }
-
-    public static String colorText(double num, String color){
-        String finalColor = getColor(color);
-        return String.format("%s%s%s",finalColor,num,RESET);
     }
 
     public static String getColor(String color){
