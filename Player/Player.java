@@ -262,7 +262,7 @@ class Player {
 		if(this.xp >= 1000*(this.level)){
 			this.addLevel(1);
 		}
-		System.out.println(String.format("%s gained %s xp", this.name, amt));
+		System.out.println(String.format("%s gained %s xp", this.name, CusLib.colorText(amt,"purple")));
 	}
 
 	public int level(){

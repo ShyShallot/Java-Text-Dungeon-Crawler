@@ -90,11 +90,11 @@ class Game {
 			if(npc.getHealth() <= 0){
 				return;
 			}
-			System.out.println(mainPlayer.getType().baseSpeed());
+			//System.out.println(mainPlayer.getType().baseSpeed());
 			double speedBonus = (mainPlayer.getType().baseSpeed())*CusLib.randomNum(0.01, 0.02); // these were just so that i could debug
 			double random = Math.random()+speedBonus;
 			double celing = CusLib.randomNum(0.7, 0.9);
-			System.out.println(speedBonus + ", " + random + ", " + celing);
+			//System.out.println(speedBonus + ", " + random + ", " + celing);
 			if(random > celing){
 				System.out.println("You were faster than " + npc.getName() + " and dodged their attack!");
 				return;
@@ -125,7 +125,7 @@ class Game {
 			System.out.println("You're busy casting a spell, you were skipped.");
 			return;
 		}
-		System.out.print("Current Round: " + currentSubRound + ", Your Current Health: " + CusLib.colorText(mainPlayer.getHealth(), "green") + ", Your Current Level: " + mainPlayer.level() + " (" + mainPlayer.getXp() + "/" + (1000*(mainPlayer.level())) + ")" + " The " + CusLib.colorText(enemy.getName() + "'s", "red") + " Health: " + CusLib.colorText(enemy.getHealth(), "green") + ", ");
+		System.out.print("Current Round: " + currentSubRound + ", Your Current Health: " + CusLib.colorText(mainPlayer.getHealth(), "green") + ", Your Current Level: " + CusLib.colorText(mainPlayer.level(),"blue") + " (" + CusLib.colorText(mainPlayer.getXp(),"yellow") + "/" + CusLib.colorText((1000*(mainPlayer.level())),"purple") + ")" + " The " + CusLib.colorText(enemy.getName() + "'s", "red") + " Health: " + CusLib.colorText(enemy.getHealth(), "green") + ", ");
 		if(mainPlayer.getType().getName() == "Mage"){
 			ActionMage(enemy);
 			return;
@@ -414,6 +414,8 @@ class Game {
 				aiDecideItem(currentNPC);
 				Action(currentNPC);
 				DecideDamage(currentNPC);
+				castList.castSpells();
+				DOTList.dealOutDamage(currentSubRound);
 				if(currentNPC.getHealth() <= 0){
 					//System.out.println(currentNPC.getName() + " has " + currentNPC.getCoins() + " Coins");
 					mainPlayer.killedPlayer(currentNPC);
@@ -426,8 +428,6 @@ class Game {
 					currentRound--;
 					break;
 				}
-				castList.castSpells();
-				DOTList.dealOutDamage(currentSubRound);
 				currentRoom.activeNPCS.GarbageCleanup();
 				healRandomPlayer(currentNPC);
 				currentSubRound++;
