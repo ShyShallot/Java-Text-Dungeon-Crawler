@@ -25,6 +25,7 @@ class Game {
 	public static StunList stunList = new StunList();
 	public static Type[] playableTypeList = {new Goblin(), new Knight(), new Mage()};
 	public static CastSpellList castList = new CastSpellList();
+	public static SkillsTree skillTree = new SkillsTree();
 
 	// Input
 	public void SetupInput(Scanner in) {

@@ -88,6 +88,7 @@ class Player {
 				} else {
 					System.out.println(String.format("%s is immune to the effects of %s and didn't take any damage.", this.getName(),Items.getDamageTypeName(dmgType)));
 				}
+				return;
 			}
 			System.out.println(String.format("%s felt the effects of %s and took %s dmg! (%s --> %s)",CusLib.colorText(this.getName(),"red"),Items.getDamageTypeName(dmgType),CusLib.colorText(dmg, "red"),CusLib.colorText(this.health+dmg,"green"),CusLib.colorText(this.health,"green")));
 		} else {
