@@ -7,7 +7,7 @@ class AI extends Player {
 	}
 
 	public void shouldDefend(boolean isPlayerHoldingGround) { // AI FUNC only
-		if (Game.currentRound - this.lastRoundDefended() < 2) {
+		if (Game.currentSubRound - this.lastRoundDefended() < 2) {
 			return;
 		}
 		if (this.isHoldingGround()) {
@@ -37,7 +37,7 @@ class AI extends Player {
 			}
 		}
 		if(chance > Math.random() && !isPlayerHoldingGround){
-			this.Defend(Game.currentRound);
+			this.Defend(Game.currentSubRound);
 		}
 	}
 

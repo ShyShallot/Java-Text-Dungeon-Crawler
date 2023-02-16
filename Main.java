@@ -1,7 +1,9 @@
 import java.util.*;
 class Main {
   	public static void main(String[] args) {
-		Game();
+		//Game();
+		SkillsTree tree = new SkillsTree();
+		tree.printSkillsTree(new Weather3());
   	}
 
 	public static void Game(){

@@ -14,38 +14,26 @@ public class SkillsTree {
 
     public void printSkillsTree(Skill skill){
         //System.out.println(skill);
-        Skill mostPrevSkill = null;
-        if(skill.hasPrevLevel()){
-            mostPrevSkill = getSkillFromName(skill.previousSkillLevel());
-        } else {
-            mostPrevSkill = skill;
-        }
-        Skill highestSkill = null;
-        if(skill.hasNextLevel()){
-            highestSkill = getSkillFromName(skill.nextSkillLevel());
-        } else {
-            highestSkill = skill;
-        }
-        while(mostPrevSkill != null){
-            if(!mostPrevSkill.hasPrevLevel()){
-                break;
-            }
-            mostPrevSkill = getSkillFromName(mostPrevSkill.previousSkillLevel());
-            System.out.println(mostPrevSkill);
-        }
-        while(highestSkill != null){
-            if(!highestSkill.hasNextLevel()){
-                break;
-            }
-            highestSkill = getSkillFromName(highestSkill.nextSkillLevel());
-        }
+        Skill mostPrevSkill = skill;
 
+        while(mostPrevSkill.hasPrevLevel()){
+            mostPrevSkill = getSkillFromName(mostPrevSkill.previousSkillLevel());
+        }
         System.out.print(String.format("%s \n", mostPrevSkill.toStringSimplified()));
         System.out.println(CusLib.colorText("|\nV", "red"));
-        System.out.print(String.format("%s \n",skill.toStringSimplified()));
+
+        Skill curSkill = mostPrevSkill;
+        if(curSkill.hasNextLevel()){
+            curSkill = getSkillFromName(curSkill.nextSkillLevel());
+        }
+        System.out.print(String.format("%s \n", curSkill.toStringSimplified()));
         System.out.println(CusLib.colorText("|\nV", "red"));
-        if(highestSkill != null){
-            System.out.print(String.format("%s",highestSkill.toStringSimplified()));
+        while(curSkill.hasNextLevel()){
+            curSkill = getSkillFromName(curSkill.nextSkillLevel());
+            System.out.print(String.format("%s \n", curSkill.toStringSimplified()));
+            if(curSkill.hasNextLevel()){
+                System.out.println(CusLib.colorText("|\nV", "red"));
+            }
         }
         System.out.println();
     }

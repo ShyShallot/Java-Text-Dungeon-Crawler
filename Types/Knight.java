@@ -18,6 +18,5 @@ public class Knight extends Type{
         this.setMainWeapon(new Sword());
         this.setMainArmor(new Armor());
         this.addIllegalWeapon(new Staff());
-        this.addIllegalWeapon(new Dagger());
     }
 }
