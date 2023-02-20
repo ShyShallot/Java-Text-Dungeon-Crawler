@@ -1,0 +1,41 @@
+Extends [[AI]]
+
+This is just so that we can introduce secondary attacks and Attack Patterns
+
+## Private Variables
+
+```java
+item secondaryAttack // The Item to use as a secondary
+int[] attackPattern // if the attackPattern[curAttackIndex] is a 0 it uses its main Weapon, else if its a 1 it uses the Secondary
+int curAttackIndex // keep track of which attack we should use
+```
+
+## Constructers
+
+```java
+Boss(String name, Type type, int health, int maxHealth, Item secondaryAttack) // calls super(name, type)
+
+Boss(String name, Type type, int health, Item Secondary Attack) // same as the first constructer but maxHealth is set to Health
+```
+
+## Getters 
+
+```java
+Item getSecondaryAttack()
+
+int[] getAttackPattern
+```
+
+## Setters
+```java
+void setAttackPattern(int[] arr) // Overwrites this.attackPattern for the array
+
+```
+
+## Boss Functions
+```java
+boolean shouldUseSecondary() // look at attackPattern in the Private Variables Section but also if it is true, it runs this.usedSecondary()
+
+void usedSecondary() // Increases this.curAttackIndex and if this.curAttackIndex > this.attackPattern.length it resets to 0
+```
+``
