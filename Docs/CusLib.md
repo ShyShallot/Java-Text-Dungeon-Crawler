@@ -22,4 +22,6 @@ double linearInterp(double f, double min, double max, boolean override) // Linea
 double randomNum(double min, double max) // Same as randomNum but returns a double
 
 <T> String colorText(T text, String color) // input anything and it will be output with the color if it matches the input, Only Available colors are the ones defined above
+
+String getColor(String color) // returns the Color Variable associated with the string, this is seperate due to earlier impentations of colorText.
 ```
