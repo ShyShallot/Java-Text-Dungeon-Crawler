@@ -4,7 +4,7 @@ public class MerchantRoom extends Room {
 
 	public void createAvailItems(){
 		for(Item item : Game.itemList){
-			if(Math.random() > 0.65){
+			if(Math.random() > 0.55){
 				availItems.add(item);
 			}
 		}
@@ -38,7 +38,7 @@ public class MerchantRoom extends Room {
 		}
 		System.out.println("You have bought " + itemPicked.getName() + " for " + itemPicked.getCost() + " Coins");
 		Game.mainPlayer.addItemToInventory(itemPicked);
-		return;
+		itemShop(true);
 	}
 
 }

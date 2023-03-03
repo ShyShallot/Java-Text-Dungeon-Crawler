@@ -37,5 +37,7 @@ void setAttackPattern(int[] arr) // Overwrites this.attackPattern for the array
 boolean shouldUseSecondary() // look at attackPattern in the Private Variables Section but also if it is true, it runs this.usedSecondary()
 
 void usedSecondary() // Increases this.curAttackIndex and if this.curAttackIndex > this.attackPattern.length it resets to 0
+
+void prepareAttack() // Basic function that either allows the Boss to defend or figure out if he is supposed to use his secondary or primary attack
 ```
 ``

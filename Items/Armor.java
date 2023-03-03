@@ -3,7 +3,7 @@ public class Armor extends Item{
     private int block;
     double[] armorEff = {0.5, 0.8, 0.7, 0.6,1.0,1.0,0.55,0.65}; // Lower Numbers are better protection, higher numbers are worse as this is practically a multiplication table
     public Armor(){
-        super("Iron Armor", "Blocks 8 Damage", 12, 2, true);
+        super("Iron Armor", "Blocks 3 Damage", 12, 2, true);
 		this.block = 3;
     }
 

@@ -58,7 +58,7 @@ class AI extends Player {
 				{ 0, 0.0, 1.0 }
 		};
 		int healthPercent = this.healthPercentage();
-		//System.out.println("Health Percent: " + healthPercent);
+		CusLib.DebugOutputLn("Health Percent: " + healthPercent);
 		double dmg = 0.0;
 		double heal = 0.0;
 		double frac = -0.5; // Only go from -1 to 1, -1 will bias past the min, 0 is no bias, 1 will bias

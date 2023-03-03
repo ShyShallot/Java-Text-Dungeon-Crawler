@@ -28,8 +28,8 @@ public class CusLib {
                 min = tempMin;
             }
         }   
-        //System.out.println(String.format("Fraction: %s, Min: %s, Max: %s",f,min,max));
-        //System.out.println(max + f * (max-min));
+        DebugOutputLn(String.format("Fraction: %s, Min: %s, Max: %s",f,min,max));
+        DebugOutputLn(max + f * (max-min));
         return max + f * (max-min);
     }
 
@@ -78,5 +78,15 @@ public class CusLib {
         return finalColor;
     }
     
+    public static <T> void DebugOutputLn(T text){
+        if(Main.debugMode){
+            System.out.println(text);
+        }
+    }
 
+    public static <T> void DebugOutput(T text){
+        if(Main.debugMode){
+            System.out.print(text);
+        }
+    }
 }

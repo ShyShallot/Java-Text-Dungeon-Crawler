@@ -25,7 +25,7 @@ ArrayList<Item> availItems // A list of items that the Player is able to buy
 // There is none
 ```
 
-## Merchant Room Function
+## Merchant Room Functions
 
 ```java
 void createAvailItems() // Goes through every item in Game.itemList and that item as a 45% chance of being added to the list, if no items get added a single Health Vial is added

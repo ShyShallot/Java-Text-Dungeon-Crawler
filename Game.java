@@ -9,14 +9,13 @@ class Game {
 	// Round Data 
 	public static int currentRound = 1;
 	public static int currentSubRound = 1;
-	int lastRoundHealed;
+	public static int lastRoundHealed;
 	public static int lastMerchantRoom;
+	public static int lastBossRoom;
 	// AI
-	int roundAIDefended;
 	double randomHealChance = 0.85;
 	public static int difficulty = 0; // easy = 0, medium = 1, hard = 2
 	double aiHealBias = 0.0;
-	public static int aiRollBias = 0;
 	// Main
 	boolean over = false;
 	public static Scanner input;
@@ -49,6 +48,13 @@ class Game {
 				MerchantRoom merchantRoom = new MerchantRoom();
 				merchantRoom.itemShop(false);
 				currentRound++;
+				lastMerchantRoom = currentRound;
+			} else if (shouldBeBossRoom()) {
+				System.out.println("You walk into a massive chamber with a giant cage, You find a massive monster");
+				BossRoom bossRoom = new BossRoom();
+				BossCombat(bossRoom);
+				lastBossRoom = currentRound;
+
 			} else {
 				currentRoom = new Room();
 				currentRoom.activeNPCS.renameDupes();
@@ -59,7 +65,7 @@ class Game {
 
 	public void TestWeights(){
 		AI testNPC = new AI("Test", new Mage());
-		testNPC.setHealth(56,75);
+		testNPC.setHealth(60,100);
 		aiDecideItem(testNPC);
 	}
 
@@ -75,26 +81,26 @@ class Game {
 	}
 
 	public void DecideDamage(AI npc) {
-		//System.out.println(String.format("AI: %s, Player %s", npc.getType().toString(), mainPlayer.getType().toString()));
-		//System.out.println(String.format("Player Hand: %s, AI Hand: %s",mainPlayer.getHand().getName(), npc.getHand().getName()));
+		CusLib.DebugOutputLn(String.format("AI: %s, Player %s", npc.getType().toString(), mainPlayer.getType().toString()));
+		CusLib.DebugOutputLn(String.format("Player Hand: %s, AI Hand: %s",mainPlayer.getHand().getName(), npc.getHand().getName()));
 		if(npc.getType().baseSpeed() > mainPlayer.getType().baseSpeed()){
-			//System.out.println("NPC Speed is faster than player");
+			CusLib.DebugOutputLn("NPC Speed is faster than player");
 			playerUseItem(npc,mainPlayer);
 			if(mainPlayer.getHealth() <= 0){ // player isnt marked as dead just yet so we have to check for health instead
 				return;
 			}
 			playerUseItem(mainPlayer,npc);
 		} else {
-			//System.out.println("NPC Speed is slower than player");
+			CusLib.DebugOutputLn("NPC Speed is slower than player");
 			playerUseItem(mainPlayer,npc);
 			if(npc.getHealth() <= 0){
 				return;
 			}
-			//System.out.println(mainPlayer.getType().baseSpeed());
+			CusLib.DebugOutputLn(mainPlayer.getType().baseSpeed());
 			double speedBonus = (mainPlayer.getType().baseSpeed())*CusLib.randomNum(0.01, 0.02); // these were just so that i could debug
 			double random = Math.random()+speedBonus;
 			double celing = CusLib.randomNum(0.7, 0.9);
-			//System.out.println(speedBonus + ", " + random + ", " + celing);
+			CusLib.DebugOutputLn(speedBonus + ", " + random + ", " + celing);
 			if(random > celing){
 				System.out.println("You were faster than " + npc.getName() + " and dodged their attack!");
 				return;
@@ -105,10 +111,13 @@ class Game {
 
 
 	public void playerUseItem(Player player, Player target){
+		CusLib.DebugOutputLn("Dealer: " + player.getName() + ", Hand: " + player.getHand().getName() + ", Target: " + target.getName());
 		if(stunList.isPlayerStunned(player)){
+			CusLib.DebugOutputLn("Dealer is Stunned");
 			return;
 		}
 		if(castList.isPlayerCastingSpell(player)){
+			CusLib.DebugOutputLn("Dealer is Casting a spell");
 			return;
 		}
 		player.getHand().useItem(player, target);
@@ -126,7 +135,7 @@ class Game {
 			return;
 		}
 		System.out.print("Current Round: " + currentSubRound + ", Your Current Health: " + CusLib.colorText(mainPlayer.getHealth(), "green") + ", Your Current Level: " + CusLib.colorText(mainPlayer.level(),"blue") + " (" + CusLib.colorText(mainPlayer.getXp(),"yellow") + "/" + CusLib.colorText((1000*(mainPlayer.level())),"purple") + ")" + " The " + CusLib.colorText(enemy.getName() + "'s", "red") + " Health: " + CusLib.colorText(enemy.getHealth(), "green") + ", ");
-		if(mainPlayer.getType().getName() == "Mage"){
+		if(mainPlayer.getType().getName().equals("Mage")){
 			ActionMage(enemy);
 			return;
 		}
@@ -142,18 +151,11 @@ class Game {
 			System.out.println();
 			return;
 		}
-		if (!action.toLowerCase().equals("item") && !action.toLowerCase().equals("defend")) {
-			System.out.println("Unknown Command");
-			this.Action(enemy);
-			return;
-		}
-		System.out.println();
+		System.out.println("Unknown Command");
+		this.Action(enemy);
 	}
 
 	public void ActionMage(Player enemy){
-		if(castList.isPlayerCastingSpell(mainPlayer)){
-			return;
-		}
 		System.out.print("Defend or Cast a Spell?" + " Your Mana: " + mainPlayer.getMana());
 		System.out.println();
 		String action = input.nextLine().toLowerCase();
@@ -167,7 +169,7 @@ class Game {
 			return;
 		}
 		System.out.println("Unknown Command!");
-		this.Action(enemy);
+		this.ActionMage(enemy);
 		return;
 	}
 
@@ -176,7 +178,7 @@ class Game {
 			return;
 		}
 		if (Math.random() > randomHealChance && (currentSubRound - lastRoundHealed) >= 2) { // 10% chance to randomly heal
-			int health = randomInt(5, 10);
+			int health = CusLib.randomNum(5, 10);
 			double healChance = Math.random() - aiHealBias;
 			if (healChance > 0.5) { // heal player
 				System.out.println("You were randomly healed " + CusLib.colorText(health, "green") + " hp");
@@ -189,11 +191,6 @@ class Game {
 		}
 	}
 
-	public int randomInt(int min, int max) {
-		return (int) Math.floor(Math.random() * (max - min + 1) + min);
-	}
-
-
 	public void setDifficulty(){
 		System.out.println("Start by typing to select a difficulty: Easy, Medium, Hard");
 		String selectDiff = input.nextLine();
@@ -202,12 +199,10 @@ class Game {
 			System.out.println("You Selected: Medium");
 			difficulty = 1;
 			aiHealBias = 0.1;
-			aiRollBias = 3;
 		} else if(selectDiff.equals("hard")){
 			System.out.println("You Selected: Hard");
 			difficulty = 2;
 			aiHealBias = 0.2;
-			aiRollBias = 5;
 			randomHealChance = 0.9;
 		} else {
 			System.out.println("You Selected: Easy");
@@ -246,7 +241,7 @@ class Game {
 			return;
 		}
 		if(mainPlayer.getInventory().size() == 1){
-			if(mainPlayer.getInventory().get(0).getName() == mainPlayer.getType().getMainWeapon().getName()){
+			if(mainPlayer.getInventory().get(0).getName().equals(mainPlayer.getType().getMainWeapon().getName())){
 				mainPlayer.setHand(mainPlayer.getInventory().get(0));
 				return;
 			}
@@ -267,6 +262,7 @@ class Game {
 		if(item == null){
 			System.out.println("You do not have that item.");
 			pickItem();
+			return;
 		}
 		mainPlayer.setHand(item);
 	}
@@ -299,15 +295,15 @@ class Game {
 	}
 
 	public void aiDecideItem(AI npc){
-		if(npc.getInventory().size() == 0){
-			return;
-		}
+		//if(npc.getInventory().size() == 0){
+		//	return;
+		//}
 		if(stunList.isPlayerStunned(npc)){
 			return;
 		}
 		double[] weights = npc.itemDecideWeightTable();
-		//System.out.println(String.format("Npc Health: %s/%s, Percentage: %s", npc.getMaxHealth(),npc.getHealth(),npc.healthPercentage()));
-		//System.out.println("NPC Health Percentage: "+ npc.healthPercentage() + ", Damage Weight: " + weights[0] + ", Heal Weight: " + weights[1]);
+		CusLib.DebugOutputLn(String.format("Npc Health: %s/%s, Percentage: %s", npc.getMaxHealth(),npc.getHealth(),npc.healthPercentage()));
+		CusLib.DebugOutputLn("NPC Health Percentage: "+ npc.healthPercentage() + ", Damage Weight: " + weights[0] + ", Heal Weight: " + weights[1]);
 		double damageItemWeight = weights[0]; // from 0 to 1 (For Percentage Multiply by 100)
 		double healthItemWeight = weights[1]; // from 0 to 1
 		if(npc.isHoldingGround()){
@@ -317,7 +313,7 @@ class Game {
 		int maxHeal = 0;
 		Item itemToUse = new Item();
 		boolean shouldUseDamage = false;
-		//System.out.println("Damage Weight: " + damageItemWeight + ", Heal item Weight: " + healthItemWeight);
+		CusLib.DebugOutputLn("Damage Weight: " + damageItemWeight + ", Heal item Weight: " + healthItemWeight);
 		if(damageItemWeight > healthItemWeight){
 			shouldUseDamage = true;
 			//System.out.println("AI wants to use Damage Item");
@@ -372,15 +368,23 @@ class Game {
 		}
 		if(heals > 0 ){
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 
 	public boolean shouldBeMerchantRoom(){
 		if(Game.lastMerchantRoom >= CusLib.randomNum(1, 6)){
 			if(Math.random() > 0.4){ // 40% chance for it to be a merchant room afterwards
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean shouldBeBossRoom(){
+		if((Game.lastBossRoom - Game.currentRound) > 2 && Game.currentRound > 4){
+			if(Math.random() > (0.65 - ((Game.lastBossRoom - Game.currentRound)/10))){
 				return true;
 			}
 		}
@@ -416,13 +420,11 @@ class Game {
 				DecideDamage(currentNPC);
 				castList.castSpells();
 				DOTList.dealOutDamage(currentSubRound);
-				if(currentNPC.getHealth() <= 0){
+				if(currentNPC.isDead()){
 					//System.out.println(currentNPC.getName() + " has " + currentNPC.getCoins() + " Coins");
 					mainPlayer.killedPlayer(currentNPC);
-					currentNPC.death(mainPlayer);
 				}
-				if(mainPlayer.getHealth() <= 0){
-					mainPlayer.death(currentNPC);
+				if(mainPlayer.isDead()){
 					over = true;
 					System.out.println("You died and made it through " + CusLib.colorText(currentRound, "green") + " Rooms, Congrats and Better Luck next time!");
 					currentRound--;
@@ -440,6 +442,47 @@ class Game {
 		if(Math.random() > 0.75){
 			currentRoom.treasureChest();
 		}
+		roundOver();
+		System.out.println();
+	}
+
+	public void BossCombat(BossRoom bossRoom){
+		currentSubRound = 1;
+		while(!mainPlayer.isDead() && !bossRoom.boss().isDead()){
+			Boss boss = bossRoom.boss();
+			stunList.checkStuns();
+			if(currentSubRound > mainPlayer.lastRoundDefended()+1){
+				mainPlayer.unDefend();
+			}
+			if(currentSubRound > boss.lastRoundDefended()+1){
+				boss.unDefend();
+			}
+			System.out.println("Current Boss Health: " + CusLib.colorText(boss.getHealth(), "red"));
+			boss.prepareAttack();
+			Action(boss);
+			DecideDamage(boss);
+			castList.castSpells();
+			DOTList.dealOutDamage(currentSubRound);
+			if(boss.isDead()){
+				System.out.println("You successfully killed " + boss.getName() + " Boss, Congrats!!");
+				mainPlayer.killedBoss(boss);
+				bossRoom.rewardPlayer();
+			}
+			if(mainPlayer.isDead()){
+				over = true;
+				currentRound--;
+				System.out.println("You died a true soldier while trying to defeat the " + boss.getName() + " Boss, Better luck next time.");
+				break;
+			}
+		}
+		if(over){
+			return;
+		}
+		roundOver();
+
+	}
+
+	public void roundOver(){
 		mainPlayer.Heal((mainPlayer.getMaxHealth()/2));
 		DOTList.reset();
 		currentSubRound = 1;
@@ -466,6 +509,21 @@ class Game {
 				
 		}
 		System.out.println(totalRoomHealth);
+	}
+
+	public static int DifficultyMod(boolean unCapped){
+		if(difficulty == 0){
+			return 1;
+		}
+		if(unCapped){
+			int diff = difficulty+1;
+			return diff;
+		}
+		return difficulty;
+	}
+
+	public static int DifficultyMod(){
+		return DifficultyMod(false);
 	}
 
 }

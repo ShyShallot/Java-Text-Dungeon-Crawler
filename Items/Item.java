@@ -1,5 +1,3 @@
-
-
 public class Item {
 	private String name;
 	private String description;
@@ -46,27 +44,17 @@ public class Item {
 	public Item(String name, String description, int cost, int durability, boolean isArmor){
 		if(isArmor){
 			this.healthItem = false;
+			this.isArmor = true;
+		} else {
+			this.healthItem = true;
+			this.isArmor = false;
 		}
 		this.name = name;
 		this.description = description;
 		this.cost = cost;
 		this.durability = durability;
 		this.curDurability = durability;
-		this.isArmor = isArmor;
 		this.manaCost = 0;
-	}
-
-	public Item(String name, String description, int cost, int mana ,boolean isHeal, boolean isArmor){
-		this.name = name;
-		this.description = description;
-		this.cost = cost;
-		this.healthItem = isHeal;
-		if(isHeal){
-			this.isArmor = false;
-		}
-		this.durability = 1;
-		this.curDurability = this.durability;
-		this.manaCost = mana;
 	}
 
 

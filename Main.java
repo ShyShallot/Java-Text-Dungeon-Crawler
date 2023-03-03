@@ -1,13 +1,15 @@
 import java.util.*;
 class Main {
+	public static boolean debugMode = false;
+	
   	public static void main(String[] args) {
 		Game();
+		//Testing();
   	}
 
 	public static void Game(){
 		Scanner input = new Scanner(System.in);
     	Game game = new Game();
-		game.TestWeights(); //Runs a test using a test AI to tune interp and weighting balancing
 		game.SetupInput(input);
 		game.Start();
 		if(game.over){
@@ -19,5 +21,10 @@ class Main {
 				System.out.println("Thanks for playing!");
 			}
 		}
+	}
+
+	public static void Testing(){
+		Game game = new Game();
+		game.TestWeights();
 	}
 }

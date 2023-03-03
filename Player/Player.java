@@ -24,6 +24,8 @@ class Player {
 		this.id = Game.playersCreated;
 		Game.playersCreated++;
 		this.inHand = this.type.getMainWeapon();
+		this.health = this.type.baseHealth();
+		this.maxHealth = this.type.baseMaxHealth();
 	}
 
 	public Player(String name, int health, Type type){
@@ -78,8 +80,9 @@ class Player {
 			dmg /= 2;
 		}
 		this.health -= dmg;
-		if(this.health < 0 ){
+		if(this.health <= 0 ){
 			this.health = 0;
+			this.dead = true;
 		}
 		if(dealer == null){
 			if(dmg == 0){
@@ -111,8 +114,10 @@ class Player {
 			dmg /= 2;
 		}
 		this.health -= dmg;
-		if(this.health < 0 ){
+		if(this.health <= 0 ){
 			this.health = 0;
+			this.dead = true;
+
 		}
 	}
 
@@ -125,7 +130,7 @@ class Player {
 	}
 
 	public int getItemInvIndex(Item item){
-		int index = 0;
+		int index = -1;
 		for(int i=0;i<this.inventory.size();i++){
 			if(this.inventory.get(i).getName().equals(item.getName())){
 				index = i;
@@ -152,7 +157,15 @@ class Player {
 		this.giveXp(xp);
 	}
 
-	public void death(Player killer){
+	public void killedBoss(Boss bossKilled){
+		int coinsToGive = CusLib.randomNum(5, 25*Game.DifficultyMod());
+		System.out.println(this.name + " killed " + CusLib.colorText(bossKilled.getName(),"red") + " and took all of their " + CusLib.colorText(coinsToGive,"yellow") + " Coin(s)");
+		int xp = (int)((CusLib.randomNum(400, 850))*((CusLib.randomNum(1, 2)) + Game.difficulty));
+		this.giveXp(xp);
+
+	}
+
+	public void death(){
 		this.dead = true;
 	}
 

@@ -86,5 +86,13 @@ boolean shouldBeBossRoom() // Similar implentation as the Merchant room
 
 void TurnCombat() // This is the main function that handles combat for the current room, This runs via a While statement that runs until the room has no enemies or the player dies, every turn it loops through the npcs in the room sorted by speed and runs the various functions asscoitated
 
+void BossCombat() // This for when the Player encounters a Boss, specialized function meant for just 1 on 1 combat between the Player and the Boss.
+
+void roundOver() // Shared Variable setting and called functions between BossCombat and TurnCombat when the player clears a room/kills the boss
+
 void printOpponents() // Prints each of the enemies in the currentRoom and their health
+
+int DifficultyMod(boolean unCapped) // Used when we want to modify something with difficulty, since it starts a 0, if Uncapped is true, 2 will become 3, if not, 2 will stay 2.
+
+int DifficultyMod() // Calls DifficultyMod(false).
 ```

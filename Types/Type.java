@@ -137,13 +137,29 @@ public class Type {
     public int baseMaxHealth(){
         return this.baseStats.baseMaxHealth();
     }
+
+    public void setBaseHealth(int health, int maxHealth){
+        this.baseStats.setHealth(health, maxHealth);
+    }
+
+    public void setBaseHealth(int health){
+        this.baseStats.setHealth(health);
+    }
     
     public int baseSpeed(){
         return this.baseStats.baseSpeed();
     }
 
+    public void setBaseSpeed(int speed){
+        this.baseStats.setSpeed(speed);
+    }
+
     public int baseMana(){
         return this.baseStats.baseMana();
+    }
+
+    public void setBaseMana(int mana){
+        this.baseStats.setMana(mana);
     }
 
     public String toString(){

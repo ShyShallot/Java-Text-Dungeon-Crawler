@@ -24,4 +24,8 @@ double randomNum(double min, double max) // Same as randomNum but returns a doub
 <T> String colorText(T text, String color) // input anything and it will be output with the color if it matches the input, Only Available colors are the ones defined above
 
 String getColor(String color) // returns the Color Variable associated with the string, this is seperate due to earlier impentations of colorText.
+
+<T> void DebugOutputLn(T text); // If Main.debugMode is true then it will output the text as a new Line
+
+<T> void DebugOutput(T text); // Same as DebugOutputLn but only doesnt print a new line
 ```
