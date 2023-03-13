@@ -122,4 +122,8 @@ public class Item {
 		this.curDurability += dur;
 	}
 
+	public <T> void outputText(T text){
+		CusLib.advanceText(text);
+	}
+
 }

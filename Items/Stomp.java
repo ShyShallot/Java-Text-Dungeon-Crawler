@@ -4,7 +4,7 @@ public class Stomp extends Item{
     }
 
     public void useItem(Player user, Player target){
-        System.out.println(String.format("%s created an short groundquake by stomping their feet!",user.getName()));
+        CusLib.queueText(String.format("%s created an short groundquake by stomping their feet!",user.getName()));
         target.Damage(this.getDamage(), this.getDamageType(), user);
     }
 }

@@ -69,10 +69,10 @@ class Player {
 		if(Armor != null){
 			int amountBlocked = Armor.damageBlocked(dmg, dmgType);
 			if(this.getName() == "You"){
-				System.out.println(String.format("Your %s blocks %s of the %s Damage (%s -> %s)",CusLib.colorText(Armor.getName(),"blue"),CusLib.colorText(dmg-amountBlocked, "red"), Items.getDamageTypeName(dmgType), CusLib.colorText(dmg, "red"),CusLib.colorText(amountBlocked, "red")));
+				CusLib.queueText(String.format("Your %s blocks %s of the %s Damage (%s -> %s)",CusLib.colorText(Armor.getName(),"blue"),CusLib.colorText(dmg-amountBlocked, "red"), Items.getDamageTypeName(dmgType), CusLib.colorText(dmg, "red"),CusLib.colorText(amountBlocked, "red")));
 			} else 
 			if(Armor.getName() != "Skeleton Armor"){
-				System.out.println(String.format("%s's %s blocks %s of the %s Damage (%s -> %s)",this.getName(),CusLib.colorText(Armor.getName(),"blue"),CusLib.colorText(dmg-amountBlocked, "red"), Items.getDamageTypeName(dmgType), CusLib.colorText(dmg, "red"),CusLib.colorText(amountBlocked, "red")));
+				CusLib.queueText(String.format("%s's %s blocks %s of the %s Damage (%s -> %s)",this.getName(),CusLib.colorText(Armor.getName(),"blue"),CusLib.colorText(dmg-amountBlocked, "red"), Items.getDamageTypeName(dmgType), CusLib.colorText(dmg, "red"),CusLib.colorText(amountBlocked, "red")));
 			}
 			dmg = amountBlocked;
 		}
@@ -87,15 +87,15 @@ class Player {
 		if(dealer == null){
 			if(dmg == 0){
 				if(this.getName() == "You"){
-					System.out.println(String.format("%s are immune to the effects of %s and didn't take any damage.", this.getName(),Items.getDamageTypeName(dmgType)));
+					CusLib.queueText(String.format("%s are immune to the effects of %s and didn't take any damage.", this.getName(),Items.getDamageTypeName(dmgType)));
 				} else {
-					System.out.println(String.format("%s is immune to the effects of %s and didn't take any damage.", this.getName(),Items.getDamageTypeName(dmgType)));
+					CusLib.queueText(String.format("%s is immune to the effects of %s and didn't take any damage.", this.getName(),Items.getDamageTypeName(dmgType)));
 				}
 				return;
 			}
-			System.out.println(String.format("%s felt the effects of %s and took %s dmg! (%s --> %s)",CusLib.colorText(this.getName(),"red"),Items.getDamageTypeName(dmgType),CusLib.colorText(dmg, "red"),CusLib.colorText(this.health+dmg,"green"),CusLib.colorText(this.health,"green")));
+			CusLib.queueText(String.format("%s felt the effects of %s and took %s dmg! (%s --> %s)",CusLib.colorText(this.getName(),"red"),Items.getDamageTypeName(dmgType),CusLib.colorText(dmg, "red"),CusLib.colorText(this.health+dmg,"green"),CusLib.colorText(this.health,"green")));
 		} else {
-			System.out.println(String.format("%s dealt %s damage to %s! (%s --> %s)",dealer.getName(),CusLib.colorText(dmg,"red"),this.getName(),CusLib.colorText(this.health+dmg,"green"),CusLib.colorText(this.health, "green")));
+			CusLib.queueText(String.format("%s dealt %s damage to %s! (%s --> %s)",dealer.getName(),CusLib.colorText(dmg,"red"),this.getName(),CusLib.colorText(this.health+dmg,"green"),CusLib.colorText(this.health, "green")));
 		}
 	}
 
@@ -103,10 +103,10 @@ class Player {
 		if(Armor != null){
 			int amountBlocked = Armor.damageBlocked(dmg, 0);
 			if(this.getName() == "You"){
-				System.out.println(String.format("Your %s blocks %s of the %s Damage (%s -> %s)",CusLib.colorText(Armor.getName(),"blue"),CusLib.colorText(dmg-amountBlocked, "red"), Items.getDamageTypeName(0), CusLib.colorText(dmg, "red"),CusLib.colorText(amountBlocked, "red")));
+				CusLib.queueText(String.format("Your %s blocks %s of the %s Damage (%s -> %s)",CusLib.colorText(Armor.getName(),"blue"),CusLib.colorText(dmg-amountBlocked, "red"), Items.getDamageTypeName(0), CusLib.colorText(dmg, "red"),CusLib.colorText(amountBlocked, "red")));
 			} else 
 			if(Armor.getName() != "Skeleton Armor"){
-				System.out.println(String.format("%s's %s blocks %s of the %s Damage (%s -> %s)",this.getName(),CusLib.colorText(Armor.getName(),"blue"),CusLib.colorText(dmg-amountBlocked, "red"), Items.getDamageTypeName(0), CusLib.colorText(dmg, "red"),CusLib.colorText(amountBlocked, "red")));
+				CusLib.queueText(String.format("%s's %s blocks %s of the %s Damage (%s -> %s)",this.getName(),CusLib.colorText(Armor.getName(),"blue"),CusLib.colorText(dmg-amountBlocked, "red"), Items.getDamageTypeName(0), CusLib.colorText(dmg, "red"),CusLib.colorText(amountBlocked, "red")));
 			}
 			dmg = amountBlocked;
 		}

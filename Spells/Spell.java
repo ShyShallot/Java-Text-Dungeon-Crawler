@@ -118,22 +118,22 @@ public class Spell {
         if(this.skillReq != null){
             if(!user.hasSkill(skillReq)){
                 if(user.getName() == "You"){
-                    System.out.println("You don't have knowladge on how to cast that spell.");
+                    CusLib.queueText("You don't have knowladge on how to cast that spell.");
                 }
                 return;
             }
         }
         if(this.turnsToCast() > 0 && initCast){
-            System.out.println(String.format("%s started casting %s for %s turns",user.getName(),this.name,this.turnsToCast));
+            CusLib.queueText(String.format("%s started casting %s for %s turns",user.getName(),this.name,this.turnsToCast));
             Game.castList.castMultiTurnSpell(user, Target, Game.currentSubRound, this.turnsToCast);
             return;
         }
         if(this.heal != 0){
-            System.out.println(String.format("%s casted %s and healed for %s",user.getName(),this.name,this.heal));
+            CusLib.queueText(String.format("%s casted %s and healed for %s",user.getName(),this.name,this.heal));
             this.spellHeal(user);
             user.removeMana(castCost);
         } else {
-            System.out.println(String.format("%s casted %s at %s and dealt %s dmg!",user.getName(),this.name,Target.getName(),CusLib.colorText(this.damage, "red")));
+            CusLib.queueText(String.format("%s casted %s at %s and dealt %s dmg!",user.getName(),this.name,Target.getName(),CusLib.colorText(this.damage, "red")));
             this.spellDamage(user, Target);
             user.removeMana(castCost);
         }

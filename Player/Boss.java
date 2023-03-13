@@ -44,7 +44,7 @@ public class Boss extends AI{
         if(this.currAttackIndex > this.getAttackPattern().length){
             this.currAttackIndex = 0;
         }
-        System.out.println("increased attack index");
+        CusLib.DebugOutputLn("increased attack index");
     }
 
     public void prepareAttack(){

@@ -8,13 +8,13 @@ public class Club extends Sword{
     public void useItem(Player user, Player Target){
         if(Math.random() > missChance){
             if(user.getName() == "You"){
-                System.out.println(String.format("%s swung your %s and missed and dealt %s damage to yourself",user.getName(), this.getName(),CusLib.colorText(this.getDamage(), "red")));
+                CusLib.queueText(String.format("%s swung your %s and missed and dealt %s damage to yourself",user.getName(), this.getName(),CusLib.colorText(this.getDamage(), "red")));
             } else {
-                System.out.println(String.format("%s swung their %s and missed and dealt %s damage to themselves",user.getName(), this.getName(),CusLib.colorText(this.getDamage(), "red")));
+                CusLib.queueText(String.format("%s swung their %s and missed and dealt %s damage to themselves",user.getName(), this.getName(),CusLib.colorText(this.getDamage(), "red")));
             }
             user.Damage(this.getDamage(), 0, user);
         } else {
-            System.out.println(String.format("%s swung and missed!", user.getName()));
+            CusLib.queueText(String.format("%s swung and missed!", user.getName()));
         }
         
     }

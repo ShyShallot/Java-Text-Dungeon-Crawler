@@ -6,29 +6,29 @@ This is just so that we can introduce secondary attacks and Attack Patterns
 
 ```java
 item secondaryAttack // The Item to use as a secondary
-int[] attackPattern // if the attackPattern[curAttackIndex] is a 0 it uses its main Weapon, else if its a 1 it uses the Secondary
 int curAttackIndex // keep track of which attack we should use
+BossType bossType;
 ```
 
 ## Constructers
 
 ```java
-Boss(String name, Type type, int health, int maxHealth, Item secondaryAttack) // calls super(name, type)
+Boss(String name, BossType type, int health, int maxHealth, Item secondaryAttack) // calls super(name, type)
 
-Boss(String name, Type type, int health, Item Secondary Attack) // same as the first constructer but maxHealth is set to Health
+Boss(String name, BossType type, int health, Item Secondary Attack) // same as the first constructer but maxHealth is set to Health
 ```
 
 ## Getters 
 
 ```java
-Item getSecondaryAttack()
+Item getSecondaryAttack();
 
-int[] getAttackPattern
+int[] getAttackPattern(); // returns this.bossType.getAttackPattern();
 ```
 
 ## Setters
 ```java
-void setAttackPattern(int[] arr) // Overwrites this.attackPattern for the array
+void setAttackPattern(int[] arr) // Calls this.bossType.setAttackPattern(arr);
 
 ```
 

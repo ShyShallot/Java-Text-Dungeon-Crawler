@@ -1,4 +1,5 @@
-import java.util.*;
+import java.util.ArrayList;
+
 public class CusLib {
     public static final String RESET = "\u001B[0m";
 	public static final String RED = "\u001B[31m";
@@ -8,6 +9,7 @@ public class CusLib {
     public static final String PURPLE = "\u001B[35m";
     public static final String CYAN = "\u001B[36m";
     public static final String WHITE = "\u001B[37m";
+    private static ArrayList<String> queuedText = new ArrayList<>();
     public static int percentage(int part, int total){
         return (int)(((double)part/(double)total) * 100);
     }
@@ -88,5 +90,42 @@ public class CusLib {
         if(Main.debugMode){
             System.out.print(text);
         }
+    }
+
+    public static <T> void advanceTextLn(T text){
+        System.out.println(text);
+        String input = Game.input.nextLine();
+        if(input != null){
+            return;
+        }
+    }
+
+    public static <T> void advanceText(T text){
+        System.out.print(text);
+        String input = Game.input.nextLine();
+        if(input != null){
+            return;
+        }
+    }
+
+    public static <T> void queueText(T text){
+        String finalText = "" + text;
+        queuedText.add(finalText);
+        DebugOutput("Added new Text to queue.");
+    }
+
+    public static void callQueue(boolean advance, boolean newLine){
+        for(int i=0;i<queuedText.size();i++){
+            if(newLine){
+                queuedText.set(i, queuedText.get(i) + "\n");
+            }
+            if(advance){
+                advanceText(queuedText.get(i));
+            } else {
+                System.out.print(queuedText.get(i));
+            }
+        }
+        queuedText.clear();
+        DebugOutput("Called all queued Text and emptied the queue: " + queuedText.size());
     }
 }

@@ -20,7 +20,7 @@ public class Bite extends Item {
     }
 
     public void useItem(Player user, Player target){
-        System.out.println(user.getName() + damageString + target.getName() + "!");
+        CusLib.queueText(user.getName() + damageString + target.getName() + "!");
         target.Damage(this.getDamage(), this.getDamageType(),user);
         if(Math.random() < poisonChance){
             Game.DOTList.addPlayer(target, this.poisonDamage, 4, this.poisonLasts, Game.currentSubRound);

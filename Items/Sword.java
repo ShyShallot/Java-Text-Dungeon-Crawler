@@ -11,9 +11,9 @@ public class Sword extends Item {
 
 	public void useItem(Player player, Player target){
 		if(player.getName() == "You"){
-			System.out.println(player.getName() + " used your " + this.getName());
+			CusLib.queueText(player.getName() + " used your " + this.getName());
 		} else {
-			System.out.println(player.getName() + " has used their " + this.getName());
+			CusLib.queueText(player.getName() + " has used their " + this.getName());
 		}
 		damagePlayer(player,target);
 	}

@@ -1,7 +1,6 @@
-
 ----
 
-Functions as the basis for the [[Player]] class and uses the [[Base Properties]] Class as storage for base stats for the type
+Functions as the basis for the [[Player]] class and uses the [[Base Properties]] Class as storage for base stats for the type. Purely just for information the base health and max health, what item and armor the player/npc should have by default. 
 
 ## Private Variables
 

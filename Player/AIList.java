@@ -17,19 +17,19 @@ class AIList {
 	public void renameDupes(){
 		for(int i=0;i<npcs.size();i++){
 			AI curNPC = npcs.get(i);
-			//System.out.println("Current NPC: " + curNPC.name + " ID: " + curNPC.id);
+			CusLib.DebugOutputLn(("Current NPC: " + curNPC.getName() + " ID: " + curNPC.getID()));
 			int dupeNPCs = 1;
 			for(int y=0;y<npcs.size();y++){
 				AI npcToChange = npcs.get(y);
 				if(npcToChange.getID() == curNPC.getID()){
 					continue;
 				}
-				//System.out.println("NPC to Change: " + curNPC.name + " ID: " + curNPC.id);
+				CusLib.DebugOutputLn("NPC to Change: " + curNPC.getName() + " ID: " + curNPC.getID());
 				if(npcToChange.getName() == curNPC.getName()){
 					String curName = npcToChange.getName();
 					npcToChange.setName(curName += " "+ dupeNPCs);
 					dupeNPCs++;
-					//System.out.println("NPC "+ npcToChange.id + " New Name " + npcToChange.name);
+					CusLib.DebugOutputLn("NPC "+ npcToChange.getID() + " New Name " + npcToChange.getName());
 				}
 			}
 		}

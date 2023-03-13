@@ -60,7 +60,6 @@ public class Room {
 	}
 
 	public double healItemChance(AI npc){	
-							//DMG  HEAL
 		double heal = 0.0;
 		switch (npc.getType().getName()){
 			case "Goblin":

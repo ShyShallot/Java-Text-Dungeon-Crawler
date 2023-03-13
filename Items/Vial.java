@@ -20,7 +20,7 @@ public class Vial extends Item {
 		//	return;
 		//}
 		player.Heal(this.heal);
-		System.out.println(player.getName() + " has used their " + this.getName() + " and Gained " + this.heal + " HP");
+		CusLib.queueText(player.getName() + " has used their " + this.getName() + " and Gained " + this.heal + " HP");
 		player.removeItemFromInventory(player.getItemInvIndex(this));
 		return;
 	}

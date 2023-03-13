@@ -102,7 +102,7 @@ class Game {
 			double celing = CusLib.randomNum(0.7, 0.9);
 			CusLib.DebugOutputLn(speedBonus + ", " + random + ", " + celing);
 			if(random > celing){
-				System.out.println("You were faster than " + npc.getName() + " and dodged their attack!");
+				CusLib.advanceText("You were faster than " + npc.getName() + " and dodged their attack!");
 				return;
 			}
 			playerUseItem(npc,mainPlayer);
@@ -375,7 +375,7 @@ class Game {
 
 	public boolean shouldBeMerchantRoom(){
 		if(Game.lastMerchantRoom >= CusLib.randomNum(1, 6)){
-			if(Math.random() > 0.4){ // 40% chance for it to be a merchant room afterwards
+			if(Math.random() > 0.4){ // 60% chance for it to be a merchant room afterwards
 				return true;
 			}
 		}
@@ -420,6 +420,7 @@ class Game {
 				DecideDamage(currentNPC);
 				castList.castSpells();
 				DOTList.dealOutDamage(currentSubRound);
+				CusLib.callQueue(true,false);
 				if(currentNPC.isDead()){
 					//System.out.println(currentNPC.getName() + " has " + currentNPC.getCoins() + " Coins");
 					mainPlayer.killedPlayer(currentNPC);
@@ -463,6 +464,7 @@ class Game {
 			DecideDamage(boss);
 			castList.castSpells();
 			DOTList.dealOutDamage(currentSubRound);
+			CusLib.callQueue(true,false);
 			if(boss.isDead()){
 				System.out.println("You successfully killed " + boss.getName() + " Boss, Congrats!!");
 				mainPlayer.killedBoss(boss);
