@@ -19,26 +19,6 @@ class Items {
 		return false;
 	}
 
-    public static Item getItemFromName(String name){
-		Item searchItem = null;
-		for(Item item : Game.itemList){
-			if(item.getName().toLowerCase().equals(name.toLowerCase())){
-				searchItem = item;
-			}
-		}
-		return searchItem;
-	}
-
-	public static Item getItemFromName(String name, Player player){
-		Item searchItem = null;
-		for(Item item: player.getInventory()){
-			//System.out.println(item.toString() + ", " + name);
-			if(item.getName().toLowerCase().equals(name.toLowerCase())){
-				searchItem = item;
-			}
-		}
-		return searchItem;
-	}
 
 	public static String getDamageTypeName(int dmgType){
 		String type = "";

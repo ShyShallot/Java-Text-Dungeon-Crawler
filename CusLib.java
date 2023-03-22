@@ -111,10 +111,11 @@ public class CusLib {
     public static <T> void queueText(T text){
         String finalText = "" + text;
         queuedText.add(finalText);
-        DebugOutput("Added new Text to queue.");
+        DebugOutputLn("Added new Text ID " + (queuedText.size()-1) + " to queue.");
     }
 
     public static void callQueue(boolean advance, boolean newLine){
+        CusLib.DebugOutputLn("Calling Queue");
         for(int i=0;i<queuedText.size();i++){
             if(newLine){
                 queuedText.set(i, queuedText.get(i) + "\n");

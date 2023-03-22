@@ -87,12 +87,14 @@ class AI extends Player {
 	}
 
 	public Spell decideSpell(Player opponent, boolean shouldHeal){
-		if(this.getType().getName() != "Mage"){
+		if(!this.getType().getName().equals("Mage")){
 			return null;
 		}
-		ArrayList<Spell> spells = SpellsList.getSpells();
-		Spell betterSpell = new Orb();
-		for(Spell spell : spells){
+		Spell betterSpell = Spell.spellFromString("Magic Orb");
+		CusLib.DebugOutputLn(betterSpell);
+		for(int i=0;i<Spell.spells.size();i++){
+			Spell spell = Spell.spells.get(i);
+			CusLib.DebugOutputLn(spell);
 			if(!spell.canPlayerCast(this)){
 				continue;
 			}

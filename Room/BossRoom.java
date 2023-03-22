@@ -17,8 +17,8 @@ public class BossRoom extends Room{
     }
 
     private void treasure(){
-        for(int i=0;i<Game.itemList.size();i++){
-            Item curItem = Game.itemList.get(i);
+        for(int i=0;i<Item.ItemList.size();i++){
+            Item curItem = Item.ItemList.get(i);
             if(Math.random() > (0.45 + (Math.random()/10))){
                 if(rewards.size() < 5 && !Game.mainPlayer.getType().isItemIllegal(curItem)){
                     rewards.add(curItem);

@@ -4,7 +4,7 @@ public class Dagger extends Bite{
     }
 
     public void useItem(Player user, Player target){
-        if(user.getName() == "You"){
+        if(user.getName().equals("You")){
             this.setDamageString(" Stabbed ");
         }
         CusLib.queueText(user.getName() + this.damageString() + target.getName() + "!");

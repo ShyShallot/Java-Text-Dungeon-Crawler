@@ -16,6 +16,11 @@ ArrayList<Item> prohibitedWeapons
 BaseProperties baseStats
 ```
 
+## Public Static Variables
+
+```java
+ArrayList<Type> types = new ArrayList<>(); // contains the list of created types
+```
 ---
 
 ## Constructers
@@ -88,6 +93,8 @@ void setBaseMana(int mana)
 ## Type Functions
 
 ```java
+void addType(Type type) throws DuplicateTypeException // Only called in the constructer for the type class, throws an error if a duplicate type is constructed
+
 void addIllegalWeapon(Item weap)
 
 void removeIllegalWeapon(Item weap) // loops through till it finds an item with the same name and removed it

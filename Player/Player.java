@@ -68,10 +68,10 @@ class Player {
 	public void Damage(int dmg, int dmgType, Player dealer){
 		if(Armor != null){
 			int amountBlocked = Armor.damageBlocked(dmg, dmgType);
-			if(this.getName() == "You"){
+			if(this.getName().equals("You")){
 				CusLib.queueText(String.format("Your %s blocks %s of the %s Damage (%s -> %s)",CusLib.colorText(Armor.getName(),"blue"),CusLib.colorText(dmg-amountBlocked, "red"), Items.getDamageTypeName(dmgType), CusLib.colorText(dmg, "red"),CusLib.colorText(amountBlocked, "red")));
 			} else 
-			if(Armor.getName() != "Skeleton Armor"){
+			if(!Armor.getName().equals("Skeleton Armor")){
 				CusLib.queueText(String.format("%s's %s blocks %s of the %s Damage (%s -> %s)",this.getName(),CusLib.colorText(Armor.getName(),"blue"),CusLib.colorText(dmg-amountBlocked, "red"), Items.getDamageTypeName(dmgType), CusLib.colorText(dmg, "red"),CusLib.colorText(amountBlocked, "red")));
 			}
 			dmg = amountBlocked;
@@ -86,7 +86,7 @@ class Player {
 		}
 		if(dealer == null){
 			if(dmg == 0){
-				if(this.getName() == "You"){
+				if(this.getName().equals("You")){
 					CusLib.queueText(String.format("%s are immune to the effects of %s and didn't take any damage.", this.getName(),Items.getDamageTypeName(dmgType)));
 				} else {
 					CusLib.queueText(String.format("%s is immune to the effects of %s and didn't take any damage.", this.getName(),Items.getDamageTypeName(dmgType)));
@@ -102,10 +102,10 @@ class Player {
 	public void Damage(int dmg){
 		if(Armor != null){
 			int amountBlocked = Armor.damageBlocked(dmg, 0);
-			if(this.getName() == "You"){
+			if(this.getName().equals("You")){
 				CusLib.queueText(String.format("Your %s blocks %s of the %s Damage (%s -> %s)",CusLib.colorText(Armor.getName(),"blue"),CusLib.colorText(dmg-amountBlocked, "red"), Items.getDamageTypeName(0), CusLib.colorText(dmg, "red"),CusLib.colorText(amountBlocked, "red")));
 			} else 
-			if(Armor.getName() != "Skeleton Armor"){
+			if(!Armor.getName().equals("Skeleton Armor")){
 				CusLib.queueText(String.format("%s's %s blocks %s of the %s Damage (%s -> %s)",this.getName(),CusLib.colorText(Armor.getName(),"blue"),CusLib.colorText(dmg-amountBlocked, "red"), Items.getDamageTypeName(0), CusLib.colorText(dmg, "red"),CusLib.colorText(amountBlocked, "red")));
 			}
 			dmg = amountBlocked;
@@ -153,7 +153,8 @@ class Player {
 		} else{
 			System.out.println(this.name + " killed " + CusLib.colorText(playerKilled.getName(),"red"));
 		}
-		int xp = (int)((CusLib.randomNum(50, 150))*(CusLib.randomNum(1, 2.5)));
+		int xp = (int)((CusLib.randomNum(100, 250))*(CusLib.randomNum(1, 2.5)));
+		xp += CusLib.randomNum(-100, 100);
 		this.giveXp(xp);
 	}
 
@@ -285,9 +286,33 @@ class Player {
 	public void addLevel(int lvl){
 		this.level += lvl;
 		System.out.println(String.format("%s leveled up to %s", this.name, this.level));
+		learnSkill();
 	}
 
-	public void learnSkill(Skill skill){
+	public void learnSkill(){
+		String learnableSkills = "";
+		for(int i=0;i<skills.size();i++){
+			if(!skills.get(i).canLearnSkill(this)){
+				continue;
+			}
+			if(i == skills.size()-1){
+				learnableSkills += skills.get(i).toStringSimplified() + ".";
+			} else {
+				learnableSkills += skills.get(i).toStringSimplified() + "\n";
+			}
+		}
+		if(learnableSkills.equals("")){
+			return;
+		}
+		System.out.println("Choose a skill to learn.");
+		System.out.println(learnableSkills);
+		String skillToLearn = Game.input.nextLine();
+		Skill skill = SkillsTree.getSkillFromName(skillToLearn);
+		if(skill == null){
+			System.out.println("Invalid Skill");
+			learnSkill();
+			return;
+		}
 		if(skills.containsKey(skill.name())){
 			System.out.println("You already know that skill.");
 			return;
@@ -316,5 +341,13 @@ class Player {
 
 	public void setSpell(Spell spell){
 		this.spell = spell;
+	}
+
+	public boolean equals(Object object){
+		Player player = (Player) object;
+		if(player.getID() == this.id){
+			return true;
+		}
+		return false;
 	}
 }

@@ -25,8 +25,7 @@ public class Room {
 	}
 	
 	public AI createRandomNPC(){ 
-    	Type[] types = {new Goblin(), new Hog(), new Skeleton(), new Mage(), new Skeleton(), new Spider(), new Knight()};
-    	Type type = types[CusLib.randomNum(0, types.length-1)];
+    	Type type = Type.types.get(CusLib.randomNum(0, Type.types.size()-1));
 		type.getStatProps().setSpeed(CusLib.randomNum(type.baseSpeed()/2, type.baseSpeed()*2));
     	AI npc = new AI(type.getName(), type);
 		calculateHealthValues(npc);
@@ -42,12 +41,12 @@ public class Room {
 	public void fillNPCInventory(AI npc){
 		npc.addItemToInventory(npc.getType().getMainWeapon());
 		npc.setArmor(npc.getType().getMainArmor());
-		if(npc.getType().getName() == "Hog" || npc.getType().getName() == "Spider"){
+		if(npc.getType().getName().equals("Hog") || npc.getType().getName().equals("Spider")){
 			return;
 		}
 		double heal = healItemChance(npc);
-		for(int i=0; i<Game.itemList.size();i++){
-			Item itm = Game.itemList.get(i);
+		for(int i=0; i<Item.ItemList.size();i++){
+			Item itm = Item.ItemList.get(i);
 			if(itm.isHeal()){
 				if(Math.random() <= heal){
 					int amt = CusLib.randomNum(1, 5);
@@ -92,7 +91,7 @@ public class Room {
 	public void treasureChest(){
 		System.out.println("You found a treasure chest, would you like to open it? y/n");
 		String open = Game.input.nextLine();
-		if(open != "y" || open != "yes"){
+		if(!open.equals("y") || !open.equals("yes")){
 			System.out.println("You don't open the chest and you continue on your way");
 			return;
 		}
@@ -112,7 +111,7 @@ public class Room {
 		ArrayList<Item> items = new ArrayList<>();
 		int maxSize = CusLib.randomNum(0, 4-diff);
 		while(items.size() < maxSize){
-			for(Item item : Game.itemList){
+			for(Item item : Item.ItemList){
 				if(items.size() >= maxSize){
 					break;
 				}

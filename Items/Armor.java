@@ -5,11 +5,13 @@ public class Armor extends Item{
     public Armor(){
         super("Iron Armor", "Blocks 3 Damage", 12, 2, true);
 		this.block = 3;
+        addItemtoList(this);
     }
 
     public Armor(String name,String description,int cost, int durability, int block){
         super(name,description,cost,durability,true);
         this.block = block;
+        addItemtoList(this);
     }
 
     public void useItem(Player player){

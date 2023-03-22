@@ -10,6 +10,8 @@ public class Item {
 	private boolean unUsable;
 	private boolean isArmor;
 	private boolean healthItem;
+	public static TypeArray<Item> ItemList = new TypeArray<>();
+	public static TypeArray<Armor> ArmorList = new TypeArray<>();
 	public Item(){
 		
 	}
@@ -26,6 +28,7 @@ public class Item {
 		this.healthItem = isHeal;
 		this.dmgType = dmgType;
 		this.manaCost = mana;
+		addItemtoList(this);
 	}
 
 	public Item(String name, String description, int cost, int dmg, int dmgType, int durability){
@@ -39,6 +42,7 @@ public class Item {
 		this.isArmor = false;
 		this.healthItem = false;
 		this.manaCost = 0;
+		addItemtoList(this);
 	}
 
 	public Item(String name, String description, int cost, int durability, boolean isArmor){
@@ -55,8 +59,22 @@ public class Item {
 		this.durability = durability;
 		this.curDurability = durability;
 		this.manaCost = 0;
+		addItemtoList(this);
 	}
 
+	public void addItemtoList(Item item){
+		if(item.isArmor()){
+			return;
+		}
+		ItemList.add(item);
+	}
+
+	public void addItemtoList(Armor armor){
+		if(!armor.isArmor()){
+			return;
+		}
+		ArmorList.add(armor);
+	}
 
 	public void useItem(Player player){
 		return;
@@ -123,7 +141,57 @@ public class Item {
 	}
 
 	public <T> void outputText(T text){
-		CusLib.advanceText(text);
+		CusLib.queueText(text);
+	}
+
+	public static Item getItemFromName(String itemName){
+		CusLib.DebugOutputLn("Finding weapon: " + itemName);
+		for(int i=0;i<ItemList.size();i++){
+			Item item = ItemList.get(i);
+			CusLib.DebugOutputLn("Weapon: " + item.getName());
+			if(item.getName().toLowerCase().equals(itemName.toLowerCase())){
+				CusLib.DebugOutputLn("Found Item: " + item.getName());
+				return item;
+			}
+		}
+		return null;
+	}
+
+	public static Item getItemFromName(String itemName, Player player){
+		CusLib.DebugOutputLn("Finding weapon: " + itemName);
+		for(int i=0;i<player.getInventory().size();i++){
+			Item item = player.getInventory().get(i);
+			if(item.getName().toLowerCase().equals(itemName.toLowerCase())){
+				CusLib.DebugOutputLn("Found Item: " + item.getName());
+				return item;
+			}
+		}
+		return null;
+	}
+
+	public static Armor getArmorFromName(String armorName){
+		CusLib.DebugOutputLn("Finding Armor: " + armorName);
+		for(int i=0;i<ArmorList.size();i++){
+			Armor armor = ArmorList.get(i);
+			if(armor.getName().toLowerCase().equals(armorName.toLowerCase())){
+				CusLib.DebugOutputLn("Found Item: " + armor.getName());
+				return armor;
+			}
+		}
+		return null;
+	}
+
+	public boolean equals(Object object){
+		Item item = (Item) object;
+		CusLib.DebugOutputLn("Checking if " + item.getName() + " is equal to: " + this.name);
+		if(item.getName().equals(this.name)){
+			return true;
+		}
+		return false;
+	}
+
+	public String toString(){
+		return String.format("Name: %s, Description: %s, Cost: %s, Mana Cost: %s, Damage: %s, Damage Type: %s, Durability: %s, Current Durability: %s, Unusable: %s, Is Armor: %s, Is Healing: %s", this.name, this.description, this.cost, this.manaCost, this.dmg, this.dmgType, this.durability, this.curDurability, this.unUsable, this.isArmor, this.healthItem);
 	}
 
 }

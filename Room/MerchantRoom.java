@@ -3,13 +3,13 @@ public class MerchantRoom extends Room {
 	ArrayList<Item> availItems = new ArrayList<>();
 
 	public void createAvailItems(){
-		for(Item item : Game.itemList){
+		for(Item item : Item.ItemList){
 			if(Math.random() > 0.55){
 				availItems.add(item);
 			}
 		}
 		if(availItems.size() == 0){
-			availItems.add(Items.getItemFromName("Health Vial"));
+			availItems.add(Item.getItemFromName("Health Vial"));
 		}
 	}
 
@@ -27,7 +27,7 @@ public class MerchantRoom extends Room {
 		if(itemPickedString.equals("none")){
 			return;
 		}
-		Item itemPicked = Items.getItemFromName(itemPickedString);
+		Item itemPicked = Item.getItemFromName(itemPickedString);
 		if(itemPicked == null){
 			System.out.println("Could not find that item.");
 			itemShop(true);

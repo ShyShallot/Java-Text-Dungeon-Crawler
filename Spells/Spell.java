@@ -8,6 +8,7 @@ public class Spell {
     private Skill skillReq;
     private Item requiredStaff;
     private int requiredLevel = 0;
+    public static TypeArray<Spell> spells = new TypeArray<>();
 
     public Spell(String name, int cast, int DoH, int dmgType ,int turns, Skill skill, Item staff, boolean isHeal){
         this.name = name;
@@ -21,6 +22,7 @@ public class Spell {
         this.turnsToCast = turns;
         this.skillReq = skill;
         this.requiredStaff = staff;
+        spells.add(this);
     }
 
     public Spell(String name, int cast, int DoH, int dmgType ,int turns, int requiredLevel, Item staff, boolean isHeal){
@@ -36,6 +38,7 @@ public class Spell {
         this.skillReq = null;
         this.requiredLevel = requiredLevel;
         this.requiredStaff = staff;
+        spells.add(this);
     }
 
     public Spell(String name, int cast, int heal, int turns, Skill skill, Item staff){
@@ -45,6 +48,7 @@ public class Spell {
         this.turnsToCast = turns;
         this.skillReq = skill;
         this.requiredStaff = staff;
+        spells.add(this);
     }
 
     public Spell(String name, int cast, int heal, int turns, int levelReq, Item staff){
@@ -54,6 +58,7 @@ public class Spell {
         this.turnsToCast = turns;
         this.requiredLevel = levelReq;
         this.requiredStaff = staff;
+        spells.add(this);
     }
 
     public Spell(){
@@ -117,7 +122,7 @@ public class Spell {
     public void castSpell(Player user, Player Target, boolean initCast){
         if(this.skillReq != null){
             if(!user.hasSkill(skillReq)){
-                if(user.getName() == "You"){
+                if(user.getName().equals("You")){
                     CusLib.queueText("You don't have knowladge on how to cast that spell.");
                 }
                 return;
@@ -154,6 +159,26 @@ public class Spell {
             return String.format("%s, Damage %s, Damage Type %s, Turns to Cast %s, Mana Cost %s", this.name, this.damage, this.dmgType, this.turnsToCast, this.castCost);
         }
         
+    }
+
+    public static Spell spellFromString(String name){
+        Spell returnSpell = null;
+        for(int i=0;i<spells.size();i++){
+            CusLib.DebugOutputLn(spells.get(i));
+            if(spells.get(i).name().toLowerCase().equals(name.toLowerCase())){
+                returnSpell = spells.get(i);
+                CusLib.DebugOutputLn(returnSpell);
+            }
+        }
+        return returnSpell;
+    }
+
+    public boolean equals(Object object){
+        Spell spell = (Spell) object;
+        if(spell.name().equals(this.name)){
+            return true;
+        }
+        return false;
     }
 
 }

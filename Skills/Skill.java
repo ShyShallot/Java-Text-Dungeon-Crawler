@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Skill {
     private int level;
     private String name;
@@ -7,6 +9,7 @@ public class Skill {
     private Type typeRestrict = null;
     private String previousLevel;
     private String nextLevel;
+    public static TypeArray<Skill> SkillList = new TypeArray<>();
 
     public Skill(int level, String name, int increase, int lvlRequired, Type restrict, boolean powerOrSpeed, String prevSkill, String nextSkill){
         this.level = level;
@@ -20,6 +23,7 @@ public class Skill {
         this.typeRestrict = restrict;
         this.previousLevel = prevSkill;
         this.nextLevel = nextSkill;
+        SkillList.add(this);
     }
 
     public Skill(int level, String name, int increase, int lvlRequired, boolean powerOrSpeed, String prevSkill, String nextSkill){
@@ -33,6 +37,7 @@ public class Skill {
         this.lvlRequired = lvlRequired;
         this.previousLevel = prevSkill;
         this.nextLevel = nextSkill;
+        SkillList.add(this);
     }
 
     public Skill(int level, String name, int lvlRequired, Type restrict, String prevSkill, String nextSkill){
@@ -42,6 +47,7 @@ public class Skill {
         this.typeRestrict = restrict;
         this.previousLevel = prevSkill;
         this.nextLevel = nextSkill;
+        SkillList.add(this);
     }
 
     public Skill(int level, String name, int lvlRequired, String prevSkill, String nextSkill){
@@ -50,6 +56,7 @@ public class Skill {
         this.lvlRequired = lvlRequired;
         this.previousLevel = prevSkill;
         this.nextLevel = nextSkill;
+        SkillList.add(this);
     }
 
     public Skill(){
@@ -58,12 +65,27 @@ public class Skill {
 
     public boolean canLearnSkill(Player player){
         if(this.typeRestrict == null){
-            return true;
-        }
-        if(player.getType().getName() == this.typeRestrict.getName()){
-            if(player.level() >= this.lvlRequired){
-                return true;
+            if(player.level() <= this.lvlRequired){ // if player is below the level required
+                return false;
             }
+            if(this.hasPrevLevel()){ // if the skill has a previous skill
+                if(!player.hasSkill(SkillsTree.getSkillFromName(this.previousLevel))){ // if player doesnt have the previous skill
+                    return false;
+                }
+            }
+            return true;
+            
+        }
+        if(player.getType().getName().equals(this.typeRestrict.getName())){
+            if(player.level() <= this.lvlRequired){
+                return false;
+            }
+            if(this.hasPrevLevel()){
+                if(!player.hasSkill(SkillsTree.getSkillFromName(this.previousLevel))){
+                    return false;
+                }
+            }
+            return true;
         }
         return false;
     }
@@ -109,7 +131,7 @@ public class Skill {
     }
     
     public boolean hasPrevLevel(){
-        if(this.previousLevel == null){
+        if(this.previousLevel.equals(null) || this.previousLevel.equals("null")){
             return false;
         }
         return true;
@@ -123,10 +145,26 @@ public class Skill {
     }
 
     public String toString(){
-        return String.format("%s, Prev Skill %s, Next Skill %s, Power Increase: %s, Speed Increase: %s, Level Required: %s, Type Restrict: %s",CusLib.colorText(this.name,"yellow"),CusLib.colorText(this.previousLevel,"blue"),CusLib.colorText(this.nextLevel,"green"),CusLib.colorText(this.powerIncrease,"red"),CusLib.colorText(this.speedIncrease,"yellow"),CusLib.colorText(this.lvlRequired,"red"),CusLib.colorText(this.typeRestrict.getName(),"purple"));
+        String typeRestrictName = "None";
+        if(typeRestrict != null){
+            typeRestrictName = typeRestrict.getName();
+        }
+        return String.format("%s, Prev Skill %s, Next Skill %s, Power Increase: %s, Speed Increase: %s, Level Required: %s, Type Restrict: %s",CusLib.colorText(this.name,"yellow"),CusLib.colorText(this.previousLevel,"blue"),CusLib.colorText(this.nextLevel,"green"),CusLib.colorText(this.powerIncrease,"red"),CusLib.colorText(this.speedIncrease,"yellow"),CusLib.colorText(this.lvlRequired,"red"),CusLib.colorText(typeRestrictName,"purple"));
     }
 
     public String toStringSimplified(){
-        return String.format("%s, Power Increase: %s, Speed Increase: %s, Level Required: %s, Type Restrict: %s",CusLib.colorText(this.name,"yellow"),CusLib.colorText(this.powerIncrease,"red"),CusLib.colorText(this.speedIncrease,"yellow"),CusLib.colorText(this.lvlRequired,"red"),CusLib.colorText(this.typeRestrict.getName(),"purple"));
+        String typeRestrictName = "None";
+        if(typeRestrict != null){
+            typeRestrictName = typeRestrict.getName();
+        }
+        return String.format("%s, Power Increase: %s, Speed Increase: %s, Level Required: %s, Type Restrict: %s",CusLib.colorText(this.name,"yellow"),CusLib.colorText(this.powerIncrease,"red"),CusLib.colorText(this.speedIncrease,"yellow"),CusLib.colorText(this.lvlRequired,"red"),CusLib.colorText(typeRestrictName,"purple"));
+    }
+
+    public boolean equals(Object object){
+        Skill skill = (Skill) object;
+        if(skill.name().equals(this.name)){
+            return true;
+        }
+        return false;
     }
 }

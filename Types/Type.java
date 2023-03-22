@@ -5,6 +5,7 @@ public class Type {
     private Armor mainArmor;
     private ArrayList<Item> prohibitedWeapons = new ArrayList<>();
     private BaseProperties baseStats;
+    public static TypeArray<Type> types = new TypeArray<>();
 
     public Type(String name, int health, int maxHealth, int speed, int mana ,Item mainWeapon){
         this.baseStats = new BaseProperties(health, maxHealth, speed, mana);
@@ -13,6 +14,7 @@ public class Type {
         this.baseStats.setSpeed(speed);
         this.baseStats.setMana(mana);
         this.mainWeapon = mainWeapon;
+        types.add(this);
     }
 
     public Type(String name, int health, int speed, int mana ,Item mainWeapon){
@@ -22,6 +24,7 @@ public class Type {
         this.baseStats.setSpeed(speed);
         this.baseStats.setMana(mana);
         this.mainWeapon = mainWeapon;
+        types.add(this);
     }
 
     public Type(String name, int health, int maxHealth, int speed, int mana ,Item mainWeapon, Armor mainArmor){
@@ -32,6 +35,7 @@ public class Type {
         this.baseStats.setMana(mana);
         this.mainWeapon = mainWeapon;
         this.mainArmor = mainArmor;
+        types.add(this);
     }
 
     public Type(String name, int health, int speed, int mana ,Item mainWeapon, Armor mainArmor){
@@ -42,16 +46,19 @@ public class Type {
         this.baseStats.setMana(mana);
         this.mainWeapon = mainWeapon;
         this.mainArmor = mainArmor;
+        types.add(this);
     }
 
     public Type(String name, int health, int maxHealth, int speed, int mana){
         this.baseStats = new BaseProperties(health, maxHealth, speed, mana);
         this.typeName = name;
+        types.add(this);
     }
 
     public Type(String name, int health, int speed, int mana){
         this.baseStats = new BaseProperties(health, speed, mana);
         this.typeName = name;
+        types.add(this);
     }
 
     public Type(){
@@ -118,7 +125,7 @@ public class Type {
     public boolean isItemIllegal(Item item){
         boolean illegal = false;
         for(Item itm : this.prohibitedWeapons){
-            if(item.getName() == itm.getName()){
+            if(item.getName().equals(itm.getName())){
                 illegal = true;
                 break;
             }
@@ -170,6 +177,27 @@ public class Type {
         return String.format("Type Name: %s, Base Props: %s", this.typeName, this.baseStats.toString(player));
     }
 
+    public static Type getTypeFromName(String name){
+        Type returnType = null;
+        for(int i=0; i<types.size();i++){
+            Type type = types.get(i);
+            //CusLib.DebugOutputLn(type.getName() + ", " + name);
+            if(type.getName().toLowerCase().equals(name.toLowerCase())){
+                CusLib.DebugOutputLn("Found Type: " + name);
+                returnType = type;
+                break;
+            }
+        }
+        return returnType;
+    }
+
+    public boolean equals(Object object){
+        Type compare = (Type) object;
+        if(compare.getName().equals(this.getName())){
+            return true;
+        }
+        return false;
+    }
 }
 
 

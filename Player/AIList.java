@@ -25,7 +25,7 @@ class AIList {
 					continue;
 				}
 				CusLib.DebugOutputLn("NPC to Change: " + curNPC.getName() + " ID: " + curNPC.getID());
-				if(npcToChange.getName() == curNPC.getName()){
+				if(npcToChange.getName().equals(curNPC.getName())){
 					String curName = npcToChange.getName();
 					npcToChange.setName(curName += " "+ dupeNPCs);
 					dupeNPCs++;

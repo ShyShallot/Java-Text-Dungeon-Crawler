@@ -2,16 +2,7 @@ import java.util.ArrayList;
 
 public class SkillsTree {
 
-    public static ArrayList<Skill> skills = new ArrayList<>();
-
-    public SkillsTree(){
-        skills.add(new Speed1());
-        skills.add(new Weather1());
-        skills.add(new Weather2());
-        skills.add(new Weather3());
-    }
-
-    public void printSkillsTree(Skill skill){
+    public static void printSkillsTree(Skill skill){
         //System.out.println(skill);
         Skill mostPrevSkill = skill;
 
@@ -38,9 +29,9 @@ public class SkillsTree {
     }
 
     public static Skill getSkillFromName(String name){
-        for(int i=0;i<skills.size();i++){
-            if(skills.get(i).name().toLowerCase().equals(name.toLowerCase())){
-                return skills.get(i);
+        for(int i=0;i<Skill.SkillList.size();i++){
+            if(Skill.SkillList.get(i).name().toLowerCase().equals(name.toLowerCase())){
+                return Skill.SkillList.get(i);
             }
         }
         return null;

@@ -3,14 +3,14 @@ public class CastSpellList {
     private ArrayList<SpellCast> casters = new ArrayList<>();
 
     public void castMultiTurnSpell(Player player, Player target, int curRound, int lasts){
-        if(player.getType().getName() != "Mage"){
+        if(!player.getType().getName().equals("Mage")){
             return;
         }
         casters.add(new SpellCast(player, target, curRound, lasts));
     }
 
     public void castMultiTurnSpell(Player player, int curRound, int lasts){
-        if(player.getType().getName() != "Mage"){
+        if(!player.getType().getName().equals("Mage")){
             return;
         }
         casters.add(new SpellCast(player, curRound, lasts));

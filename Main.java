@@ -27,6 +27,10 @@ class Main {
 
 	public static void Testing(){
 		Game game = new Game();
-		game.TestWeights();
+		game.createSkills();
+		game.createTypes();
+		game.createSpells();
+		//SkillsTree.printSkillsTree(SkillsTree.getSkillFromName("Weather 2"));
+		//game.TestWeights();
 	}
 }

@@ -19,12 +19,10 @@ class Game {
 	// Main
 	boolean over = false;
 	public static Scanner input;
-	public static ArrayList<Item> itemList = new ArrayList<Item>();
 	public static DOT DOTList = new DOT();
 	public static StunList stunList = new StunList();
-	public static Type[] playableTypeList = {new Goblin(), new Knight(), new Mage()};
+	public static Type[] playableTypeList = new Type[3];
 	public static CastSpellList castList = new CastSpellList();
-	public static SkillsTree skillTree = new SkillsTree();
 
 	// Input
 	public void SetupInput(Scanner in) {
@@ -35,13 +33,16 @@ class Game {
 
 	// START OF MAIN GAME FUNCTIONS
 	public void Start() {
-		Types.createTypeLib();
+		addItemsToList();
+		createTypes();
+		createSkills();
+		createSpells();
+		playableTypeList = new Type[]{Type.getTypeFromName("Goblin"), Type.getTypeFromName("Knight"), Type.getTypeFromName("Mage")};
 		System.out.println("Welcome to Defend n Roll, A simple text fight game, where you can either defend for one turn and reduce dmg by 50% or roll. Damage is determined by the difference between the 2 rolls, who ever has the lowest roll, gets the damage.");
 		System.out.println();
 		setDifficulty();
 		setPlayerType();
 		System.out.println();
-		addItemsToList();
 		while (!over) {
 			if(shouldBeMerchantRoom()){
 				System.out.println("You come across a merchant sitting in a room.");
@@ -69,15 +70,47 @@ class Game {
 		aiDecideItem(testNPC);
 	}
 
-	public void addItemsToList(){ // Note this is a list of Items that only the player can get, DO NOT INCLUDE NON PLAYER WEAPONS/ITEMS like bite
-		itemList.add(new Sword());
-		itemList.add(new Vial());
-		itemList.add(new LargeVial());
-		itemList.add(new Armor());
-		itemList.add(new Bow());
-		itemList.add(new TitaniumArmor());
-		itemList.add(new Club());
-		itemList.add(new Dagger());
+	public void addItemsToList(){
+		new Sword();
+		new Vial();
+		new LargeVial();
+		new Armor();
+		new Bow();
+		new TitaniumArmor();
+		new Club();
+		new Dagger();
+		new Bite();
+		new GoblinArmor();
+		new Stomp();
+		new Staff();
+		new Ram();
+	}
+
+	public void createSkills(){
+		new Speed1();
+		new Weather1();
+		new Weather2();
+		new Weather3();
+	}
+
+	public void createSpells(){
+		new Enlightment();
+		new Fireball();
+		new Jet();
+		new Lightning();
+		new Orb();
+		for(int i=0;i<Spell.spells.size();i++){
+			CusLib.DebugOutputLn(Spell.spells.get(i));
+		}
+	}
+
+	public void createTypes(){
+		new Goblin();
+		new Hog();
+		new Knight();
+		new Mage();
+		new Skeleton();
+		new Spider();
 	}
 
 	public void DecideDamage(AI npc) {
@@ -102,7 +135,7 @@ class Game {
 			double celing = CusLib.randomNum(0.7, 0.9);
 			CusLib.DebugOutputLn(speedBonus + ", " + random + ", " + celing);
 			if(random > celing){
-				CusLib.advanceText("You were faster than " + npc.getName() + " and dodged their attack!");
+				CusLib.queueText("You were faster than " + npc.getName() + " and dodged their attack!");
 				return;
 			}
 			playerUseItem(npc,mainPlayer);
@@ -164,7 +197,7 @@ class Game {
 			mainPlayer.Defend(currentSubRound);
 			return;
 		}
-		if(action.equals("cast a spell") || action.equals("spell")){
+		if(action.equals("cast a spell") || action.equals("spell") || action.equals("cast")){
 			pickSpell();
 			return;
 		}
@@ -223,7 +256,7 @@ class Game {
 		}
 		System.out.println(pickList);
 		String pick = input.nextLine();
-		Type selectedType = Types.getTypeFromName(pick);
+		Type selectedType = Type.getTypeFromName(pick);
 		if(selectedType == null){
 			System.out.println("Was unable to find that type.");
 			setPlayerType();
@@ -257,7 +290,7 @@ class Game {
 		}
 		System.out.println(itemList); 
 		String itemPicked = input.nextLine();
-		Item item = Items.getItemFromName(itemPicked, mainPlayer);
+		Item item = Item.getItemFromName(itemPicked, mainPlayer);
 		//System.out.println(item.name);
 		if(item == null){
 			System.out.println("You do not have that item.");
@@ -270,10 +303,10 @@ class Game {
 	public void pickSpell(){
 		System.out.println("Which spell would you like to cast?");
 		String spells = "";
-		for(int i=0;i<SpellsList.getSpells().size();i++){
-			Spell spell = SpellsList.getSpells().get(i);
+		for(int i=0;i<Spell.spells.size();i++){
+			Spell spell = Spell.spells.get(i);
 			if(spell.canPlayerCast(mainPlayer)){
-				if( i == SpellsList.getSpells().size()-1){
+				if( i == Spell.spells.size()-1){
 					spells += spell + ".";
 				} else {
 					spells += spell + ", \n";
@@ -282,7 +315,7 @@ class Game {
 		}
 		System.out.println(spells);
 		String selectedSpellString = input.nextLine();
-		Spell selectedSpell = Spells.spellFromString(selectedSpellString);
+		Spell selectedSpell = Spell.spellFromString(selectedSpellString);
 		if(selectedSpell == null){
 			System.out.println("Couldn't find that spell!");
 			pickSpell();
@@ -321,7 +354,7 @@ class Game {
 		if(!doesPlayerHaveHeal(npc)){
 			shouldUseDamage = true;
 		}
-		if(npc.getType().getName() == "Mage"){
+		if(npc.getType().getName().equals("Mage")){
 			npc.setSpell(npc.decideSpell(mainPlayer, shouldUseDamage));
 			return;
 		}
@@ -400,7 +433,7 @@ class Game {
 				opponents += "and A " + CusLib.colorText(currentRoom.activeNPCS.npcs.get(i).getName(), "red") + ".";
 			}
 		}
-		System.out.println(opponents);
+		CusLib.advanceText(opponents);
 		while((!mainPlayer.isDead()) && currentRoom.activeNPCS.size() > 0){ 
 			for(int i=0;i<currentRoom.activeNPCS.size();i++){
 				stunList.checkStuns();
