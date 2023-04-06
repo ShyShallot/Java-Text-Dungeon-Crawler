@@ -1,6 +1,8 @@
+import java.awt.Color;
+import java.awt.Font;
 import java.util.*;
 
-class Game {
+class Game implements Runnable{
 	// Color Strings
 	
 	// Player
@@ -23,6 +25,8 @@ class Game {
 	public static StunList stunList = new StunList();
 	public static Type[] playableTypeList = new Type[3];
 	public static CastSpellList castList = new CastSpellList();
+	public static boolean busy = false;
+	public static boolean isSetup = false;
 
 	// Input
 	public void SetupInput(Scanner in) {
@@ -32,35 +36,58 @@ class Game {
 	Room currentRoom;
 
 	// START OF MAIN GAME FUNCTIONS
-	public void Start() {
+	public void run() {
+		if(isSetup){
+			return;
+		}
 		addItemsToList();
 		createTypes();
 		createSkills();
 		createSpells();
 		playableTypeList = new Type[]{Type.getTypeFromName("Goblin"), Type.getTypeFromName("Knight"), Type.getTypeFromName("Mage")};
-		System.out.println("Welcome to Defend n Roll, A simple text fight game, where you can either defend for one turn and reduce dmg by 50% or roll. Damage is determined by the difference between the 2 rolls, who ever has the lowest roll, gets the damage.");
+		//System.out.println("Welcome to Defend n Roll, A simple text fight game, where you can either defend for one turn and reduce dmg by 50% or roll. Damage is determined by the difference between the 2 rolls, who ever has the lowest roll, gets the damage.");
+		UIText welcome = new UIText(Main.gp, "Welcome to JDRC! Press Enter to Continue.", 50, Main.gp.screenHeight/2, 30);
+		welcome.setCentered(true);
+		waitForInput("Enter");
+		System.out.println("Destorying Text");
+		welcome.destory();
+		//UIButton test = new UIButton(Main.gp, 300, 200, 200, 300, Color.white, "Yuh", 30);
+		//waitForButtonPress(test.ID());
 		System.out.println();
 		setDifficulty();
-		setPlayerType();
+		//setPlayerType();
 		System.out.println();
-		while (!over) {
-			if(shouldBeMerchantRoom()){
-				System.out.println("You come across a merchant sitting in a room.");
-				MerchantRoom merchantRoom = new MerchantRoom();
-				merchantRoom.itemShop(false);
-				currentRound++;
-				lastMerchantRoom = currentRound;
-			} else if (shouldBeBossRoom()) {
-				System.out.println("You walk into a massive chamber with a giant cage, You find a massive monster");
-				BossRoom bossRoom = new BossRoom();
-				BossCombat(bossRoom);
-				lastBossRoom = currentRound;
+		isSetup = true;
 
-			} else {
-				currentRoom = new Room();
-				currentRoom.activeNPCS.renameDupes();
-				TurnCombat();
-			}
+	}
+
+	public void update(){
+		if(over){
+			return;
+		}
+		if(busy){
+			return;
+		}
+		if(shouldBeMerchantRoom()){
+			System.out.println("You come across a merchant sitting in a room.");
+			MerchantRoom merchantRoom = new MerchantRoom();
+			busy = true;
+			merchantRoom.itemShop(false);
+			busy = false;
+			currentRound++;
+			lastMerchantRoom = currentRound;
+		} else if (shouldBeBossRoom()) {
+			System.out.println("You walk into a massive chamber with a giant cage, You find a massive monster");
+			BossRoom bossRoom = new BossRoom();
+			BossCombat(bossRoom);
+			lastBossRoom = currentRound;
+			busy = false;
+
+		} else {
+			currentRoom = new Room();
+			currentRoom.activeNPCS.renameDupes();
+			TurnCombat();
+			busy = false;
 		}
 	}
 
@@ -225,22 +252,37 @@ class Game {
 	}
 
 	public void setDifficulty(){
-		System.out.println("Start by typing to select a difficulty: Easy, Medium, Hard");
-		String selectDiff = input.nextLine();
-		selectDiff = selectDiff.toLowerCase();
-		if(selectDiff.equals("medium")){
-			System.out.println("You Selected: Medium");
+		String diff = "";
+		UIText selectDiff = new UIText(Main.gp, "Start by selecting your Difficulty with one of the buttons", 0, 200, 30);
+		selectDiff.setCentered(true);
+		UIButton easy = new UIButton(Main.gp, 150, Main.gp.screenHeight/2, 250, 100, Color.white, "Easy", 20,0.5);
+		UIButton medium = new UIButton(Main.gp, 325, Main.gp.screenHeight/2, 250, 100, Color.white, "Medium", 20,0.5);
+		UIButton hard = new UIButton(Main.gp, 500, Main.gp.screenHeight/2, 250, 100, Color.white, "Hard", 20,0.5);
+		int id = waitForEitherButton(easy,medium,hard);
+		//System.out.println();
+		if(id == medium.ID()){
+			//System.out.println("You Selected: Medium");
 			difficulty = 1;
 			aiHealBias = 0.1;
-		} else if(selectDiff.equals("hard")){
-			System.out.println("You Selected: Hard");
+			diff = "Medium";
+		} else if(id == hard.ID()){
+			//System.out.println("You Selected: Hard");
 			difficulty = 2;
 			aiHealBias = 0.2;
 			randomHealChance = 0.9;
+			diff = "Hard";
 		} else {
-			System.out.println("You Selected: Easy");
+			//System.out.println("You Selected: Easy");
 			randomHealChance = 0.75;
+			diff = "Easy";
 		}
+		selectDiff.destory();
+		easy.destory();
+		medium.destory();
+		hard.destory();
+		UINotifcation diffSelect = new UINotifcation(Main.gp, String.format("You selected %s Difficulty",diff), 100, 200, 30, 8);
+		diffSelect.setCentered(true);
+		diffSelect.show();
 	}
 
 	public static void setPlayerType(){
@@ -425,6 +467,7 @@ class Game {
 	}
 
 	public void TurnCombat(){
+		busy = true;
 		String opponents = "You enter a new Room and find ";
 		for(int i=0;i<currentRoom.activeNPCS.size();i++){
 			if(i < currentRoom.activeNPCS.size()-1){
@@ -481,6 +524,7 @@ class Game {
 	}
 
 	public void BossCombat(BossRoom bossRoom){
+		busy = true;
 		currentSubRound = 1;
 		while(!mainPlayer.isDead() && !bossRoom.boss().isDead()){
 			Boss boss = bossRoom.boss();
@@ -560,5 +604,58 @@ class Game {
 	public static int DifficultyMod(){
 		return DifficultyMod(false);
 	}
+
+	public static void buttonPressed(UIButton button){
+		System.out.println(String.format("Button %s was pressed", button.ID()));
+	}
+
+	public void waitForButtonPress(int id){
+		UIButton buttonToWaitFor = null;
+		for(UIButton button : Main.gp.UIButtons){
+			if(button.ID() == id && !button.isDead()){
+				buttonToWaitFor = button;
+			}
+		}
+		if(buttonToWaitFor == null){
+			CusLib.DebugOutputLn("No Button found with that ID canceling");
+			return;
+		}
+		while(!buttonToWaitFor.activated){
+			//System.out.println("Waiting for Button " + id + " To be pressed");
+		}
+	}
+
+	public int waitForEitherButton(UIButton ... buttons){
+		int buttonsFound = 0;
+		for(UIButton button : buttons){
+			for(UIButton secButton : Main.gp.UIButtons){
+				if(button.ID() == secButton.ID()){
+					buttonsFound++;
+				}
+			}
+		}
+		if(buttonsFound != buttons.length){
+			CusLib.DebugOutputLn("Not all buttons found, Canceling");
+			return -1;
+		}
+		boolean check = true;
+		while(check){
+			for(UIButton button : buttons){
+				if(button.activated){
+					check = false;
+					return button.ID(); 
+				}
+			}
+		}
+		return 0; // This will never be returned but its to appease java
+	}
+
+	public void waitForInput(String key){
+		while(!Input.wasKeyPressed(key)){
+
+		}
+		CusLib.DebugOutputLn(key + " was pressed");
+	}
+
 
 }

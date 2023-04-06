@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 public class Skill {
     private int level;
     private String name;
