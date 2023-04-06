@@ -1,19 +1,11 @@
 # Java-Text-Dungeon-Crawler
 
-This is a basic WIP Text Based Dungeon Crawler made in JAVA, fight against random enemies going from room to room collecting items and coins.
+This is the 2d Conversion branch of this project which its goal is to turn it from a terminal game into a full 2D game with UI interactions, however ATM its not playable and has alot of work to do until it is playable
 
-# Features
+# 2d Features
 
-Scaleable Systems:
-Items, 
-Classes,
-Spells,
-Skills
-
-Damage over Time
-
-Multi Turn Spell Casting
-
-Rooms
-
-Half Inteligent AI
+Basic 2D Functions for:
+  1. Text
+  2. Buttons
+  3. Notifcations
+  4. Image Render
