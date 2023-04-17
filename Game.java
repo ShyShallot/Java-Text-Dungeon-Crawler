@@ -23,7 +23,7 @@ class Game implements Runnable{
 	public static Scanner input;
 	public static DOT DOTList = new DOT();
 	public static StunList stunList = new StunList();
-	public static Type[] playableTypeList = new Type[3];
+	public static Type[] playableTypeList;
 	public static CastSpellList castList = new CastSpellList();
 	public static boolean busy = false;
 	public static boolean isSetup = false;
@@ -55,7 +55,7 @@ class Game implements Runnable{
 		//waitForButtonPress(test.ID());
 		System.out.println();
 		setDifficulty();
-		//setPlayerType();
+		setPlayerType();
 		System.out.println();
 		isSetup = true;
 
@@ -280,13 +280,47 @@ class Game implements Runnable{
 		easy.destory();
 		medium.destory();
 		hard.destory();
-		UINotifcation diffSelect = new UINotifcation(Main.gp, String.format("You selected %s Difficulty",diff), 100, 200, 30, 8);
+		int notifTime = 3;
+		UINotifcation diffSelect = new UINotifcation(Main.gp, String.format("You selected %s Difficulty",diff), 100, 200, 30, notifTime);
 		diffSelect.setCentered(true);
 		diffSelect.show();
+		try{
+			Thread.sleep(notifTime*1000);
+		} catch (InterruptedException ex){
+			ex.printStackTrace();
+		}
 	}
 
-	public static void setPlayerType(){
-		System.out.println("What class would you like to pick?");
+	public void setPlayerType(){
+		UIText selectClass = new UIText(Main.gp, "Which class do you want to be?", 0, 200, 30);
+		selectClass.setCentered(true);
+		UIButton[] buttons = new UIButton[playableTypeList.length];
+		int baseXPos = 0;
+		switch(playableTypeList.length){
+			case 1:
+				baseXPos = 310;
+				break;
+			case 2: 
+				baseXPos = 240;
+				break;
+			case 3:
+				baseXPos = 165;
+				break;
+			case 4:
+				baseXPos = 85;
+				break;
+		}
+		for(int i=0;i<playableTypeList.length;i++){
+			//System.out.println("Art/Covers/"+playableTypeList[i].getName());
+			UIGraphicButton button = new UIGraphicButton(Main.gp, baseXPos, Main.gp.screenHeight/2, "Art/Covers/"+playableTypeList[i].getName()+".png", 0.7);
+			buttons[i] = button;
+			baseXPos = (button.xPos()+(button.getImage().getIconWidth()/2))+50;
+		}
+		//UIGraphicButton knightButton = new UIGraphicButton(Main.gp, 100, Main.gp.screenHeight/2, "Art/Covers/Knight.png", 0.7);
+		//UIGraphicButton mageButton = new UIGraphicButton(Main.gp, knightButton.xPos()+(knightButton.getImage().getIconWidth()/2)+50, Main.gp.screenHeight/2, "Art/Covers/Mage.png", 0.7);
+		int id = waitForEitherButton(buttons);
+		System.out.println(id);
+		/*
 		System.out.println();
 		String pickList = "";
 		for(int i=0;i<playableTypeList.length;i++){
@@ -308,7 +342,7 @@ class Game implements Runnable{
 		mainPlayer = new Player("You", selectedType.baseHealth()*2 ,selectedType);
 		mainPlayer.addItemToInventory(selectedType.getMainWeapon());
 		mainPlayer.setArmor(mainPlayer.getType().getMainArmor());
-		mainPlayer.addMana(selectedType.baseMana());
+		mainPlayer.addMana(selectedType.baseMana());*/
 	}
 
 	public void pickItem(){
@@ -609,9 +643,9 @@ class Game implements Runnable{
 		System.out.println(String.format("Button %s was pressed", button.ID()));
 	}
 
-	public void waitForButtonPress(int id){
+	public static void waitForButtonPress(int id){
 		UIButton buttonToWaitFor = null;
-		for(UIButton button : Main.gp.UIButtons){
+		for(UIButton button : Main.gp.getCreatedButtons()){
 			if(button.ID() == id && !button.isDead()){
 				buttonToWaitFor = button;
 			}
@@ -628,7 +662,7 @@ class Game implements Runnable{
 	public int waitForEitherButton(UIButton ... buttons){
 		int buttonsFound = 0;
 		for(UIButton button : buttons){
-			for(UIButton secButton : Main.gp.UIButtons){
+			for(UIButton secButton : Main.gp.getCreatedButtons()){
 				if(button.ID() == secButton.ID()){
 					buttonsFound++;
 				}

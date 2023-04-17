@@ -1,11 +1,7 @@
-import java.awt.event.*;
-
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
 
 public class UIButton extends UI{
-
+ 
     private String text;
     private int textSize;
     private Color color;
@@ -13,6 +9,14 @@ public class UIButton extends UI{
     private int height;
     private double scale;
     public boolean activated = false;
+
+    public UIButton(GamePanel gp, int x, int y, Color color, double scale){
+        super(gp,x,y);
+        this.color = color;
+        this.text = "";
+        this.textSize = 0;
+        this.scale = scale;
+    }
  
     public UIButton(GamePanel gp, int x, int y, int width, int height, Color color, String text, int textSize){
         super(gp,x,y);
@@ -36,8 +40,16 @@ public class UIButton extends UI{
         return this.height;
     }
 
+    public void setHeight(int height){
+        this.height = height;
+    }
+
     public int width(){
         return this.width;
+    }
+
+    public void setWidth(int width){
+        this.width = width;
     }
 
     public Color getColor(){

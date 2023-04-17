@@ -1,5 +1,6 @@
 import java.util.*;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -26,6 +27,7 @@ public class GamePanel extends JPanel implements Runnable{
     ArrayList<UINotifcation> UINotifcations = new ArrayList<>();
     ArrayList<UIText> UITexts = new ArrayList<>();
     ArrayList<UIButton> UIButtons = new ArrayList<>();
+    ArrayList<UIGraphicButton> UIGraphicButtons = new ArrayList<>();
 
     Scanner input = new Scanner(System.in);
     Game game = new Game();
@@ -118,6 +120,7 @@ public class GamePanel extends JPanel implements Runnable{
             //System.out.println("Creating Button: " + i);
             UIButton UIButton = UIButtons.get(i);
 
+
             JButton button = new JButton(UIButton.message());
             button.setBounds(UIButton.xPos(), UIButton.yPos(), (int)(UIButton.width()*UIButton.getScale()), (int)(UIButton.height()*UIButton.getScale()));
             button.setVerticalAlignment(SwingConstants.CENTER);
@@ -128,6 +131,28 @@ public class GamePanel extends JPanel implements Runnable{
                     System.out.println("BUTTON!");
                     Game.buttonPressed(UIButton);
                     UIButton.activated = true;
+                }
+            });
+            this.add(button);
+        }
+
+        for(int i=0;i<UIGraphicButtons.size();i++){
+            if(UIGraphicButtons.get(i).isDead()){
+                UIGraphicButtons.remove(i);
+                this.repaint();
+                continue;
+            }
+            //System.out.println("Creating G Button: " + i);
+            UIGraphicButton UIGButton = UIGraphicButtons.get(i);
+            JButton button = new JButton();
+            button.setBounds(UIGButton.xPos(), UIGButton.yPos(), (int)(UIGButton.width()*UIGButton.getScale()), (int)(UIGButton.height()*UIGButton.getScale()));
+            button.setIcon(new ImageIcon(UIGButton.getImage().getImage().getScaledInstance((int)(UIGButton.getImage().getIconWidth()*UIGButton.getScale()),(int)(UIGButton.getImage().getIconHeight()*UIGButton.getScale()), Image.SCALE_SMOOTH))); // Scale Image
+            button.setBackground(UIGButton.getColor());
+            button.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e){
+                    System.out.println("BUTTON!");
+                    Game.buttonPressed(UIGButton);
+                    UIGButton.activated = true;
                 }
             });
             this.add(button);
@@ -188,6 +213,13 @@ public class GamePanel extends JPanel implements Runnable{
             drawCount = 0;
         }
         //gD.dispose();
+    }
+
+    public ArrayList<UIButton> getCreatedButtons(){ // to combine UIButtons and UIGraphicButtons
+        ArrayList<UIButton> allButtons = new ArrayList<>();
+        allButtons.addAll(UIButtons);
+        allButtons.addAll(UIGraphicButtons);
+        return allButtons;
     }
 
 }
