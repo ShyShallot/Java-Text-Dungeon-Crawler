@@ -3,6 +3,7 @@ public class UI{
     private GamePanel gp;
     private int x,y;
     private boolean destory = false;
+    private boolean hide = false;
     private int id;
 
     public UI(GamePanel gp, int x, int y){
@@ -39,8 +40,12 @@ public class UI{
         this.destory = true;
     }
 
-    public void revive(){
-        this.destory = false;
+    public void hide(boolean bool){
+        this.hide = bool;
+    }
+
+    public boolean isHidden(){
+        return this.hide;
     }
 
     public void setID(int n){

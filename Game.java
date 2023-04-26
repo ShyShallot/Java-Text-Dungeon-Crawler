@@ -58,10 +58,13 @@ class Game implements Runnable{
 		setPlayerType();
 		System.out.println();
 		isSetup = true;
-
+		update();
 	}
 
 	public void update(){
+		if(!isSetup){
+			return;
+		}
 		if(over){
 			return;
 		}
@@ -194,12 +197,33 @@ class Game implements Runnable{
 			System.out.println("You're busy casting a spell, you were skipped.");
 			return;
 		}
-		System.out.print("Current Round: " + currentSubRound + ", Your Current Health: " + CusLib.colorText(mainPlayer.getHealth(), "green") + ", Your Current Level: " + CusLib.colorText(mainPlayer.level(),"blue") + " (" + CusLib.colorText(mainPlayer.getXp(),"yellow") + "/" + CusLib.colorText((1000*(mainPlayer.level())),"purple") + ")" + " The " + CusLib.colorText(enemy.getName() + "'s", "red") + " Health: " + CusLib.colorText(enemy.getHealth(), "green") + ", ");
+		//System.out.print("Current Round: " + currentSubRound + ", Your Current Health: " + CusLib.colorText(mainPlayer.getHealth(), "green") + ", Your Current Level: " + CusLib.colorText(mainPlayer.level(),"blue") + " (" + CusLib.colorText(mainPlayer.getXp(),"yellow") + "/" + CusLib.colorText((1000*(mainPlayer.level())),"purple") + ")" + " The " + CusLib.colorText(enemy.getName() + "'s", "red") + " Health: " + CusLib.colorText(enemy.getHealth(), "green") + ", ");
+		UIText roundDisplay = new UIText(Main.gp,"Current Round: " + currentSubRound, 50, 490, 20);
+		UIText healthDisplay = new UIText(Main.gp, "Current Health:%" + mainPlayer.getHealth() + "%", 50, 470, 20, Color.white, Color.GREEN);
 		if(mainPlayer.getType().getName().equals("Mage")){
-			ActionMage(enemy);
+			//ActionMage(enemy);
 			return;
 		}
-		System.out.print("Defend or Use an Item?");
+		UIButton defendButton = new UIButton(Main.gp, 300, 450, 100, 50, Color.white, "Defend", 20, 1);
+		UIButton itemButton = new UIButton(Main.gp, 410, 450, 150, 50, Color.white, "Inventory" , 20,1);
+		int id = waitForEitherButton(defendButton,itemButton);
+		defendButton.hide(true);
+		itemButton.hide(true);
+		if(id == defendButton.ID()){
+			mainPlayer.Defend(currentSubRound);
+			return;
+		}
+		if(id == itemButton.ID()){
+			ArrayList<UIButton> buttons = createInventoryButtons();
+			int itemID = waitForEitherButton(buttons);
+			Item itemToUse = (Item)Main.gp.UIButtons.get(itemID).getAccObject();
+			mainPlayer.setHand(itemToUse);
+			for(int i=0;i<buttons.size();i++){
+				buttons.get(i).destory();
+			}
+			return;
+		}
+		/*System.out.print("Defend or Use an Item?");
 		System.out.println();
 		String action = input.nextLine();
 		if (action.toLowerCase().equals("defend")) {
@@ -212,7 +236,29 @@ class Game implements Runnable{
 			return;
 		}
 		System.out.println("Unknown Command");
-		this.Action(enemy);
+		this.Action(enemy);*/
+	}
+
+	public ArrayList<UIButton> createInventoryButtons(){
+		ArrayList<UIButton> buttons = new ArrayList<>();
+		int startX = 300;
+		int xOffset = startX;
+		int startY = 450;
+		for(int i=0;i<mainPlayer.getInventory().size();i++){
+			if(startY >= Main.gp.screenHeight-50){
+				continue;
+			}
+			Item curItem = mainPlayer.getInventory().get(i);
+			UIButton<Item> item = new UIButton<>(Main.gp, xOffset, startY, 50, 50, Color.white, "" + curItem.getName(), 10, 1);
+			item.setAccObject(curItem);
+			xOffset += item.width() + 20;
+			if((i+1)%5 == 0){
+				startY += item.height() + 10;
+				xOffset = startX;
+			}
+			buttons.add(item);
+		}
+		return buttons;
 	}
 
 	public void ActionMage(Player enemy){
@@ -319,7 +365,11 @@ class Game implements Runnable{
 		//UIGraphicButton knightButton = new UIGraphicButton(Main.gp, 100, Main.gp.screenHeight/2, "Art/Covers/Knight.png", 0.7);
 		//UIGraphicButton mageButton = new UIGraphicButton(Main.gp, knightButton.xPos()+(knightButton.getImage().getIconWidth()/2)+50, Main.gp.screenHeight/2, "Art/Covers/Mage.png", 0.7);
 		int id = waitForEitherButton(buttons);
-		System.out.println(id);
+		System.out.println(playableTypeList[id]);
+		for(UIButton button : buttons){
+			button.destory();
+		}
+		selectClass.destory();
 		/*
 		System.out.println();
 		String pickList = "";
@@ -332,17 +382,29 @@ class Game implements Runnable{
 		}
 		System.out.println(pickList);
 		String pick = input.nextLine();
-		Type selectedType = Type.getTypeFromName(pick);
+		*/
+		Type selectedType = playableTypeList[id];
 		if(selectedType == null){
 			System.out.println("Was unable to find that type.");
 			setPlayerType();
 			return;
 		}
-		System.out.println("You selected the " + selectedType.getName());
+		//System.out.println("You selected the " + selectedType.getName());
+		UINotifcation diffSelect = new UINotifcation(Main.gp, String.format("You selected %s",selectedType.getName()), 100, 200, 30, 3);
+		diffSelect.setCentered(true);
+		diffSelect.show();
+		try{
+			Thread.sleep(3000);
+		} catch (InterruptedException ex){
+			ex.printStackTrace();
+		}
 		mainPlayer = new Player("You", selectedType.baseHealth()*2 ,selectedType);
 		mainPlayer.addItemToInventory(selectedType.getMainWeapon());
+		for(int i=0; i<5;i++){
+			mainPlayer.addItemToInventory(Item.getItemFromName("Health Vial"));
+		}
 		mainPlayer.setArmor(mainPlayer.getType().getMainArmor());
-		mainPlayer.addMana(selectedType.baseMana());*/
+		mainPlayer.addMana(selectedType.baseMana());
 	}
 
 	public void pickItem(){
@@ -502,15 +564,20 @@ class Game implements Runnable{
 
 	public void TurnCombat(){
 		busy = true;
-		String opponents = "You enter a new Room and find ";
+		/*String opponents = "You enter a new Room and find ";
 		for(int i=0;i<currentRoom.activeNPCS.size();i++){
 			if(i < currentRoom.activeNPCS.size()-1){
 				opponents += "A " + CusLib.colorText(currentRoom.activeNPCS.npcs.get(i).getName(), "red") + ", ";
 			} else {
 				opponents += "and A " + CusLib.colorText(currentRoom.activeNPCS.npcs.get(i).getName(), "red") + ".";
 			}
+		}*/
+		//CusLib.advanceText(opponents);
+		int startX = 150;
+		for(int i=0;i<currentRoom.activeNPCS.size();i++){
+			UISquare opp = new UISquare(Main.gp, startX, 150, 70, Color.white);
+			startX += opp.getWidth()/2 + (10+opp.getWidth()); 
 		}
-		CusLib.advanceText(opponents);
 		while((!mainPlayer.isDead()) && currentRoom.activeNPCS.size() > 0){ 
 			for(int i=0;i<currentRoom.activeNPCS.size();i++){
 				stunList.checkStuns();
@@ -660,18 +727,6 @@ class Game implements Runnable{
 	}
 
 	public int waitForEitherButton(UIButton ... buttons){
-		int buttonsFound = 0;
-		for(UIButton button : buttons){
-			for(UIButton secButton : Main.gp.getCreatedButtons()){
-				if(button.ID() == secButton.ID()){
-					buttonsFound++;
-				}
-			}
-		}
-		if(buttonsFound != buttons.length){
-			CusLib.DebugOutputLn("Not all buttons found, Canceling");
-			return -1;
-		}
 		boolean check = true;
 		while(check){
 			for(UIButton button : buttons){
@@ -682,6 +737,14 @@ class Game implements Runnable{
 			}
 		}
 		return 0; // This will never be returned but its to appease java
+	}
+
+	public int waitForEitherButton(ArrayList<UIButton> buttons){
+		UIButton[] buttonArray = new UIButton[buttons.size()];
+		for(int i=0;i<buttons.size();i++){
+			buttonArray[i] = buttons.get(i);
+		}
+		return waitForEitherButton(buttonArray);
 	}
 
 	public void waitForInput(String key){

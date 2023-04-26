@@ -1,6 +1,8 @@
 import java.awt.Color;
 
-public class UIButton extends UI{
+import javax.swing.JButton;
+
+public class UIButton<T> extends UI{
  
     private String text;
     private int textSize;
@@ -9,6 +11,8 @@ public class UIButton extends UI{
     private int height;
     private double scale;
     public boolean activated = false;
+    private JButton JButton;
+    private T object;
 
     public UIButton(GamePanel gp, int x, int y, Color color, double scale){
         super(gp,x,y);
@@ -66,6 +70,22 @@ public class UIButton extends UI{
 
     public double getScale(){
         return this.scale;
+    }
+
+    public void setJButton(JButton jbutton){
+        this.JButton = jbutton;
+    }
+
+    public JButton getJButton(){
+        return this.JButton;
+    }
+    
+    public void setAccObject(T obj){
+        this.object = obj;
+    }
+
+    public T getAccObject(){
+        return this.object;
     }
 
 }

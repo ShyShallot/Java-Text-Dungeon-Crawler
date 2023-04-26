@@ -2,6 +2,7 @@ import java.util.*;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
@@ -28,6 +29,7 @@ public class GamePanel extends JPanel implements Runnable{
     ArrayList<UIText> UITexts = new ArrayList<>();
     ArrayList<UIButton> UIButtons = new ArrayList<>();
     ArrayList<UIGraphicButton> UIGraphicButtons = new ArrayList<>();
+    ArrayList<UISquare> UISquares = new ArrayList<>();
 
     Scanner input = new Scanner(System.in);
     Game game = new Game();
@@ -98,29 +100,41 @@ public class GamePanel extends JPanel implements Runnable{
         if(Input.wasKeyPressed("Enter")){
             System.out.println("enter was pressed");
         }
-        if(Input.wasKeyPressed("A")){
-            System.out.println("A was pressed");
-        }
-        //game.update();
     }
 
     public void paintComponent(Graphics g){
-        this.removeAll(); // due to the way we draw things, we remove all UI Components, which are things like buttons before we draw.
+        //this.removeAll(); // due to the way we draw things, we remove all UI Components, which are things like buttons before we draw.
         drawCount++;
         super.paintComponent(g);
 
         Graphics2D gD = (Graphics2D)g;
 
         for(int i=0;i<UIButtons.size();i++){
-            if(UIButtons.get(i).isDead()){
+            UIButton UIButton = UIButtons.get(i);
+            if(UIButton.isDead()){
+                //System.out.println(this.getComponentCount());
+                this.remove(UIButton.getJButton());
+                //System.out.println(this.getComponentCount());
                 UIButtons.remove(i);
                 this.repaint();
                 continue;
             }
+            if(UIButton.isHidden()){
+                if(UIButton.getJButton() != null){
+                    this.remove(UIButton.getJButton());
+                }
+                continue;
+            }
+            if(UIButton.getJButton() != null){
+                if(UIButton.xPos() != UIButton.getJButton().getX() || UIButton.yPos() != UIButton.getJButton().getY()){
+                    this.remove(UIButton.getJButton());
+                    UIButton.getJButton().setBounds(UIButton.xPos(),UIButton.yPos(),UIButton.width(),UIButton.height());
+                    this.add(UIButton.getJButton());
+                    continue;
+                }
+                continue;
+            }
             //System.out.println("Creating Button: " + i);
-            UIButton UIButton = UIButtons.get(i);
-
-
             JButton button = new JButton(UIButton.message());
             button.setBounds(UIButton.xPos(), UIButton.yPos(), (int)(UIButton.width()*UIButton.getScale()), (int)(UIButton.height()*UIButton.getScale()));
             button.setVerticalAlignment(SwingConstants.CENTER);
@@ -133,13 +147,21 @@ public class GamePanel extends JPanel implements Runnable{
                     UIButton.activated = true;
                 }
             });
+            UIButton.setJButton(button);
             this.add(button);
         }
 
         for(int i=0;i<UIGraphicButtons.size();i++){
             if(UIGraphicButtons.get(i).isDead()){
+                this.remove(UIGraphicButtons.get(i).getJButton());
                 UIGraphicButtons.remove(i);
                 this.repaint();
+                continue;
+            }
+            if(i >= UIGraphicButtons.size()){
+                continue;
+            }
+            if(UIGraphicButtons.get(i).isHidden() || UIGraphicButtons.get(i).getJButton() != null){
                 continue;
             }
             //System.out.println("Creating G Button: " + i);
@@ -156,6 +178,7 @@ public class GamePanel extends JPanel implements Runnable{
                 }
             });
             this.add(button);
+            UIGButton.setJButton(button);
         }
 
         for(int i=0;i<UIImages.size();i++){
@@ -171,6 +194,9 @@ public class GamePanel extends JPanel implements Runnable{
             UIText curText = UITexts.get(i);
             if(curText.isDead()){
                 UITexts.remove(i);
+                continue;
+            }
+            if(curText.isHidden()){
                 continue;
             }
             //System.out.println(curText.xPos());
@@ -204,6 +230,16 @@ public class GamePanel extends JPanel implements Runnable{
             notif.draw(gD);
             notif.incTime();
         }
+
+        for(int i=0;i<UISquares.size();i++){
+            UISquare square = UISquares.get(i);
+            if(square.isDead()){
+                UISquares.remove(i);
+                continue;
+            }
+            square.draw(gD);
+        }
+
         if(drawCount == 60){
             for(UIButton button : UIButtons){
                 if(button.activated){
@@ -212,7 +248,6 @@ public class GamePanel extends JPanel implements Runnable{
             }
             drawCount = 0;
         }
-        //gD.dispose();
     }
 
     public ArrayList<UIButton> getCreatedButtons(){ // to combine UIButtons and UIGraphicButtons

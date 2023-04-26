@@ -140,9 +140,6 @@ class Player {
 	}
 
 	public void setHand(Item item){
-		if(item.isHeal() || item.isArmor()){
-			return;
-		}
 		this.inHand = item;
 	}
 

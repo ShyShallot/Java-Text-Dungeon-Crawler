@@ -129,4 +129,16 @@ public class CusLib {
         queuedText.clear();
         DebugOutput("Called all queued Text and emptied the queue: " + queuedText.size());
     }
+
+    public static int[] getOccurencesOfChar(String text, String c){
+        ArrayList<Integer> index = new ArrayList<>();
+        for(int i=0;i<text.length();i++){
+            if(text.charAt(i) == c.charAt(0)){
+                index.add(i);
+            }
+        }
+        int[] indexArray = index.stream().mapToInt(i -> i).toArray();
+        return indexArray;
+    }
+
 }
