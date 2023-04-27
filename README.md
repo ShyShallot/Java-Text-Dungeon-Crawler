@@ -9,3 +9,7 @@ Basic 2D Functions for:
   2. Buttons
   3. Notifcations
   4. Image Render
+
+# Basic WIP Anim Creator
+
+https://github.com/ShyShallot/Java-Text-Game-Anim-Creator
