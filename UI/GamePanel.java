@@ -91,8 +91,6 @@ public class GamePanel extends JPanel implements Runnable{
                 drawCount = 0;
                 timer = 0;
             }
-            
-
         }
     }
 
@@ -207,6 +205,17 @@ public class GamePanel extends JPanel implements Runnable{
                 curText.setX((int)((screenWidth-textLength)/2));
             }
             //System.out.println(curText.xPos());
+            if(curText.getAnimation() != null){
+                if(!curText.getAnimation().isDone() && drawCount % curText.getAnimation().getAnimSpeed() == 0){
+                    UIAnim textAnim = curText.getAnimation();
+                    if(curText.isCentered()){
+                        curText.setY((int)(textAnim.getAnimation()[textAnim.getCurKeyframe()][1]*textAnim.getScale()));
+                    } else {
+                        curText.setPos((int)(textAnim.getAnimation()[textAnim.getCurKeyframe()][0]*textAnim.getScale()),(int)(textAnim.getAnimation()[textAnim.getCurKeyframe()][1]*textAnim.getScale()));
+                    }
+                    textAnim.incrementKeyframe();
+                }
+            }
             curText.draw(gD);
         }
 

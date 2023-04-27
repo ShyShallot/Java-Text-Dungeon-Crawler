@@ -5,6 +5,7 @@ public class UISquare extends UI{
     private int width;
     private int height;
     private Color color;
+    private UIAnim animation;
     
     public UISquare(GamePanel gp, int x, int y, int width, int height, Color color){
         super(gp,x,y);
@@ -14,8 +15,18 @@ public class UISquare extends UI{
         gp.UISquares.add(this);
     }
 
+    public UISquare(GamePanel gp, int x, int y, int width, int height, Color color, UIAnim animation){
+        this(gp,x,y,width,height,color);
+        this.animation = animation;
+    }
+
     public UISquare(GamePanel gp, int x, int y, int width, Color color){
         this(gp,x,y,width,width,color);
+    }
+
+    public UISquare(GamePanel gp, int x, int y, int width, Color color, UIAnim animation){
+        this(gp,x,y,width,color);
+        this.animation = animation;
     }
 
     public void draw(Graphics2D gD){
@@ -34,5 +45,9 @@ public class UISquare extends UI{
 
     public Color getColor(){
         return this.color;
+    }
+
+    public UIAnim getAnimation(){
+        return animation;
     }
 }

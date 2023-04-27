@@ -28,6 +28,11 @@ public class UI{
         this.y = y;
     }
 
+    public void setPos(int x, int y){
+        this.x = x;
+        this.y = y;
+    }
+
     public GamePanel getGP(){
         return this.gp;
     }

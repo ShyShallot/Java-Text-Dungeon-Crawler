@@ -46,7 +46,9 @@ class Game implements Runnable{
 		createSpells();
 		playableTypeList = new Type[]{Type.getTypeFromName("Goblin"), Type.getTypeFromName("Knight"), Type.getTypeFromName("Mage")};
 		//System.out.println("Welcome to Defend n Roll, A simple text fight game, where you can either defend for one turn and reduce dmg by 50% or roll. Damage is determined by the difference between the 2 rolls, who ever has the lowest roll, gets the damage.");
-		UIText welcome = new UIText(Main.gp, "Welcome to JDRC! Press Enter to Continue.", 50, Main.gp.screenHeight/2, 30);
+		int yHalf = Main.gp.screenHeight/2;
+		int[][] animFrames = {{50,yHalf},{50,yHalf-5},{50,yHalf-10},{50,yHalf-15},{50,yHalf-20},{50,yHalf-15},{50,yHalf-10},{50,yHalf-5},{50,yHalf}};
+		UIText welcome = new UIText(Main.gp, "Welcome to JDRC! Press Enter to Continue.", 50, Main.gp.screenHeight/2, 30,new UIAnim(animFrames, true,16));
 		welcome.setCentered(true);
 		waitForInput("Enter");
 		System.out.println("Destorying Text");
