@@ -60,4 +60,12 @@ public class UIAnim {
             }
         }
     }
+
+    public int getKeyframeX(){
+        return this.getAnimation()[this.curKeyframe][0];
+    }
+
+    public int getKeyframeY(){
+        return this.getAnimation()[this.curKeyframe][1];
+    }
 }
