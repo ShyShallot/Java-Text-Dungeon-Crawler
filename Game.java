@@ -48,7 +48,9 @@ class Game implements Runnable{
 		//System.out.println("Welcome to Defend n Roll, A simple text fight game, where you can either defend for one turn and reduce dmg by 50% or roll. Damage is determined by the difference between the 2 rolls, who ever has the lowest roll, gets the damage.");
 		int yHalf = Main.gp.screenHeight/2;
 		int[][] animFrames = {{50,yHalf},{50,yHalf-5},{50,yHalf-10},{50,yHalf-15},{50,yHalf-20},{50,yHalf-15},{50,yHalf-10},{50,yHalf-5},{50,yHalf}};
-		UIText welcome = new UIText(Main.gp, "Welcome to JDRC! Press Enter to Continue.", 50, Main.gp.screenHeight/2, 30,new UIAnim(animFrames, true,16));
+		UIText welcome = new UIText(Main.gp, "Welcome to JDRC! Press Enter to Continue.", 50, Main.gp.screenHeight/2, 30);
+		welcome.addAnimation("idle_00", new UIAnim(animFrames, true,16));
+		welcome.playAnimation("idle_00");
 		welcome.setCentered(true);
 		waitForInput("Enter");
 		System.out.println("Destorying Text");
@@ -200,8 +202,6 @@ class Game implements Runnable{
 			return;
 		}
 		//System.out.print("Current Round: " + currentSubRound + ", Your Current Health: " + CusLib.colorText(mainPlayer.getHealth(), "green") + ", Your Current Level: " + CusLib.colorText(mainPlayer.level(),"blue") + " (" + CusLib.colorText(mainPlayer.getXp(),"yellow") + "/" + CusLib.colorText((1000*(mainPlayer.level())),"purple") + ")" + " The " + CusLib.colorText(enemy.getName() + "'s", "red") + " Health: " + CusLib.colorText(enemy.getHealth(), "green") + ", ");
-		UIText roundDisplay = new UIText(Main.gp,"Current Round: " + currentSubRound, 50, 490, 20);
-		UIText healthDisplay = new UIText(Main.gp, "Current Health:%" + mainPlayer.getHealth() + "%", 50, 470, 20, Color.white, Color.GREEN);
 		if(mainPlayer.getType().getName().equals("Mage")){
 			//ActionMage(enemy);
 			return;
@@ -210,7 +210,7 @@ class Game implements Runnable{
 		UIButton itemButton = new UIButton(Main.gp, 410, 450, 150, 50, Color.white, "Inventory" , 20,1);
 		int id = waitForEitherButton(defendButton,itemButton);
 		defendButton.hide(true);
-		itemButton.hide(true);
+		itemButton.hide(true); 
 		if(id == defendButton.ID()){
 			mainPlayer.Defend(currentSubRound);
 			return;
@@ -251,7 +251,7 @@ class Game implements Runnable{
 				continue;
 			}
 			Item curItem = mainPlayer.getInventory().get(i);
-			UIButton<Item> item = new UIButton<>(Main.gp, xOffset, startY, 50, 50, Color.white, "" + curItem.getName(), 10, 1);
+			UIButton item = new UIButton(Main.gp, xOffset, startY, 50, 50, Color.white, "" + curItem.getName(), 10, 1);
 			item.setAccObject(curItem);
 			xOffset += item.width() + 20;
 			if((i+1)%5 == 0){
@@ -581,6 +581,8 @@ class Game implements Runnable{
 			startX += opp.getWidth()/2 + (10+opp.getWidth()); 
 		}
 		while((!mainPlayer.isDead()) && currentRoom.activeNPCS.size() > 0){ 
+			UIText roundDisplay = new UIText(Main.gp,"Current Round: " + currentSubRound, 50, 490, 20);
+			UIText healthDisplay = new UIText(Main.gp, "Current Health:%" + mainPlayer.getHealth() + "%", 50, 470, 20, Color.white, Color.GREEN);
 			for(int i=0;i<currentRoom.activeNPCS.size();i++){
 				stunList.checkStuns();
 				AI currentNPC = currentRoom.activeNPCS.get(i);
@@ -597,8 +599,11 @@ class Game implements Runnable{
 				aiDecideItem(currentNPC);
 				Action(currentNPC);
 				DecideDamage(currentNPC);
+				healthDisplay.update("Current Health:%" + mainPlayer.getHealth() + "%");
 				castList.castSpells();
+				healthDisplay.update("Current Health:%" + mainPlayer.getHealth() + "%");
 				DOTList.dealOutDamage(currentSubRound);
+				healthDisplay.update("Current Health:%" + mainPlayer.getHealth() + "%");
 				CusLib.callQueue(true,false);
 				if(currentNPC.isDead()){
 					//System.out.println(currentNPC.getName() + " has " + currentNPC.getCoins() + " Coins");
@@ -613,6 +618,7 @@ class Game implements Runnable{
 				currentRoom.activeNPCS.GarbageCleanup();
 				healRandomPlayer(currentNPC);
 				currentSubRound++;
+				roundDisplay.update("Current Round: " + currentSubRound);
 			}	
 		}
 		if(over){

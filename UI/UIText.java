@@ -11,8 +11,6 @@ public class UIText extends UI{
     private Color secondaryColor = null;
     private int fontSize;
     private boolean isCentered;
-    private UIAnim animation = null;
-
 
     public UIText(GamePanel gp, String text, int x, int y, int size){
         super(gp,x,y);
@@ -24,19 +22,9 @@ public class UIText extends UI{
         gp.UITexts.add(this);
     }
 
-    public UIText(GamePanel gp, String text, int x, int y, int size, UIAnim animation){
-        this(gp,text,x,y,size);
-        this.animation = animation;
-    }
-
     public UIText(GamePanel gp, String text, int x, int y, int size, Color color){
         this(gp,text,x,y,size);
         this.setColor(color);
-    }
-
-    public UIText(GamePanel gp, String text, int x, int y, int size, Color color, UIAnim animation){
-        this(gp,text,x,y,size,color);
-        this.animation = animation;
     }
 
     public UIText(GamePanel gp, String text, int x, int y, int size, Color color, Color secondaryColor){
@@ -44,10 +32,6 @@ public class UIText extends UI{
         this.secondaryColor = secondaryColor;
     }
 
-    public UIText(GamePanel gp, String text, int x, int y, int size, Color color, Color secondaryColor, UIAnim animation){
-        this(gp,text,x,y,size,color,secondaryColor);
-        this.animation = animation;
-    }
 
     public void draw(Graphics2D gD){
         if(secondaryColor != null){
@@ -108,9 +92,4 @@ public class UIText extends UI{
     public <T> void update(T text){
         this.text = "" + text;
     }
-
-    public UIAnim getAnimation(){
-        return this.animation;
-    }
-
 }

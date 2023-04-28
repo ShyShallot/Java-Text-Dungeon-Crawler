@@ -2,7 +2,7 @@ import java.awt.Color;
 
 import javax.swing.JButton;
 
-public class UIButton<T> extends UI{
+public class UIButton extends UI{
  
     private String text;
     private int textSize;
@@ -12,7 +12,7 @@ public class UIButton<T> extends UI{
     private double scale;
     public boolean activated = false;
     private JButton JButton;
-    private T object;
+    private Object object = null;
 
     public UIButton(GamePanel gp, int x, int y, Color color, double scale){
         super(gp,x,y);
@@ -80,12 +80,28 @@ public class UIButton<T> extends UI{
         return this.JButton;
     }
     
-    public void setAccObject(T obj){
+    public void setAccObject(Object obj){
         this.object = obj;
     }
 
-    public T getAccObject(){
+    public Object getAccObject(){
         return this.object;
+    }
+
+    public void addAnimation(String ref, UIAnim anim){
+        throw new UnsupportedOperationException();
+    }
+
+    public void removeAnimation(String ref){
+        throw new UnsupportedOperationException();
+    }
+
+    public UIAnimList getAnimationsList(){
+        throw new UnsupportedOperationException();
+    }
+
+    public void playAnimation(String ref){
+        throw new UnsupportedOperationException();
     }
 
 }

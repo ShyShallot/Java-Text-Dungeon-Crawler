@@ -4,11 +4,14 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.PrintStream;
 
 //https://www.youtube.com/watch?v=om59cwR7psI
 public class GamePanel extends JPanel implements Runnable{
@@ -30,6 +33,10 @@ public class GamePanel extends JPanel implements Runnable{
     ArrayList<UIButton> UIButtons = new ArrayList<>();
     ArrayList<UIGraphicButton> UIGraphicButtons = new ArrayList<>();
     ArrayList<UISquare> UISquares = new ArrayList<>();
+    HashMap<UI, UIAnim> animationQeue = new HashMap<>();
+
+    //private JTextArea textArea = new JTextArea(15, 30);
+    //private TextAreaOutputStream taOutputStream = new TextAreaOutputStream(textArea, "Test");
 
     Scanner input = new Scanner(System.in);
     Game game = new Game();
@@ -49,6 +56,8 @@ public class GamePanel extends JPanel implements Runnable{
         game.SetupInput(input);
         fpsDisplay = new UIText(this, "", 100, 100, 40);
         fpsDisplay.setColor(Color.white);
+        //add(new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER));
+        //System.setOut(new PrintStream(taOutputStream));
     }
 
     public void startGameThread(){
@@ -204,18 +213,6 @@ public class GamePanel extends JPanel implements Runnable{
                 //System.out.println(screenWidth + " " + textLength);
                 curText.setX((int)((screenWidth-textLength)/2));
             }
-            //System.out.println(curText.xPos());
-            if(curText.getAnimation() != null){
-                if(!curText.getAnimation().isDone() && drawCount % curText.getAnimation().getAnimSpeed() == 0){
-                    UIAnim textAnim = curText.getAnimation();
-                    if(curText.isCentered()){
-                        curText.setY((int)(textAnim.getAnimation()[textAnim.getCurKeyframe()][1]*textAnim.getScale()));
-                    } else {
-                        curText.setPos((int)(textAnim.getAnimation()[textAnim.getCurKeyframe()][0]*textAnim.getScale()),(int)(textAnim.getAnimation()[textAnim.getCurKeyframe()][1]*textAnim.getScale()));
-                    }
-                    textAnim.incrementKeyframe();
-                }
-            }
             curText.draw(gD);
         }
 
@@ -247,6 +244,20 @@ public class GamePanel extends JPanel implements Runnable{
                 continue;
             }
             square.draw(gD);
+        }
+
+        //System.out.println(animationQeue.size());
+        for(Map.Entry<UI,UIAnim> entry : animationQeue.entrySet()){
+            if(entry.getValue().isDone() && !entry.getValue().doesLoop()){
+                continue;
+            }
+            UI element = entry.getKey();
+            UIAnim anim = entry.getValue();
+            if(drawCount % anim.getAnimSpeed() == 0){
+                element.setPos(anim.getKeyframeX(), anim.getKeyframeY());
+                anim.incrementKeyframe();
+            }
+            
         }
 
         if(drawCount == 60){
