@@ -49,7 +49,17 @@ class Game implements Runnable{
 		int yHalf = Main.gp.screenHeight/2;
 		int[][] animFrames = {{50,yHalf},{50,yHalf-5},{50,yHalf-10},{50,yHalf-15},{50,yHalf-20},{50,yHalf-15},{50,yHalf-10},{50,yHalf-5},{50,yHalf}};
 		UIText welcome = new UIText(Main.gp, "Welcome to JDRC! Press Enter to Continue.", 50, Main.gp.screenHeight/2, 30);
-		welcome.addAnimation("idle_00", new UIAnim(animFrames, true,16));
+		UISpriteSheet sheet = new UISpriteSheet("Art/Sprites/TestCube/spritesheet.png", 209,209);
+		int[] anim = new int[sheet.getSpriteChunks().length];
+		for(int i=0;i<sheet.getSpriteChunks().length;i++){
+			//System.out.println(i);
+			anim[i] = i;
+		}
+		UISpriteAnim spriteAnim = new UISpriteAnim(anim, true, 1);
+		UISprite testSquare = new UISprite(Main.gp, 200, 200, 0,sheet,1.1);
+		testSquare.addAnimation("idle_00", spriteAnim);
+		testSquare.playSpriteAnimation("idle_00");
+		welcome.addAnimation("idle_00", new UIAnim(animFrames,true,false,16));
 		welcome.playAnimation("idle_00");
 		welcome.setCentered(true);
 		waitForInput("Enter");
@@ -579,6 +589,10 @@ class Game implements Runnable{
 		for(int i=0;i<currentRoom.activeNPCS.size();i++){
 			UISquare opp = new UISquare(Main.gp, startX, 150, 70, Color.white);
 			startX += opp.getWidth()/2 + (10+opp.getWidth()); 
+			int[][] idleAnim = {{-5,2},{-5,2},{-5,2},{5,-2},{5,-2},{5,-2}};
+			opp.addAnimation("idle_00", new UIAnim(idleAnim,13,true,1.0,0.8));
+			opp.playAnimation("idle_00");
+			currentRoom.activeNPCS.get(i).setGraphicParent(opp);
 		}
 		while((!mainPlayer.isDead()) && currentRoom.activeNPCS.size() > 0){ 
 			UIText roundDisplay = new UIText(Main.gp,"Current Round: " + currentSubRound, 50, 490, 20);
@@ -598,6 +612,7 @@ class Game implements Runnable{
 				currentNPC.AIAction();
 				aiDecideItem(currentNPC);
 				Action(currentNPC);
+				currentNPC.getGraphicParent().stopAnimation();
 				DecideDamage(currentNPC);
 				healthDisplay.update("Current Health:%" + mainPlayer.getHealth() + "%");
 				castList.castSpells();
@@ -616,6 +631,7 @@ class Game implements Runnable{
 					break;
 				}
 				currentRoom.activeNPCS.GarbageCleanup();
+				currentNPC.getGraphicParent().playAnimation("idle_00");
 				healRandomPlayer(currentNPC);
 				currentSubRound++;
 				roundDisplay.update("Current Round: " + currentSubRound);

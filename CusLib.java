@@ -46,6 +46,14 @@ public class CusLib {
 		return ran;
 	}
 
+    public static int NoP(){
+        double rand = Math.random();
+        if(rand > 0.5){
+            return 1;
+        }
+        return -1;
+    }
+
 
     public static <T> String colorText(T text, String color){
         String finalColor = getColor(color);

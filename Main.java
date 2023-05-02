@@ -8,7 +8,6 @@ class Main {
 		BaseFrame ui = new BaseFrame();
 		gp = ui.gamePanel;
 		ui.frame();
-		
   	}
 
 	public static void Testing(){

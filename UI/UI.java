@@ -2,10 +2,12 @@ public class UI{
 
     private GamePanel gp;
     private int x,y;
+    private int baseX,baseY;
     private boolean destory = false;
     private boolean hide = false;
     private int id;
     private UIAnimList animList = new UIAnimList();
+    private boolean isAnimPlaying;
 
     public UI(GamePanel gp, int x, int y){
         this.gp = gp;
@@ -75,11 +77,25 @@ public class UI{
     }
 
     public void playAnimation(String ref){
+        if(Main.gp.animationQeue.containsKey(this)){
+            return;
+        }
+        this.baseX = this.xPos();
+        this.baseY = this.yPos();
+        //if(this.isAnimPlaying){
+        //    return;
+        //}
         if(!this.animList.containsAnim(ref)){
             return;
         }
         UIAnim anim = this.animList.getAnimation(ref);
         Main.gp.animationQeue.put(this,anim);
+        this.isAnimPlaying = true;
+    }
+
+    public void stopAnimation(){
+        Main.gp.animationQeue.remove(this);
+        this.setPos(baseX, baseY);
     }
 
 }

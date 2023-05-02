@@ -26,6 +26,7 @@ public class GamePanel extends JPanel implements Runnable{
     final int screenHeight = tileSize * maxScreenRow;
     final int FPS = 60;
     private int drawCount;
+    private double delta = 0;
     
     ArrayList<UIImage> UIImages = new ArrayList<>();
     ArrayList<UINotifcation> UINotifcations = new ArrayList<>();
@@ -33,7 +34,9 @@ public class GamePanel extends JPanel implements Runnable{
     ArrayList<UIButton> UIButtons = new ArrayList<>();
     ArrayList<UIGraphicButton> UIGraphicButtons = new ArrayList<>();
     ArrayList<UISquare> UISquares = new ArrayList<>();
+    ArrayList<UISprite> UISprites = new ArrayList<>();
     HashMap<UI, UIAnim> animationQeue = new HashMap<>();
+    HashMap<UISprite, UISpriteAnim> spriteQueue = new HashMap<>();
 
     //private JTextArea textArea = new JTextArea(15, 30);
     //private TextAreaOutputStream taOutputStream = new TextAreaOutputStream(textArea, "Test");
@@ -71,7 +74,7 @@ public class GamePanel extends JPanel implements Runnable{
     public void run(){
 
         double drawInterval = 1000000000/FPS;
-        double delta = 0;
+        
         long lastTime = System.nanoTime();
         long currentTime;
         long timer = 0;
@@ -112,9 +115,9 @@ public class GamePanel extends JPanel implements Runnable{
     public void paintComponent(Graphics g){
         //this.removeAll(); // due to the way we draw things, we remove all UI Components, which are things like buttons before we draw.
         drawCount++;
-        super.paintComponent(g);
-
         Graphics2D gD = (Graphics2D)g;
+        gD.clearRect(0, 0, this.screenWidth, this.screenHeight);
+        super.paintComponent(g);
 
         for(int i=0;i<UIButtons.size();i++){
             UIButton UIButton = UIButtons.get(i);
@@ -196,6 +199,14 @@ public class GamePanel extends JPanel implements Runnable{
             UIImages.get(i).draw(gD);
         }
 
+        for(int i=0;i<UISprites.size();i++){
+            if(UISprites.get(i).isDead()){
+                UISprites.remove(i);
+                continue;
+            }
+            UISprites.get(i).draw(gD);
+        }
+
         //System.out.println(UITexts.size());
         for(int i=0;i<UITexts.size();i++){
             UIText curText = UITexts.get(i);
@@ -249,15 +260,44 @@ public class GamePanel extends JPanel implements Runnable{
         //System.out.println(animationQeue.size());
         for(Map.Entry<UI,UIAnim> entry : animationQeue.entrySet()){
             if(entry.getValue().isDone() && !entry.getValue().doesLoop()){
+                System.out.println("Anim does not loop skipping");
+                animationQeue.remove(entry.getKey());
                 continue;
             }
             UI element = entry.getKey();
             UIAnim anim = entry.getValue();
-            if(drawCount % anim.getAnimSpeed() == 0){
-                element.setPos(anim.getKeyframeX(), anim.getKeyframeY());
+            double animDelta = ((double)anim.getAnimSpeed()/(double)FPS)*delta;
+            int randIncrecment = 0;
+            if(anim.isRandom()){
+                randIncrecment = (int)(CusLib.randomNum(0.01, 0.1)*10);
+            }
+            if(drawCount % (anim.getAnimSpeed() + randIncrecment) == 0){
+                if(anim.isAdditive()){
+                    //System.out.println(anim.getKeyframeX());
+                    element.setPos(element.xPos()+anim.getKeyframeX(), element.yPos()+anim.getKeyframeY());
+                } else {
+                    element.setPos(anim.getKeyframeX(), anim.getKeyframeY());
+                }
+                
                 anim.incrementKeyframe();
             }
-            
+        }
+
+        for(Map.Entry<UISprite, UISpriteAnim> entry : spriteQueue.entrySet()){
+            if(entry.getValue().isDone() && !entry.getValue().doesLoop()){
+                spriteQueue.remove(entry.getKey());
+                continue;
+            }
+            UISprite sprite = entry.getKey();
+            UISpriteAnim anim = entry.getValue();
+
+            if(drawCount % anim.getAnimSpeed() == 0){
+                if(anim.getKeyframe() >= sprite.getParentSheet().getSpriteChunks().length){
+                    continue;
+                }
+                sprite.updateSprite(sprite.getParentSheet().getSprite(anim.getKeyframe()));
+                anim.incrementKeyframe();
+            }
         }
 
         if(drawCount == 60){
