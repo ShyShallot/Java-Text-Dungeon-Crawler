@@ -4,7 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.nio.Buffer;
 
-public class UIImage extends UI{
+public class UIImage extends UIAnimatable{
     
     private BufferedImage image;
     private int xScale;

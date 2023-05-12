@@ -7,8 +7,11 @@ public class Dagger extends Bite{
         if(user.getName().equals("You")){
             this.setDamageString(" Stabbed ");
         }
-        CusLib.queueText(user.getName() + this.damageString() + target.getName() + "!");
+        //CusLib.queueText(user.getName() + this.damageString() + target.getName() + "!");
         target.Damage(this.getDamage(), this.getDamageType(),user);
         Game.DOTList.addPlayer(target, this.poisonDamage(), 5, this.poisonLasts(), Game.currentSubRound);
+        String text = user.getName() + this.damageString() + target.getName() + "!";
+        this.visualNotify(text, 300, Main.gp.screenHeight/2);
+        
     } 
 }

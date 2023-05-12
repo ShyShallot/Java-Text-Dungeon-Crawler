@@ -27,6 +27,7 @@ public class GamePanel extends JPanel implements Runnable{
     final int FPS = 60;
     private int drawCount;
     private double delta = 0;
+    HashMap<String,int[]> positionBaseTable = new HashMap<>();
     
     ArrayList<UIImage> UIImages = new ArrayList<>();
     ArrayList<UINotifcation> UINotifcations = new ArrayList<>();
@@ -35,7 +36,7 @@ public class GamePanel extends JPanel implements Runnable{
     ArrayList<UIGraphicButton> UIGraphicButtons = new ArrayList<>();
     ArrayList<UISquare> UISquares = new ArrayList<>();
     ArrayList<UISprite> UISprites = new ArrayList<>();
-    HashMap<UI, UIAnim> animationQeue = new HashMap<>();
+    HashMap<UIAnimatable, UIAnim> animationQeue = new HashMap<>();
     HashMap<UISprite, UISpriteAnim> spriteQueue = new HashMap<>();
 
     //private JTextArea textArea = new JTextArea(15, 30);
@@ -57,10 +58,11 @@ public class GamePanel extends JPanel implements Runnable{
         this.addKeyListener(Main.keyHandler);
         this.setFocusable(true);
         game.SetupInput(input);
-        fpsDisplay = new UIText(this, "", 100, 100, 40);
+        fpsDisplay = new UIText(this, "%c", 100, 100, 40, 0);
         fpsDisplay.setColor(Color.white);
         //add(new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER));
         //System.setOut(new PrintStream(taOutputStream));
+        positionBaseTable.put("damage_notif",new int[]{300,200});
     }
 
     public void startGameThread(){
@@ -97,9 +99,8 @@ public class GamePanel extends JPanel implements Runnable{
                 drawCount++;
             }
 
-            //System.out.println(timer);
             if(timer >= 1000000000){
-                fpsDisplay.updateText(drawCount);
+                fpsDisplay.update(drawCount);
                 drawCount = 0;
                 timer = 0;
             }
@@ -118,6 +119,15 @@ public class GamePanel extends JPanel implements Runnable{
         Graphics2D gD = (Graphics2D)g;
         gD.clearRect(0, 0, this.screenWidth, this.screenHeight);
         super.paintComponent(g);
+
+        for(int i=0;i<UISquares.size();i++){
+            UISquare square = UISquares.get(i);
+            if(square.isDead()){
+                UISquares.remove(i);
+                continue;
+            }
+            square.draw(gD);
+        }
 
         for(int i=0;i<UIButtons.size();i++){
             UIButton UIButton = UIButtons.get(i);
@@ -248,17 +258,8 @@ public class GamePanel extends JPanel implements Runnable{
             notif.incTime();
         }
 
-        for(int i=0;i<UISquares.size();i++){
-            UISquare square = UISquares.get(i);
-            if(square.isDead()){
-                UISquares.remove(i);
-                continue;
-            }
-            square.draw(gD);
-        }
-
         //System.out.println(animationQeue.size());
-        for(Map.Entry<UI,UIAnim> entry : animationQeue.entrySet()){
+        for(Map.Entry<UIAnimatable,UIAnim> entry : animationQeue.entrySet()){
             if(entry.getValue().isDone() && !entry.getValue().doesLoop()){
                 System.out.println("Anim does not loop skipping");
                 animationQeue.remove(entry.getKey());
@@ -266,7 +267,8 @@ public class GamePanel extends JPanel implements Runnable{
             }
             UI element = entry.getKey();
             UIAnim anim = entry.getValue();
-            double animDelta = ((double)anim.getAnimSpeed()/(double)FPS)*delta;
+
+            //double animDelta = ((double)anim.getAnimSpeed()/(double)FPS)*delta;
             int randIncrecment = 0;
             if(anim.isRandom()){
                 randIncrecment = (int)(CusLib.randomNum(0.01, 0.1)*10);

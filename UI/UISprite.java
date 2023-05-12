@@ -2,7 +2,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.nio.Buffer;
 
-public class UISprite extends UI{
+public class UISprite extends UIAnimatable{
 
     private BufferedImage sprite;
     private UISpriteSheet parentSheet;

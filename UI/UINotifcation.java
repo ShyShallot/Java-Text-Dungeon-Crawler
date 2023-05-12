@@ -3,10 +3,10 @@ import java.awt.*;
 public class UINotifcation extends UIText{
     
     public boolean show = false;
-    private int timeToShow;
-    private int time = 0;
+    private double timeToShow;
+    private double time = 0;
 
-    public UINotifcation(GamePanel gp, String text, int x, int y, int size, int seconds){
+    public UINotifcation(GamePanel gp, String text, int x, int y, int size, double seconds){
         super(gp,text,x,y,size);
         this.timeToShow = seconds;
         this.setID(gp.UINotifcations.size());
@@ -30,11 +30,11 @@ public class UINotifcation extends UIText{
         this.show = true;
     }
 
-    public int timeToShow(){
+    public double timeToShow(){
         return this.timeToShow;
     }
 
-    public int time(){
+    public double time(){
         return this.time;
     }
 

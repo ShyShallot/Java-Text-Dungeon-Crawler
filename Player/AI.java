@@ -2,19 +2,10 @@ import java.text.DecimalFormat;
 import java.util.*;
 class AI extends Player {
 
-	private UISquare graphicElement;
-
 	public AI(String name, Type type) {
 		super(name, type);
 	}
 
-	public void setGraphicParent(UISquare parent){
-		this.graphicElement = parent;
-	}
-
-	public UISquare getGraphicParent(){
-		return this.graphicElement;
-	}
 
 	public void shouldDefend(boolean isPlayerHoldingGround) { // AI FUNC only
 		if (Game.currentSubRound - this.lastRoundDefended() < 2) {

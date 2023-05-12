@@ -17,6 +17,8 @@ class Player {
 	private Spell spell;
 	private Type type;
 	private HashMap<String, Skill> skills = new HashMap<>();
+	private UIAnimatable graphicElement;
+	
 
 	public Player(String name, Type type){
 		this.name = name;
@@ -50,6 +52,14 @@ class Player {
 		this.type.getStatProps().setHealth(health, maxHealth);
 	}
 
+	public void setGraphicParent(UIAnimatable parent){
+		this.graphicElement = parent;
+	}
+
+	public UIAnimatable getGraphicParent(){
+		return this.graphicElement;
+	}
+
 	public void Defend(int currentRound){
 		this.holdingGround = true;
 		this.lastRoundDefended = currentRound;
@@ -61,8 +71,10 @@ class Player {
 		this.health += hp;
 		if(this.health >= this.maxHealth){
 			this.health = this.maxHealth;
+			healEvent();
 			return;
 		}
+		healEvent();
 	}
 
 	public void Damage(int dmg, int dmgType, Player dealer){
@@ -97,6 +109,8 @@ class Player {
 		} else {
 			CusLib.queueText(String.format("%s dealt %s damage to %s! (%s --> %s)",dealer.getName(),CusLib.colorText(dmg,"red"),this.getName(),CusLib.colorText(this.health+dmg,"green"),CusLib.colorText(this.health, "green")));
 		}
+
+		this.damageEvent();
 	}
 
 	public void Damage(int dmg){
@@ -118,6 +132,29 @@ class Player {
 			this.health = 0;
 			this.dead = true;
 
+		}
+		this.damageEvent();
+	}
+
+	public void damageEvent(){
+		updateHealthBar();
+	}
+
+	public void healEvent(){
+		updateHealthBar();
+	}
+
+	public void updateHealthBar(){
+		if(this.graphicElement != null){
+			if(this.graphicElement.getChild("health_bar") == null){
+				return;
+			}
+			UISquare healthBar = (UISquare)this.graphicElement.getChild("health_bar");
+			healthBar.setWidth((int)((double)healthBar.getWidth() * (double)(this.healthPercentage()/100.0)));
+			if(healthBar.getChild("health_bar_text") != null){
+				UIText healthBarText = (UIText)healthBar.getChild("health_bar_text");
+				healthBarText.update(this.getHealth(),this.getMaxHealth());
+			}
 		}
 	}
 
@@ -153,6 +190,7 @@ class Player {
 		int xp = (int)((CusLib.randomNum(100, 250))*(CusLib.randomNum(1, 2.5)));
 		xp += CusLib.randomNum(-100, 100);
 		this.giveXp(xp);
+		playerKilled.death();
 	}
 
 	public void killedBoss(Boss bossKilled){
@@ -165,6 +203,9 @@ class Player {
 
 	public void death(){
 		this.dead = true;
+		if(this.graphicElement != null){
+			this.graphicElement.destory();
+		}
 	}
 
 	public int healthPercentage(){

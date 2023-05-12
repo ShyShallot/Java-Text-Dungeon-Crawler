@@ -1,7 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-public class UISquare extends UI{
+public class UISquare extends UIAnimatable {
     private int width;
     private int height;
     private Color color;
@@ -29,8 +29,16 @@ public class UISquare extends UI{
         return this.width;
     }
 
+    public void setWidth(int width){
+        this.width = width;
+    }
+
     public int getHeight(){
         return this.height;
+    }
+
+    public void setHeight(int height){
+        this.height = height;
     }
 
     public Color getColor(){

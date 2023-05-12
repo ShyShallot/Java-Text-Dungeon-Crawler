@@ -88,20 +88,4 @@ public class UIButton extends UI{
         return this.object;
     }
 
-    public void addAnimation(String ref, UIAnim anim){
-        throw new UnsupportedOperationException();
-    }
-
-    public void removeAnimation(String ref){
-        throw new UnsupportedOperationException();
-    }
-
-    public UIAnimList getAnimationsList(){
-        throw new UnsupportedOperationException();
-    }
-
-    public void playAnimation(String ref){
-        throw new UnsupportedOperationException();
-    }
-
 }

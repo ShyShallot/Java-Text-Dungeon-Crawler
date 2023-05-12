@@ -15,7 +15,7 @@ class Main {
 		game.createSkills();
 		game.createTypes();
 		game.createSpells();
-		//SkillsTree.printSkillsTree(SkillsTree.getSkillFromName("Weather 2"));
+		//SkillsTree.printSkillsTree(SkillsTree.getSkillFromName("Weather 2")); 
 		//game.TestWeights();
 	}
 }

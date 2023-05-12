@@ -94,11 +94,18 @@ public class CusLib {
         }
     }
 
+    public static void DebugOutputLn(){
+        if(Main.debugMode){
+            System.out.println();
+        }
+    }
+
     public static <T> void DebugOutput(T text){
         if(Main.debugMode){
             System.out.print(text);
         }
     }
+
 
     public static <T> void advanceTextLn(T text){
         System.out.println(text);
@@ -147,6 +154,29 @@ public class CusLib {
         }
         int[] indexArray = index.stream().mapToInt(i -> i).toArray();
         return indexArray;
+    }
+
+    public static int getOccurencesOfString(String text, String check){
+        int count = 0;
+        String[] splitString = text.split(" ");
+        for(int i=0;i<splitString.length;i++){
+            if(splitString[i].equals(check)){
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public static int getSpeicalCharCount(String text, char first, char second){
+        int count = 0;
+        for(int i=0;i<text.length()-1;i++){
+            String comb = String.valueOf(text.charAt(i)) + String.valueOf(text.charAt(i+1));
+            //System.out.println(comb);
+            if(comb.equals(String.valueOf(first)+String.valueOf(second))){
+                count++;
+            }
+        }
+        return count;
     }
 
 }

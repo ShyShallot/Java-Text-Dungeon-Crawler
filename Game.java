@@ -49,7 +49,7 @@ class Game implements Runnable{
 		int yHalf = Main.gp.screenHeight/2;
 		int[][] animFrames = {{50,yHalf},{50,yHalf-5},{50,yHalf-10},{50,yHalf-15},{50,yHalf-20},{50,yHalf-15},{50,yHalf-10},{50,yHalf-5},{50,yHalf}};
 		UIText welcome = new UIText(Main.gp, "Welcome to JDRC! Press Enter to Continue.", 50, Main.gp.screenHeight/2, 30);
-		UISpriteSheet sheet = new UISpriteSheet("Art/Sprites/TestCube/spritesheet.png", 209,209);
+		/*UISpriteSheet sheet = new UISpriteSheet("Art/Sprites/TestCube/spritesheet2.png", 202,202);
 		int[] anim = new int[sheet.getSpriteChunks().length];
 		for(int i=0;i<sheet.getSpriteChunks().length;i++){
 			//System.out.println(i);
@@ -58,7 +58,7 @@ class Game implements Runnable{
 		UISpriteAnim spriteAnim = new UISpriteAnim(anim, true, 1);
 		UISprite testSquare = new UISprite(Main.gp, 200, 200, 0,sheet,1.1);
 		testSquare.addAnimation("idle_00", spriteAnim);
-		testSquare.playSpriteAnimation("idle_00");
+		testSquare.playSpriteAnimation("idle_00");*/
 		welcome.addAnimation("idle_00", new UIAnim(animFrames,true,false,16));
 		welcome.playAnimation("idle_00");
 		welcome.setCentered(true);
@@ -216,8 +216,8 @@ class Game implements Runnable{
 			//ActionMage(enemy);
 			return;
 		}
-		UIButton defendButton = new UIButton(Main.gp, 300, 450, 100, 50, Color.white, "Defend", 20, 1);
-		UIButton itemButton = new UIButton(Main.gp, 410, 450, 150, 50, Color.white, "Inventory" , 20,1);
+		UIButton defendButton = new UIButton(Main.gp, 320, 450, 100, 50, Color.white, "Defend", 20, 1);
+		UIButton itemButton = new UIButton(Main.gp, 430, 450, 150, 50, Color.white, "Inventory" , 20,1);
 		int id = waitForEitherButton(defendButton,itemButton);
 		defendButton.hide(true);
 		itemButton.hide(true); 
@@ -588,6 +588,10 @@ class Game implements Runnable{
 		int startX = 150;
 		for(int i=0;i<currentRoom.activeNPCS.size();i++){
 			UISquare opp = new UISquare(Main.gp, startX, 150, 70, Color.white);
+			UISquare oppChild = new UISquare(Main.gp, startX, 225,opp.getWidth(), 8, Color.RED);
+			UIText healthbarText = new UIText(Main.gp, ("%s" + "%c" + "%s" + "/" + "%s" + "%c" + "%s"), oppChild.xPos(), oppChild.yPos()+oppChild.getHeight(), 12,Color.white, Color.GREEN,currentRoom.activeNPCS.get(i).getHealth(),currentRoom.activeNPCS.get(i).getMaxHealth());
+			oppChild.setParent(opp, "health_bar");
+			healthbarText.setParent(oppChild, "health_bar_text");
 			startX += opp.getWidth()/2 + (10+opp.getWidth()); 
 			int[][] idleAnim = {{-5,2},{-5,2},{-5,2},{5,-2},{5,-2},{5,-2}};
 			opp.addAnimation("idle_00", new UIAnim(idleAnim,13,true,1.0,0.8));
@@ -595,8 +599,9 @@ class Game implements Runnable{
 			currentRoom.activeNPCS.get(i).setGraphicParent(opp);
 		}
 		while((!mainPlayer.isDead()) && currentRoom.activeNPCS.size() > 0){ 
-			UIText roundDisplay = new UIText(Main.gp,"Current Round: " + currentSubRound, 50, 490, 20);
-			UIText healthDisplay = new UIText(Main.gp, "Current Health:%" + mainPlayer.getHealth() + "%", 50, 470, 20, Color.white, Color.GREEN);
+			UIText roundDisplay = new UIText(Main.gp,"Current Round: " + "%c", 50, 490, 20, currentSubRound);
+			UIText healthDisplay = new UIText(Main.gp, "Current Health:%s" + "%c" + "%s", 50, 470, 12, Color.white, Color.GREEN, mainPlayer.getHealth());
+			UIText handText = new UIText(Main.gp,"Current Item in Hand: " + "%c", 50, 510, 20,mainPlayer.getHand().getName());
 			for(int i=0;i<currentRoom.activeNPCS.size();i++){
 				stunList.checkStuns();
 				AI currentNPC = currentRoom.activeNPCS.get(i);
@@ -612,17 +617,19 @@ class Game implements Runnable{
 				currentNPC.AIAction();
 				aiDecideItem(currentNPC);
 				Action(currentNPC);
+				handText.update(mainPlayer.getHand().getName());
 				currentNPC.getGraphicParent().stopAnimation();
 				DecideDamage(currentNPC);
-				healthDisplay.update("Current Health:%" + mainPlayer.getHealth() + "%");
+				healthDisplay.update(mainPlayer.getHealth());
 				castList.castSpells();
-				healthDisplay.update("Current Health:%" + mainPlayer.getHealth() + "%");
+				healthDisplay.update(mainPlayer.getHealth());
 				DOTList.dealOutDamage(currentSubRound);
-				healthDisplay.update("Current Health:%" + mainPlayer.getHealth() + "%");
+				healthDisplay.update(mainPlayer.getHealth());
 				CusLib.callQueue(true,false);
 				if(currentNPC.isDead()){
 					//System.out.println(currentNPC.getName() + " has " + currentNPC.getCoins() + " Coins");
 					mainPlayer.killedPlayer(currentNPC);
+					i--;
 				}
 				if(mainPlayer.isDead()){
 					over = true;
@@ -634,7 +641,7 @@ class Game implements Runnable{
 				currentNPC.getGraphicParent().playAnimation("idle_00");
 				healRandomPlayer(currentNPC);
 				currentSubRound++;
-				roundDisplay.update("Current Round: " + currentSubRound);
+				roundDisplay.update(currentSubRound);
 			}	
 		}
 		if(over){
