@@ -7,7 +7,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
-
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,6 +39,7 @@ public class GamePanel extends JPanel implements Runnable{
     ArrayList<UISprite> UISprites = new ArrayList<>();
     HashMap<UIAnimatable, UIAnim> animationQeue = new HashMap<>();
     HashMap<UISprite, UISpriteAnim> spriteQueue = new HashMap<>();
+    ArrayList<QueuedText> TextNotifQueue = new ArrayList<>();
 
     //private JTextArea textArea = new JTextArea(15, 30);
     //private TextAreaOutputStream taOutputStream = new TextAreaOutputStream(textArea, "Test");
@@ -62,7 +64,8 @@ public class GamePanel extends JPanel implements Runnable{
         fpsDisplay.setColor(Color.white);
         //add(new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER));
         //System.setOut(new PrintStream(taOutputStream));
-        positionBaseTable.put("damage_notif",new int[]{300,200});
+        positionBaseTable.put("damage_notif",new int[]{300,350});
+        positionBaseTable.put("notif_area",new int[]{500,300});
     }
 
     public void startGameThread(){
@@ -118,6 +121,7 @@ public class GamePanel extends JPanel implements Runnable{
         drawCount++;
         Graphics2D gD = (Graphics2D)g;
         gD.clearRect(0, 0, this.screenWidth, this.screenHeight);
+        this.repaint();
         super.paintComponent(g);
 
         for(int i=0;i<UISquares.size();i++){
@@ -302,7 +306,8 @@ public class GamePanel extends JPanel implements Runnable{
             }
         }
 
-        if(drawCount == 60){
+        checkTextQueue(gD);
+        if(drawCount == FPS){
             for(UIButton button : UIButtons){
                 if(button.activated){
                     button.activated = false;
@@ -317,6 +322,79 @@ public class GamePanel extends JPanel implements Runnable{
         allButtons.addAll(UIButtons);
         allButtons.addAll(UIGraphicButtons);
         return allButtons;
+    }
+
+    public void checkTextQueue(Graphics2D g){
+        for(int i=0;i<TextNotifQueue.size();i++){
+            QueuedText textContainer = TextNotifQueue.get(i);
+            UIText text = textContainer.getText();
+            int position = textContainer.getQueuePosition();
+            System.out.println(position);
+            if(position > 4){
+                break;
+            }
+            //System.out.println("Text " + text.ID() + " Position: " + position);
+            int secondsLeft = textContainer.getSecondsLeft();
+            //System.out.println(secondsLeft);
+            text.hide(false);
+            int textWidth = g.getFontMetrics(new Font("Arial",Font.PLAIN,text.fontSize())).stringWidth(text.getMessage());
+            int textHeight = (int)(new Font("Arial",Font.PLAIN,text.fontSize()).getLineMetrics(text.getMessage(),g.getFontRenderContext()).getHeight());
+            text.setFontSize(15);
+            text.setPos(positionBaseTable.get("notif_area")[0], positionBaseTable.get("notif_area")[1]+(int)(textHeight*position));
+            if(secondsLeft == 0){
+                //System.out.println("removing text");
+                text.destory();
+                for(int y=i+1;y<TextNotifQueue.size();y++){
+                    //System.out.println("Old Position in Queue: " + TextNotifQueue.get(y).getQueuePosition());
+                    TextNotifQueue.get(y).changePositionInQueue(TextNotifQueue.get(y).getQueuePosition()-1);
+                    textHeight = (int)(new Font("Arial",Font.PLAIN,TextNotifQueue.get(y).getText().fontSize()).getLineMetrics(TextNotifQueue.get(y).getText().getMessage(),g.getFontRenderContext()).getHeight());
+                    TextNotifQueue.get(y).getText().setY(positionBaseTable.get("notif_area")[1]+(int)(textHeight*position));
+                    //System.out.println("New Position in Queue: " + TextNotifQueue.get(y).getQueuePosition());
+                }
+                TextNotifQueue.remove(i);
+                break;
+            }
+            if(drawCount == FPS){
+                TextNotifQueue.get(i).deIncrementSeconds();
+            }
+        }
+    } 
+
+    public void queueText(UIText text){
+        TextNotifQueue.add(new QueuedText(text, 10, TextNotifQueue.size()));
+    }
+}
+
+
+class QueuedText {
+    private UIText text;
+    private int secondsLeft;
+    private int positionInQueue;
+
+    public QueuedText(UIText text, int secondtoShow, int position){
+        this.text = text;
+        this.secondsLeft = secondtoShow;
+        this.positionInQueue = position;
+    }
+
+    public UIText getText(){
+        return this.text;
+    }
+
+    public int getQueuePosition(){
+        return this.positionInQueue;
+    }
+
+    public int getSecondsLeft(){
+        return this.secondsLeft;
+    }
+
+    public void deIncrementSeconds(){
+        this.secondsLeft -= 1;
+    }
+
+    public void changePositionInQueue(int newPos){
+        this.positionInQueue = newPos;
     }
 
 }

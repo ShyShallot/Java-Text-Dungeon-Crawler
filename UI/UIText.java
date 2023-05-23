@@ -71,7 +71,8 @@ public class UIText extends UIAnimatable{
         String replacedText = this.text;
         if(this.variableArray.length > 0){
             for(int i=0;i<this.variableArray.length;i++){
-                replacedText = this.text.replace("%c","" + this.variableArray[i]);
+                replacedText = replacedText.replaceFirst("%c",""+this.variableArray[i]);
+                //System.out.println(replacedText);
             }
         }
         gD.setFont(new Font("Arial", Font.PLAIN, this.fontSize));
@@ -97,31 +98,42 @@ public class UIText extends UIAnimatable{
         //CusLib.DebugOutputLn(indexs.length);
         int count = 0;
         //CusLib.DebugOutputLn(split.length);
-        /*for(int i=0;i<split.length;i++){
-            System.out.print("0"+split[i] + "/");
-        }*/
+        for(int i=0;i<split.length;i++){
+            CusLib.DebugOutput("0"+split[i] + "/");
+        }
         CusLib.DebugOutputLn();
         
-        if(split.length == 2 ){
+        if(split.length == 2 || indexs.length == 2){
             for(int i=0;i<split.length;i++){
+                if(count >= indexs.length){
+                    if(split.length > indexs.length){
+                        finalString += split[i];
+                    } else {
+                        continue;
+                    }
+                }
                 finalString += split[i];
                 indexs[count] = finalString.length();
                 count++;
             }
         } else {
             for(int i=0;i<split.length;i++){
+                if(count >= indexs.length){
+                    continue;
+                }
                 if(i > 0){
-                    CusLib.DebugOutputLn(finalString.length());
+                    CusLib.DebugOutputLn("String Length: " + finalString.length());
                     indexs[count] = finalString.length();
-                    CusLib.DebugOutputLn(split[i]);
+                    CusLib.DebugOutputLn("Current Split: " + split[i]);
                     finalString += " " + split[i];
                     count++;
                 } else if( i== 0) {
-                    CusLib.DebugOutputLn(split[i]);
+                    CusLib.DebugOutputLn("Current Split: " + split[i]);
                     if(split[i].equals("")){
                         continue;
                     }
                     finalString += split[i];
+                    CusLib.DebugOutputLn("String Length: " + finalString.length());
                     indexs[count] = finalString.length();
                     count++;
                 }
@@ -142,6 +154,7 @@ public class UIText extends UIAnimatable{
         attributedText.addAttribute(TextAttribute.SIZE, this.fontSize, 0, finalString.length()-1);
         for(int i=0;i<indexs.length;i+=2){
             CusLib.DebugOutputLn(finalString);
+            CusLib.DebugOutputLn("Subtring Start: " + indexs[i] + ", Substring End: " + indexs[i+1]);
             //CusLib.DebugOutputLn(indexs[i] + "&&" + indexs[i+1] + "/" + finalString.length());
             attributedText.addAttribute(TextAttribute.FOREGROUND, this.secondaryColor, indexs[i], indexs[i+1]);
         }
@@ -172,6 +185,10 @@ public class UIText extends UIAnimatable{
 
     public int fontSize(){
         return this.fontSize;
+    }
+
+    public void setFontSize(int size){
+        this.fontSize = size;
     }
 
     public void setCentered(boolean shouldCenter){

@@ -129,6 +129,14 @@ public class CusLib {
         DebugOutputLn("Added new Text ID " + (queuedText.size()-1) + " to queue.");
     }
 
+    public static void queueText(UIText text){
+        text.getAnimationsList().getAnimationsList().clear();
+        text.setPos(0,0);
+        text.hide(true);
+        text.setCentered(false);
+        Main.gp.queueText(text);
+    }
+
     public static void callQueue(boolean advance, boolean newLine){
         CusLib.DebugOutputLn("Calling Queue");
         for(int i=0;i<queuedText.size();i++){

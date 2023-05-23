@@ -611,9 +611,9 @@ class Game implements Runnable{
 				if(currentSubRound > currentNPC.lastRoundDefended()+1){
 					currentNPC.unDefend();
 				}
-				System.out.println();
-				printOpponents();
-				System.out.println("Current Opponent: " + CusLib.colorText(currentNPC.getName(), "red"));
+				//System.out.println();
+				//printOpponents();
+				//System.out.println("Current Opponent: " + CusLib.colorText(currentNPC.getName(), "red"));
 				currentNPC.AIAction();
 				aiDecideItem(currentNPC);
 				Action(currentNPC);
@@ -625,7 +625,7 @@ class Game implements Runnable{
 				healthDisplay.update(mainPlayer.getHealth());
 				DOTList.dealOutDamage(currentSubRound);
 				healthDisplay.update(mainPlayer.getHealth());
-				CusLib.callQueue(true,false);
+				//CusLib.callQueue(true,false);
 				if(currentNPC.isDead()){
 					//System.out.println(currentNPC.getName() + " has " + currentNPC.getCoins() + " Coins");
 					mainPlayer.killedPlayer(currentNPC);

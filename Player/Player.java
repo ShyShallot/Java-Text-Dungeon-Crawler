@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.util.*;
 class Player {	
 	private String name;
@@ -81,10 +82,12 @@ class Player {
 		if(Armor != null){
 			int amountBlocked = Armor.damageBlocked(dmg, dmgType);
 			if(this.getName().equals("You")){
-				CusLib.queueText(String.format("Your %s blocks %s of the %s Damage (%s -> %s)",CusLib.colorText(Armor.getName(),"blue"),CusLib.colorText(dmg-amountBlocked, "red"), Items.getDamageTypeName(dmgType), CusLib.colorText(dmg, "red"),CusLib.colorText(amountBlocked, "red")));
+				//CusLib.queueText(String.format("Your %s blocks %s of the %s Damage (%s -> %s)",CusLib.colorText(Armor.getName(),"blue"),CusLib.colorText(dmg-amountBlocked, "red"), Items.getDamageTypeName(dmgType), CusLib.colorText(dmg, "red"),CusLib.colorText(amountBlocked, "red")));
+				CusLib.queueText(new UIText(Main.gp,"Your %c blocks %c of the %c Damage (%c -> %c)",0,0,10,Color.white,Armor.getName(),dmg-amountBlocked,Items.getDamageTypeName(0),dmg,amountBlocked));
 			} else 
 			if(!Armor.getName().equals("Skeleton Armor")){
-				CusLib.queueText(String.format("%s's %s blocks %s of the %s Damage (%s -> %s)",this.getName(),CusLib.colorText(Armor.getName(),"blue"),CusLib.colorText(dmg-amountBlocked, "red"), Items.getDamageTypeName(dmgType), CusLib.colorText(dmg, "red"),CusLib.colorText(amountBlocked, "red")));
+				//CusLib.queueText(String.format("%s's %s blocks %s of the %s Damage (%s -> %s)",this.getName(),CusLib.colorText(Armor.getName(),"blue"),CusLib.colorText(dmg-amountBlocked, "red"), Items.getDamageTypeName(dmgType), CusLib.colorText(dmg, "red"),CusLib.colorText(amountBlocked, "red")));
+				CusLib.queueText(new UIText(Main.gp,"%c %c blocks %c of the %c Damage (%c -> %c)",0,0,10,Color.white,this.getName(),Armor.getName(),dmg-amountBlocked,Items.getDamageTypeName(0),dmg,amountBlocked));
 			}
 			dmg = amountBlocked;
 		}
@@ -99,15 +102,19 @@ class Player {
 		if(dealer == null){
 			if(dmg == 0){
 				if(this.getName().equals("You")){
-					CusLib.queueText(String.format("%s are immune to the effects of %s and didn't take any damage.", this.getName(),Items.getDamageTypeName(dmgType)));
+					//CusLib.queueText(String.format("%s are immune to the effects of %s and didn't take any damage.", this.getName(),Items.getDamageTypeName(dmgType)));
+					CusLib.queueText(new UIText(Main.gp,"%c are immune to the effects of %c and didn't take any damage.",0,0,0,Color.white,this.getName(),Items.getDamageTypeName(dmgType)));
 				} else {
-					CusLib.queueText(String.format("%s is immune to the effects of %s and didn't take any damage.", this.getName(),Items.getDamageTypeName(dmgType)));
+					//CusLib.queueText(String.format("%s is immune to the effects of %s and didn't take any damage.", this.getName(),Items.getDamageTypeName(dmgType)));
+					CusLib.queueText(new UIText(Main.gp,"%c is immune to the effects of %c and didn't take any damage.",0,0,0,Color.white,this.getName(),Items.getDamageTypeName(dmgType)));
 				}
 				return;
 			}
-			CusLib.queueText(String.format("%s felt the effects of %s and took %s dmg! (%s --> %s)",CusLib.colorText(this.getName(),"red"),Items.getDamageTypeName(dmgType),CusLib.colorText(dmg, "red"),CusLib.colorText(this.health+dmg,"green"),CusLib.colorText(this.health,"green")));
+			//CusLib.queueText(String.format("%s felt the effects of %s and took %s dmg! (%s --> %s)",CusLib.colorText(this.getName(),"red"),Items.getDamageTypeName(dmgType),CusLib.colorText(dmg, "red"),CusLib.colorText(this.health+dmg,"green"),CusLib.colorText(this.health,"green")));
+			CusLib.queueText(new UIText(Main.gp,"%c felt the effects of %c and took %c dmg! (%c -> %c)",0,0,0,this.getName(),Items.getDamageTypeName(dmgType),dmg,health+dmg,this.health));
 		} else {
-			CusLib.queueText(String.format("%s dealt %s damage to %s! (%s --> %s)",dealer.getName(),CusLib.colorText(dmg,"red"),this.getName(),CusLib.colorText(this.health+dmg,"green"),CusLib.colorText(this.health, "green")));
+			//CusLib.queueText(String.format("%s dealt %s damage to %s! (%s --> %s)",dealer.getName(),CusLib.colorText(dmg,"red"),this.getName(),CusLib.colorText(this.health+dmg,"green"),CusLib.colorText(this.health, "green")));
+			CusLib.queueText(new UIText(Main.gp,"%c dealt %c damage to %c! (%c --> %c)",0,0,0,dealer.getName(),dmg,this.getName(),this.health+dmg,this.health));
 		}
 
 		this.damageEvent();
@@ -117,10 +124,12 @@ class Player {
 		if(Armor != null){
 			int amountBlocked = Armor.damageBlocked(dmg, 0);
 			if(this.getName().equals("You")){
-				CusLib.queueText(String.format("Your %s blocks %s of the %s Damage (%s -> %s)",CusLib.colorText(Armor.getName(),"blue"),CusLib.colorText(dmg-amountBlocked, "red"), Items.getDamageTypeName(0), CusLib.colorText(dmg, "red"),CusLib.colorText(amountBlocked, "red")));
+				//CusLib.queueText(String.format("Your %s blocks %s of the %s Damage (%s -> %s)",CusLib.colorText(Armor.getName(),"blue"),CusLib.colorText(dmg-amountBlocked, "red"), Items.getDamageTypeName(0), CusLib.colorText(dmg, "red"),CusLib.colorText(amountBlocked, "red")));
+				CusLib.queueText(new UIText(Main.gp,"Your %c blocks %c of the %s %c Damage %s (%c -> %c)",0,0,10,Color.white,Color.RED,Armor.getName(),dmg-amountBlocked,Items.getDamageTypeName(0),dmg,amountBlocked));
 			} else 
 			if(!Armor.getName().equals("Skeleton Armor")){
-				CusLib.queueText(String.format("%s's %s blocks %s of the %s Damage (%s -> %s)",this.getName(),CusLib.colorText(Armor.getName(),"blue"),CusLib.colorText(dmg-amountBlocked, "red"), Items.getDamageTypeName(0), CusLib.colorText(dmg, "red"),CusLib.colorText(amountBlocked, "red")));
+				//CusLib.queueText(String.format("%s's %s blocks %s of the %s Damage (%s -> %s)",this.getName(),CusLib.colorText(Armor.getName(),"blue"),CusLib.colorText(dmg-amountBlocked, "red"), Items.getDamageTypeName(0), CusLib.colorText(dmg, "red"),CusLib.colorText(amountBlocked, "red")));
+				CusLib.queueText(new UIText(Main.gp,"%c %c blocks %c of the %s %c Damage %s (%c -> %c)",0,0,10,Color.white,Color.RED,this.getName(),Armor.getName(),dmg-amountBlocked,Items.getDamageTypeName(0),dmg,amountBlocked));
 			}
 			dmg = amountBlocked;
 		}
