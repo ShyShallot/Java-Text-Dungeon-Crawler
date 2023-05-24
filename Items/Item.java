@@ -194,9 +194,5 @@ public class Item {
 		return String.format("Name: %s, Description: %s, Cost: %s, Mana Cost: %s, Damage: %s, Damage Type: %s, Durability: %s, Current Durability: %s, Unusable: %s, Is Armor: %s, Is Healing: %s", this.name, this.description, this.cost, this.manaCost, this.dmg, this.dmgType, this.durability, this.curDurability, this.unUsable, this.isArmor, this.healthItem);
 	}
 
-	public void visualNotify(String text, int x, int y){
-		UIDamageNotifcation dmgNotif = new UIDamageNotifcation(Main.gp, text, x,y);
-		dmgNotif.activate();
-	}
 
 }

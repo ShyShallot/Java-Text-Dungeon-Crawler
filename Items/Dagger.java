@@ -11,7 +11,7 @@ public class Dagger extends Bite{
         target.Damage(this.getDamage(), this.getDamageType(),user);
         Game.DOTList.addPlayer(target, this.poisonDamage(), 5, this.poisonLasts(), Game.currentSubRound);
         String text = user.getName() + this.damageString() + target.getName() + "!";
-        this.visualNotify(text, 300, Main.gp.screenHeight/2);
+        CusLib.queueText(new UIText(Main.gp,text,0,0,10));
         
     } 
 }

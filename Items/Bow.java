@@ -8,8 +8,8 @@ public class Bow extends Item{
             this.setUseState(true);
             return;
         }
-        CusLib.queueText(String.format("%s has shot an arrow at %s",player.getName(),target.getName()));
+        String message = String.format("%s has shot an arrow at %s",player.getName(),target.getName());
         target.Damage(this.getDamage(), this.getDamageType(),player);
-        this.setDurability(-1);
+        CusLib.queueText(new UIText(Main.gp,message,0,0,10));
     }
 }

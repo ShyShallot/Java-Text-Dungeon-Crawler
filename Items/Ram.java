@@ -4,7 +4,8 @@ public class Ram extends Item {
     }
 
     public void useItem(Player user, Player target){
-        CusLib.queueText(user.getName() + " has rammed into " + target.getName() + "!");
+        //CusLib.queueText(user.getName() + " has rammed into " + target.getName() + "!");
+        CusLib.queueText(new UIText(Main.gp,(user.getName() + " has rammed into " + target.getName() + "!"),0,0,10));
         target.Damage(this.getDamage(), this.getDamageType(), user);
 
     } 

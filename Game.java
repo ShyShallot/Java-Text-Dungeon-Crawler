@@ -213,7 +213,7 @@ class Game implements Runnable{
 		}
 		//System.out.print("Current Round: " + currentSubRound + ", Your Current Health: " + CusLib.colorText(mainPlayer.getHealth(), "green") + ", Your Current Level: " + CusLib.colorText(mainPlayer.level(),"blue") + " (" + CusLib.colorText(mainPlayer.getXp(),"yellow") + "/" + CusLib.colorText((1000*(mainPlayer.level())),"purple") + ")" + " The " + CusLib.colorText(enemy.getName() + "'s", "red") + " Health: " + CusLib.colorText(enemy.getHealth(), "green") + ", ");
 		if(mainPlayer.getType().getName().equals("Mage")){
-			//ActionMage(enemy);
+			ActionMage(enemy);
 			return;
 		}
 		UIButton defendButton = new UIButton(Main.gp, 320, 450, 100, 50, Color.white, "Defend", 20, 1);
@@ -273,21 +273,66 @@ class Game implements Runnable{
 		return buttons;
 	}
 
+	public ArrayList<UIButton> createSpellButtons(){
+		ArrayList<UIButton> buttons = new ArrayList<>();
+		int startX = 300;
+		int xOffset = startX;
+		int startY = 450;
+		for(int i=0;i<Spell.spells.size();i++){
+			if(startY >= Main.gp.screenHeight-50){
+				continue;
+			}
+			Spell spell = Spell.spells.get(i);
+			if(!spell.canPlayerCast(mainPlayer)){
+				continue;
+			}
+			UIButton spellButton = new UIButton(Main.gp, xOffset, startY, 50, 50, Color.white, "" + spell.name(), 10, 1);
+			spellButton.setAccObject(spell);
+			xOffset += spellButton.width() + 20;
+			if((i+1)%5 == 0){
+				startY += spellButton.height() + 10;
+				xOffset = startX;
+			}
+			buttons.add(spellButton);
+		}
+		return buttons;
+	}
+
 	public void ActionMage(Player enemy){
-		System.out.print("Defend or Cast a Spell?" + " Your Mana: " + mainPlayer.getMana());
-		System.out.println();
-		String action = input.nextLine().toLowerCase();
-		
-		if(action.equals("defend")){
+		UIButton defendButton = new UIButton(Main.gp, 380, 450, 100, 50, Color.white, "Defend", 20, 1);
+		UIButton itemButton = new UIButton(Main.gp, 490, 450, 150, 50, Color.white, "Inventory" , 20,1);
+		UIButton spellButton = new UIButton(Main.gp,490,510,150,50,Color.white,"Spell To Cast",15,1.0);
+		int id = waitForEitherButton(defendButton,itemButton,spellButton);
+		defendButton.destory();
+		itemButton.destory();
+		spellButton.destory();
+		if(id == defendButton.ID()){
 			mainPlayer.Defend(currentSubRound);
 			return;
 		}
-		if(action.equals("cast a spell") || action.equals("spell") || action.equals("cast")){
-			pickSpell();
+		if(id == spellButton.ID()){
+			ArrayList<UIButton> buttons = createSpellButtons();
+			int spellID = waitForEitherButton(buttons);
+			Spell spell = (Spell)Main.gp.UIButtons.get(spellID).getAccObject();
+			mainPlayer.setSpell(spell);
+			for(int i=0;i<buttons.size();i++){
+				buttons.get(i).destory();
+			}
 			return;
 		}
-		System.out.println("Unknown Command!");
-		this.ActionMage(enemy);
+		if(id == itemButton.ID()){
+			ArrayList<UIButton> buttons = createInventoryButtons();
+			int itemID = waitForEitherButton(buttons);
+			Item itemToUse = (Item)Main.gp.UIButtons.get(itemID).getAccObject();
+			mainPlayer.setHand(itemToUse);
+			for(int i=0;i<buttons.size();i++){
+				buttons.get(i).destory();
+			}
+			if(mainPlayer.getSpell() == null){
+				mainPlayer.setSpell(Spell.spellFromString("Fireball"));
+			}
+			return;
+		}
 		return;
 	}
 

@@ -7,6 +7,7 @@ import java.text.AttributedString;
 public class UIText extends UIAnimatable{
     
     private String text;
+    private String finalText;
     private Color color = Color.WHITE;
     private Color secondaryColor = null;
     private int fontSize;
@@ -75,6 +76,7 @@ public class UIText extends UIAnimatable{
                 //System.out.println(replacedText);
             }
         }
+        this.finalText = replacedText;
         gD.setFont(new Font("Arial", Font.PLAIN, this.fontSize));
         gD.setColor(this.color);
         gD.drawString(replacedText, this.xPos(), this.yPos());
@@ -158,6 +160,7 @@ public class UIText extends UIAnimatable{
             //CusLib.DebugOutputLn(indexs[i] + "&&" + indexs[i+1] + "/" + finalString.length());
             attributedText.addAttribute(TextAttribute.FOREGROUND, this.secondaryColor, indexs[i], indexs[i+1]);
         }
+        this.finalText = finalString;
         gD.drawString(attributedText.getIterator(),this.xPos(),this.yPos());
 
     }
@@ -177,6 +180,13 @@ public class UIText extends UIAnimatable{
 
     public String getMessage(){
         return this.text;
+    }
+
+    public String getReplacedMessage(){
+        if(this.finalText == null){
+            this.finalText = this.text;
+        }
+        return this.finalText;
     }
 
     public Color getColor(){

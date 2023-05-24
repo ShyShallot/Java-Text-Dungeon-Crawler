@@ -6,17 +6,18 @@ public class Club extends Sword{
     }
 
     public void useItem(Player user, Player Target){
+        String message = "";
         if(Math.random() > missChance){
             if(user.getName().equals("You")){
-                CusLib.queueText(String.format("%s swung your %s and missed and dealt %s damage to yourself",user.getName(), this.getName(),CusLib.colorText(this.getDamage(), "red")));
+                message = String.format("%s swung your %s and missed and dealt %s damage to yourself",user.getName(), this.getName(),this.getDamage());
             } else {
-                CusLib.queueText(String.format("%s swung their %s and missed and dealt %s damage to themselves",user.getName(), this.getName(),CusLib.colorText(this.getDamage(), "red")));
+                message = (String.format("%s swung their %s and missed and dealt %s damage to themselves",user.getName(), this.getName(),this.getDamage()));
             }
             user.Damage(this.getDamage(), 0, user);
         } else {
-            CusLib.queueText(String.format("%s swung and missed!", user.getName()));
+            message = String.format("%s swung and missed!", user.getName());
         }
-        
+        CusLib.queueText(new UIText(Main.gp,message,0,0,10));
     }
     
 }

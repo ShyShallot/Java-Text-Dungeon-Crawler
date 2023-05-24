@@ -324,12 +324,12 @@ public class GamePanel extends JPanel implements Runnable{
         return allButtons;
     }
 
-    public void checkTextQueue(Graphics2D g){
+    public void checkTextQueue(Graphics2D gD){
         for(int i=0;i<TextNotifQueue.size();i++){
             QueuedText textContainer = TextNotifQueue.get(i);
             UIText text = textContainer.getText();
             int position = textContainer.getQueuePosition();
-            System.out.println(position);
+            int[] basePos = positionBaseTable.get("notif_area");
             if(position > 4){
                 break;
             }
@@ -337,18 +337,32 @@ public class GamePanel extends JPanel implements Runnable{
             int secondsLeft = textContainer.getSecondsLeft();
             //System.out.println(secondsLeft);
             text.hide(false);
-            int textWidth = g.getFontMetrics(new Font("Arial",Font.PLAIN,text.fontSize())).stringWidth(text.getMessage());
-            int textHeight = (int)(new Font("Arial",Font.PLAIN,text.fontSize()).getLineMetrics(text.getMessage(),g.getFontRenderContext()).getHeight());
+            int textWidth = gD.getFontMetrics(new Font("Arial",Font.PLAIN,text.fontSize())).stringWidth(text.getReplacedMessage());
+            int textHeight = (int)(new Font("Arial",Font.PLAIN,text.fontSize()).getLineMetrics(text.getReplacedMessage(),gD.getFontRenderContext()).getHeight());
             text.setFontSize(15);
-            text.setPos(positionBaseTable.get("notif_area")[0], positionBaseTable.get("notif_area")[1]+(int)(textHeight*position));
+            text.setPos(basePos[0], basePos[1]+(int)(textHeight*position));
+            int textSafeBounds = 25;
+            int finalScreenWidth = screenWidth - textSafeBounds;
+            if(basePos[0]+textWidth > finalScreenWidth){ // https://www.desmos.com/calculator/p4ml6y4m0m
+                /*int a = basePos[0]; //Figuring out the conversion from desmos to reasonable java code
+                int b = textWidth;
+                int c = finalScreenWidth;
+                int d = a+b;
+                int f = d-c;
+                int g = (d-f)-b;
+                System.out.println(a +"\n"+b+"\n"+c+"\n"+d+"\n"+f+"\n"+(d-f)+"\n"+g);*/
+                int x = ((basePos[0]+textWidth)-((basePos[0]+textWidth)-finalScreenWidth))-textWidth;
+                //System.out.println(g + "/" + x);
+                text.setX(x);
+            }
             if(secondsLeft == 0){
                 //System.out.println("removing text");
                 text.destory();
                 for(int y=i+1;y<TextNotifQueue.size();y++){
                     //System.out.println("Old Position in Queue: " + TextNotifQueue.get(y).getQueuePosition());
                     TextNotifQueue.get(y).changePositionInQueue(TextNotifQueue.get(y).getQueuePosition()-1);
-                    textHeight = (int)(new Font("Arial",Font.PLAIN,TextNotifQueue.get(y).getText().fontSize()).getLineMetrics(TextNotifQueue.get(y).getText().getMessage(),g.getFontRenderContext()).getHeight());
-                    TextNotifQueue.get(y).getText().setY(positionBaseTable.get("notif_area")[1]+(int)(textHeight*position));
+                    textHeight = (int)(new Font("Arial",Font.PLAIN,TextNotifQueue.get(y).getText().fontSize()).getLineMetrics(TextNotifQueue.get(y).getText().getMessage(),gD.getFontRenderContext()).getHeight());
+                    TextNotifQueue.get(y).getText().setY(basePos[1]+(int)(textHeight*position));
                     //System.out.println("New Position in Queue: " + TextNotifQueue.get(y).getQueuePosition());
                 }
                 TextNotifQueue.remove(i);
@@ -361,7 +375,7 @@ public class GamePanel extends JPanel implements Runnable{
     } 
 
     public void queueText(UIText text){
-        TextNotifQueue.add(new QueuedText(text, 10, TextNotifQueue.size()));
+        TextNotifQueue.add(new QueuedText(text, 7, TextNotifQueue.size()));
     }
 }
 
