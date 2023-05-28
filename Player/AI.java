@@ -106,7 +106,7 @@ class AI extends Player {
 				}
 			} else {
 				if(spell.damage() * opponent.getArmor().armorEffectiveness(spell.damageType()) > betterSpell.damage() * opponent.getArmor().armorEffectiveness(spell.damageType())){
-					if(spell.turnsToCast() < spell.turnsToCast() && Math.random() > 0.5){
+					if(spell.turnsToCast() < betterSpell.turnsToCast() && Math.random() > 0.5){
 						betterSpell = spell;
 					}
 				}
