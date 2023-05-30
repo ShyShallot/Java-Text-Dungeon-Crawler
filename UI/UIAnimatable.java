@@ -1,4 +1,4 @@
-public class UIAnimatable extends UI {
+public class UIAnimatable extends UI { // this is just a UI class that allows for animation, since all UI elements extend UI, we might have some that shouldnt animate, like buttons
     private int baseX,baseY;
     private UIAnimList animList = new UIAnimList();
     private boolean isAnimPlaying;

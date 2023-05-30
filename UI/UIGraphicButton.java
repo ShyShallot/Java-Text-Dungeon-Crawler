@@ -11,7 +11,6 @@ public class UIGraphicButton extends UIButton{
         this.image = new ImageIcon(imageLoc);
         this.setHeight(this.image.getIconHeight());
         this.setWidth(this.image.getIconWidth());
-        this.setID(gp.UIGraphicButtons.size());
         gp.UIGraphicButtons.add(this);
     }
 

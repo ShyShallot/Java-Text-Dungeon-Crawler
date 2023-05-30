@@ -9,7 +9,6 @@ public class UINotifcation extends UIText{
     public UINotifcation(GamePanel gp, String text, int x, int y, int size, double seconds){
         super(gp,text,x,y,size);
         this.timeToShow = seconds;
-        this.setID(gp.UINotifcations.size());
         gp.UINotifcations.add(this);
 
     }

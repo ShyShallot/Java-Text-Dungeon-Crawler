@@ -12,12 +12,13 @@ public class DOT {
         for(int i=0;i<players.size();i++){
             DOTMatrix currentMatrix = players.get(i);
             //System.out.println(currentMatrix.toString());
-            if((currentRound > currentMatrix.shouldEnd())){
-                System.out.println(String.format("%s no longer feel the effects of %s", currentMatrix.target().getName(), Items.getDamageTypeName(currentMatrix.damageType())));
-                players.remove(i);
+            if((currentRound > currentMatrix.shouldEnd())){ // when the currentRound is past when the effect should end
+                //System.out.println(String.format("%s no longer feel the effects of %s", currentMatrix.target().getName(), Items.getDamageTypeName(currentMatrix.damageType())));
+                CusLib.queueText(new UIText(Main.gp,"%c no longer feel the effects of %c", 0,0,10, currentMatrix.target().getName(),Items.getDamageTypeName(currentMatrix.damageType())));
+                players.remove(i); // remove the player or npc from the array for that damage type
                 continue;
             }
-            currentMatrix.target().Damage(currentMatrix.damage(), currentMatrix.damageType(),null);
+            currentMatrix.target().Damage(currentMatrix.damage(), currentMatrix.damageType(),null); // deal the damage, we set the dealer to null as it will tell the damage function for the player class to use the right message
         }
     }
 
@@ -26,14 +27,16 @@ public class DOT {
         if(target.getHealth() == 0){
             return;
         }
-        if(target.getName() == "You"){
-            System.out.println(String.format("%s are now under the affects of %s", target.getName(),Items.getDamageTypeName(damageType)));
-        } else {
-            System.out.println(String.format("%s is now under the affects of %s", target.getName(),Items.getDamageTypeName(damageType)));
-        } 
-        if(isPlayerInForDamageType(target, damageType)){
+        if(isPlayerInForDamageType(target, damageType)){ // if the target is already taking damage by a certain damage type in the array, we dont do anything
             return;
         }
+        if(target.getName() == "You"){
+            //System.out.println(String.format("%s are now under the affects of %s", target.getName(),Items.getDamageTypeName(damageType)));
+            CusLib.queueText(new UIText(Main.gp,"%c are now under the effects of %c",0,0,10,target.getName(),Items.getDamageTypeName(damageType)));
+        } else {
+            //System.out.println(String.format("%s is now under the affects of %s", target.getName(),Items.getDamageTypeName(damageType)));
+            CusLib.queueText(new UIText(Main.gp,"%c is now under the effects of %c",0,0,10,target.getName(),Items.getDamageTypeName(damageType)));
+        } 
         DOTMatrix playerDOT = new DOTMatrix(target, damage, damageType, rounds, currentRound);
         //System.out.println(playerDOT.toString());
         players.add(playerDOT);

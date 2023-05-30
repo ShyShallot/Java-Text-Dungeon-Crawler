@@ -10,12 +10,18 @@ public class UI{
     private boolean hide = false;
     private int id;
     private UI parent;
-    private HashMap<String, UI> children = new HashMap<>();
+    private HashMap<String, UI> children = new HashMap<>(); // we use a hashmap for the children for string ref
 
     public UI(GamePanel gp, int x, int y){
         this.gp = gp;
         this.x = x;
         this.y = y;
+        if(Main.gp != null){
+            this.id = Main.gp.AllUIElems.size();
+            Main.gp.AllUIElems.add(this);
+        } else {
+            this.id = 0;
+        }
     }
 
     public int xPos(){
@@ -26,7 +32,7 @@ public class UI{
         int lastX = this.x;
         this.x = x;
         int diff = this.x-lastX;
-        if(this.children.size() != 0){
+        if(this.children.size() != 0){ // this is to update the X Position of all our children
             for(Map.Entry<String,UI> entry : this.children.entrySet()){
                 UI child = entry.getValue();
                 child.setX(child.xPos() + diff);
@@ -42,7 +48,7 @@ public class UI{
         int lastY = this.y;
         this.y = y;
         int diff = this.y-lastY;
-        if(this.children.size() != 0){
+        if(this.children.size() != 0){ // same as setX but for the ypos
             for(Map.Entry<String,UI> entry : this.children.entrySet()){
                 UI child = entry.getValue();
                 child.setY(child.yPos() + diff);
@@ -75,7 +81,7 @@ public class UI{
 
     public void destory(){
         this.destory = true;
-        if(this.children.size() > 0){
+        if(this.children.size() > 0){ // go through and destory the children
             for(Map.Entry<String,UI> entry : this.children.entrySet()){
                 entry.getValue().destory();
             }
@@ -107,7 +113,7 @@ public class UI{
         this.parent.addChild(this, ref);
     }
 
-    private void addChild(UI child, String ref){
+    private void addChild(UI child, String ref){ // private function as we shouldnt allow the outside to set a child, we only need to set a parent
         this.children.put(ref, child);
     }
 

@@ -16,7 +16,6 @@ public class UIImage extends UIAnimatable{
         this.image = image;
         this.xScale = xScale;
         this.yScale = yScale;
-        this.setID(gp.UIImages.size());
         gp.UIImages.add(this);
     }
 

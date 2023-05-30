@@ -123,22 +123,27 @@ public class Spell {
         if(this.skillReq != null){
             if(!user.hasSkill(skillReq)){
                 if(user.getName().equals("You")){
-                    CusLib.queueText("You don't have knowladge on how to cast that spell.");
+                    //CusLib.queueText("You don't have knowladge on how to cast that spell.");
+                    UINotifcation notif = new UINotifcation(Main.gp, "You can't cast that spell!", 0, Main.gp.screenHeight/2+100, 15, 3);
+                    notif.setCentered(true);
                 }
                 return;
             }
         }
         if(this.turnsToCast() > 0 && initCast){
-            CusLib.queueText(String.format("%s started casting %s for %s turns",user.getName(),this.name,this.turnsToCast));
+            //CusLib.queueText(String.format("%s started casting %s for %s turns",user.getName(),this.name,this.turnsToCast));
+            CusLib.queueText(new UIText(Main.gp,"%c started casting %c for %c turns",0,0,10,user.getName(),this.name,this.turnsToCast));
             Game.castList.castMultiTurnSpell(user, Target, Game.currentSubRound, this.turnsToCast);
             return;
         }
         if(this.heal != 0){
-            CusLib.queueText(String.format("%s casted %s and healed for %s",user.getName(),this.name,this.heal));
+            //CusLib.queueText(String.format("%s casted %s and healed for %s",user.getName(),this.name,this.heal));
+            CusLib.queueText(new UIText(Main.gp,"%c casted %c and healed for %c",0,0,10,user.getName(),this.name,this.heal));
             this.spellHeal(user);
             user.removeMana(castCost);
         } else {
-            CusLib.queueText(String.format("%s casted %s at %s and dealt %s dmg!",user.getName(),this.name,Target.getName(),CusLib.colorText(this.damage, "red")));
+            //CusLib.queueText(String.format("%s casted %s at %s and dealt %s dmg!",user.getName(),this.name,Target.getName(),CusLib.colorText(this.damage, "red")));
+            CusLib.queueText(new UIText(Main.gp,"%c casted %c at %c and dealt %c dmg!",0,0,10,user.getName(),this.name,Target.getName(),this.damage));
             this.spellDamage(user, Target);
             user.removeMana(castCost);
         }

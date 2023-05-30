@@ -10,14 +10,14 @@ public class UIAnim {
     private boolean random = false;
     private double randomFrequency;
     private int speed; // 1 is every frame, 2 is every other frame, 3 is 1/3 of all frames and so on
-    private double scale = 1;
-    private boolean isAdditive = false;
+    private double scale = 1; // scale of each keyframe, so if you have {40,50} both values get multiplied by the scale so if its 2 it would be {80,100}
+    private boolean isAdditive = false; // if true we add the value of each keyframe to the current position instead of setting it to that
 
 
     public UIAnim(int[][] anim, boolean looping, boolean additive, int animSpeed){
         this.animation = anim;
         this.loop = looping;
-        if(animSpeed > Main.gp.FPS){
+        if(animSpeed > Main.gp.FPS){ // we cant have an animation that has a speed greater than our fps
             animSpeed = Main.gp.FPS;
         }
         this.speed = animSpeed;
@@ -92,7 +92,7 @@ public class UIAnim {
         }
     }
 
-    public void incrementSubKeyframe(){
+    public void incrementSubKeyframe(){ // unused atm but might be used later idk
         if(this.subKeyFrame >= 1.0){
             this.subKeyFrame = 0.0;
         }

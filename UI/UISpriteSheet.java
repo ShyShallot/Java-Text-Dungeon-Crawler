@@ -23,14 +23,14 @@ public class UISpriteSheet {
         this.width = charWdith;
         this.height = charHeight;
 
-        if(spriteSheet.getWidth() % width != 0 || spriteSheet.getHeight() % height != 0){
+        if(spriteSheet.getWidth() % width != 0 || spriteSheet.getHeight() % height != 0){ // if the input width and height doesnt evenly split the sprite sheet
             throw new IndexOutOfBoundsException();
         }
 
         int rows = spriteSheet.getWidth()/this.width;
         int cols = spriteSheet.getHeight()/this.height;
 
-        spriteChunks = new BufferedImage[rows*cols];
+        spriteChunks = new BufferedImage[rows*cols]; // create an array to store the sprites
         //System.out.println(spriteChunks.length);
         int x = 0;
         int y = 0;
@@ -38,11 +38,11 @@ public class UISpriteSheet {
         for(int i=0;i<rows;i++){
             for(int k=0;k<cols;k++){
                 //System.out.println(count);
-                spriteChunks[count] = spriteSheet.getSubimage(x,y, this.width, this.height);
+                spriteChunks[count] = spriteSheet.getSubimage(x,y, this.width, this.height); // at the current index of spriteChucks we add a subImage using the X and Y, width and height
                 if(x < spriteSheet.getWidth()){
-                    x += this.width;
+                    x += this.width; // add to the X the width of the subimage
                 }
-                if(x >= spriteSheet.getWidth()){
+                if(x >= spriteSheet.getWidth()){ // we only need to increase our Y when the x pos reaches the sprite sheet width
                     x = 0;
                     y += this.height;
                 }

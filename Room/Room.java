@@ -14,7 +14,7 @@ public class Room {
 	}
 
 	public void fillRoom(){
-		int max = 3 + Game.difficulty;
+		int max = 1 + Game.difficulty;
 		int size = CusLib.randomNum(1,max);
 		for(int i=0; i<=size;i++){
 			AI npc = createRandomNPC();

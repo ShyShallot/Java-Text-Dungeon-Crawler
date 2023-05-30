@@ -29,7 +29,6 @@ public class UIButton extends UI{
         this.color = color;
         this.text = text;
         this.textSize = textSize;
-        this.setID(gp.UIButtons.size());
         gp.UIButtons.add(this);
         this.scale = 1.0;
     }

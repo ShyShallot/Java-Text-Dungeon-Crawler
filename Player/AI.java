@@ -70,9 +70,9 @@ class AI extends Player {
 				dmg = weightMatrix[i][1];
 				heal = weightMatrix[i][2];
 				break;
-			}// If we are at the bottom of the matrix, reverse our inputs and go one back
+			}// If we are at the end of the matrix, reverse our inputs and go one back
 			if(i == weightMatrix.length-1 && (healthPercent <= weightMatrix[i][0] && healthPercent >= weightMatrix[i-1][0])){ 
-				dmg = CusLib.linearInterp(frac, weightMatrix[i-1][1], weightMatrix[i][1],false); 
+				dmg = CusLib.linearInterp(frac, weightMatrix[i-1][1], weightMatrix[i][1],false);  // interpolate between the previous and current damage value in the matrix
 				heal = CusLib.linearInterp(frac, weightMatrix[i-1][2], weightMatrix[i][2], false);
 			}
 			if (healthPercent <= weightMatrix[i][0] && healthPercent >= weightMatrix[i + 1][0]) { // if the health percentage is within a range
@@ -88,10 +88,10 @@ class AI extends Player {
 	}
 
 	public Spell decideSpell(Player opponent, boolean shouldHeal){
-		if(!this.getType().getName().equals("Mage")){
+		if(!this.getType().getName().equals("Mage")){ // we shouldnt be calling this function if the player isnt a mage
 			return null;
 		}
-		Spell betterSpell = Spell.spellFromString("Magic Orb");
+		Spell betterSpell = Spell.spellFromString("Magic Orb"); // default spell
 		CusLib.DebugOutputLn(betterSpell);
 		for(int i=0;i<Spell.spells.size();i++){
 			Spell spell = Spell.spells.get(i);
@@ -106,8 +106,9 @@ class AI extends Player {
 					}
 				}
 			} else {
-				if(spell.damage() * opponent.getArmor().armorEffectiveness(spell.damageType()) > betterSpell.damage() * opponent.getArmor().armorEffectiveness(spell.damageType())){
-					if(spell.turnsToCast() < spell.turnsToCast() && Math.random() > 0.5){
+				if(spell.damage() * opponent.getArmor().armorEffectiveness(spell.damageType()) > betterSpell.damage() * opponent.getArmor().armorEffectiveness(spell.damageType())){ 
+					// ^ decide which spell deals the highest damage in the shortest amount of time accounting for the targets armor
+					if(spell.turnsToCast() < betterSpell.turnsToCast() && Math.random() > 0.5){
 						betterSpell = spell;
 					}
 				}

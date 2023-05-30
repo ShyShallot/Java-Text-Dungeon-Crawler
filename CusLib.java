@@ -46,7 +46,7 @@ public class CusLib {
 		return ran;
 	}
 
-    public static int NoP(){
+    public static int NoP(){ // Randomly Negative or Positive
         double rand = Math.random();
         if(rand > 0.5){
             return 1;
@@ -175,7 +175,7 @@ public class CusLib {
         return count;
     }
 
-    public static int getSpeicalCharCount(String text, char first, char second){
+    public static int getSpeicalCharCount(String text, char first, char second){ // very specfic use case, inefficient but it does what we need it to
         int count = 0;
         for(int i=0;i<text.length()-1;i++){
             String comb = String.valueOf(text.charAt(i)) + String.valueOf(text.charAt(i+1));
@@ -185,6 +185,16 @@ public class CusLib {
             }
         }
         return count;
+    }
+
+    public static UI getElementByID(int id){
+        UI elem = null;
+        for(int i=0;i<Main.gp.AllUIElems.size();i++){
+            if(Main.gp.AllUIElems.get(i).ID() == id){
+                elem = Main.gp.AllUIElems.get(i);
+            }
+        }
+        return elem;
     }
 
 }

@@ -10,7 +10,7 @@ class Main {
 		ui.frame();
   	}
 
-	public static void Testing(){
+	public static void Testing(){ // testing function to test specific parts of the game
 		Game game = new Game();
 		game.createSkills();
 		game.createTypes();

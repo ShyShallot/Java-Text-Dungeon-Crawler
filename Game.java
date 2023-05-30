@@ -99,7 +99,6 @@ class Game implements Runnable{
 			BossCombat(bossRoom);
 			lastBossRoom = currentRound;
 			busy = false;
-
 		} else {
 			currentRoom = new Room();
 			currentRoom.activeNPCS.renameDupes();
@@ -219,8 +218,8 @@ class Game implements Runnable{
 		UIButton defendButton = new UIButton(Main.gp, 320, 450, 100, 50, Color.white, "Defend", 20, 1);
 		UIButton itemButton = new UIButton(Main.gp, 430, 450, 150, 50, Color.white, "Inventory" , 20,1);
 		int id = waitForEitherButton(defendButton,itemButton);
-		defendButton.hide(true);
-		itemButton.hide(true); 
+		defendButton.destory();
+		itemButton.destory();
 		if(id == defendButton.ID()){
 			mainPlayer.Defend(currentSubRound);
 			return;
@@ -228,7 +227,8 @@ class Game implements Runnable{
 		if(id == itemButton.ID()){
 			ArrayList<UIButton> buttons = createInventoryButtons();
 			int itemID = waitForEitherButton(buttons);
-			Item itemToUse = (Item)Main.gp.UIButtons.get(itemID).getAccObject();
+			UIButton button = (UIButton)(CusLib.getElementByID(itemID));
+			Item itemToUse = (Item)button.getAccObject();
 			mainPlayer.setHand(itemToUse);
 			for(int i=0;i<buttons.size();i++){
 				buttons.get(i).destory();
@@ -242,7 +242,7 @@ class Game implements Runnable{
 			mainPlayer.Defend(currentSubRound);
 			return;
 		}
-		if(action.toLowerCase().equals("use an item") || action.toLowerCase().equals("item") && mainPlayer.getInventory().size() > 0){
+		if(action.toLowerCase().equals("use an item") || action.toLo werCase().equals("item") && mainPlayer.getInventory().size() > 0){
 			pickItem();
 			System.out.println();
 			return;
@@ -293,6 +293,7 @@ class Game implements Runnable{
 				startY += spellButton.height() + 10;
 				xOffset = startX;
 			}
+			System.out.println(spellButton.ID() + "-->" + spellButton.message());
 			buttons.add(spellButton);
 		}
 		return buttons;
@@ -313,6 +314,7 @@ class Game implements Runnable{
 		if(id == spellButton.ID()){
 			ArrayList<UIButton> buttons = createSpellButtons();
 			int spellID = waitForEitherButton(buttons);
+			System.out.println(spellID + "/" + Main.gp.UIButtons.size());
 			Spell spell = (Spell)Main.gp.UIButtons.get(spellID).getAccObject();
 			mainPlayer.setSpell(spell);
 			for(int i=0;i<buttons.size();i++){
@@ -383,7 +385,7 @@ class Game implements Runnable{
 		easy.destory();
 		medium.destory();
 		hard.destory();
-		int notifTime = 3;
+		int notifTime = 2;
 		UINotifcation diffSelect = new UINotifcation(Main.gp, String.format("You selected %s Difficulty",diff), 100, 200, 30, notifTime);
 		diffSelect.setCentered(true);
 		diffSelect.show();
@@ -416,13 +418,14 @@ class Game implements Runnable{
 		for(int i=0;i<playableTypeList.length;i++){
 			//System.out.println("Art/Covers/"+playableTypeList[i].getName());
 			UIGraphicButton button = new UIGraphicButton(Main.gp, baseXPos, Main.gp.screenHeight/2, "Art/Covers/"+playableTypeList[i].getName()+".png", 0.7);
+			button.setAccObject(playableTypeList[i]);
 			buttons[i] = button;
 			baseXPos = (button.xPos()+(button.getImage().getIconWidth()/2))+50;
 		}
 		//UIGraphicButton knightButton = new UIGraphicButton(Main.gp, 100, Main.gp.screenHeight/2, "Art/Covers/Knight.png", 0.7);
 		//UIGraphicButton mageButton = new UIGraphicButton(Main.gp, knightButton.xPos()+(knightButton.getImage().getIconWidth()/2)+50, Main.gp.screenHeight/2, "Art/Covers/Mage.png", 0.7);
 		int id = waitForEitherButton(buttons);
-		System.out.println(playableTypeList[id]);
+		UIGraphicButton buttonPressed = (UIGraphicButton)Main.gp.AllUIElems.get(id);
 		for(UIButton button : buttons){
 			button.destory();
 		}
@@ -440,7 +443,7 @@ class Game implements Runnable{
 		System.out.println(pickList);
 		String pick = input.nextLine();
 		*/
-		Type selectedType = playableTypeList[id];
+		Type selectedType = (Type)buttonPressed.getAccObject();
 		if(selectedType == null){
 			System.out.println("Was unable to find that type.");
 			setPlayerType();
@@ -635,6 +638,8 @@ class Game implements Runnable{
 			UISquare opp = new UISquare(Main.gp, startX, 150, 70, Color.white);
 			UISquare oppChild = new UISquare(Main.gp, startX, 225,opp.getWidth(), 8, Color.RED);
 			UIText healthbarText = new UIText(Main.gp, ("%s" + "%c" + "%s" + "/" + "%s" + "%c" + "%s"), oppChild.xPos(), oppChild.yPos()+oppChild.getHeight(), 12,Color.white, Color.GREEN,currentRoom.activeNPCS.get(i).getHealth(),currentRoom.activeNPCS.get(i).getMaxHealth());
+			UIText nameTag = new UIText(Main.gp,"%c",oppChild.xPos(),healthbarText.yPos()+15,12,Color.white,currentRoom.activeNPCS.get(i).getName());
+			nameTag.setParent(opp, "name_tag");
 			oppChild.setParent(opp, "health_bar");
 			healthbarText.setParent(oppChild, "health_bar_text");
 			startX += opp.getWidth()/2 + (10+opp.getWidth()); 
