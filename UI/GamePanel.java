@@ -51,12 +51,13 @@ public class GamePanel extends JPanel implements Runnable{
     Game game = new Game();
 
     public UIText fpsDisplay;
+    public UIOverlay debugText;
 
     Thread drawThread;
     Thread gameThread;
 
     public GamePanel(){
-        System.out.println(screenWidth + "/" + screenHeight);
+        //System.out.println(screenWidth + "/" + screenHeight);
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.black);
         this.setDoubleBuffered(true);
@@ -84,6 +85,10 @@ public class GamePanel extends JPanel implements Runnable{
 
         fpsDisplay = new UIText(this, "%c", 100, 100, 40, 0);
         fpsDisplay.setColor(Color.white);
+        if(Main.debugMode){
+            debugText = new UIOverlay(this, "Art/Overlays/DEBUG.png", 0);
+        }
+        
 
         double drawInterval = 1000000000/FPS; // how long 1 frame should be
         

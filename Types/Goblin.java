@@ -5,7 +5,7 @@ public class Goblin extends Type{
         this.setMainArmor(Item.getArmorFromName("Goblin Armor"));
         this.addIllegalWeapon(Item.getItemFromName("Sword"));
         this.addIllegalWeapon(Item.getItemFromName("Magic Staff"));
-        this.addIllegalWeapon(Item.getItemFromName("Club"));
+        this.addIllegalWeapon(Item.getItemFromName("Heavy Club"));
         this.addIllegalWeapon(Item.getItemFromName("Wooden Bow"));
     }
 
@@ -15,7 +15,7 @@ public class Goblin extends Type{
         this.setMainArmor(Item.getArmorFromName("Goblin Armor"));
         this.addIllegalWeapon(Item.getItemFromName("Sword"));
         this.addIllegalWeapon(Item.getItemFromName("Magic Staff"));
-        this.addIllegalWeapon(Item.getItemFromName("Club"));
+        this.addIllegalWeapon(Item.getItemFromName("Heavy Club"));
         this.addIllegalWeapon(Item.getItemFromName("Wooden Bow"));
     }
 
@@ -25,7 +25,7 @@ public class Goblin extends Type{
         this.setMainArmor(Item.getArmorFromName("Goblin Armor"));
         this.addIllegalWeapon(Item.getItemFromName("Sword"));
         this.addIllegalWeapon(Item.getItemFromName("Magic Staff"));
-        this.addIllegalWeapon(Item.getItemFromName("Club"));
+        this.addIllegalWeapon(Item.getItemFromName("Heavy Club"));
         this.addIllegalWeapon(Item.getItemFromName("Wooden Bow"));
     }
 }

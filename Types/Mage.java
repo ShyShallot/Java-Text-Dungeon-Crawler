@@ -4,7 +4,7 @@ public class Mage extends Type{
         super("Mage",health,maxHealth,speed,mana);
         this.setMainWeapon(Item.getItemFromName("Magic Staff"));
         this.addIllegalWeapon(Item.getItemFromName("Sword"));
-        this.addIllegalWeapon(Item.getItemFromName("Club"));
+        this.addIllegalWeapon(Item.getItemFromName("Heavy Club"));
         this.addIllegalWeapon(Item.getItemFromName("Wooden Bow"));
     }
 
@@ -12,7 +12,7 @@ public class Mage extends Type{
         super("Mage",health,speed,mana);
         this.setMainWeapon(Item.getItemFromName("Magic Staff"));
         this.addIllegalWeapon(Item.getItemFromName("Sword"));
-        this.addIllegalWeapon(Item.getItemFromName("Club"));
+        this.addIllegalWeapon(Item.getItemFromName("Heavy Club"));
         this.addIllegalWeapon(Item.getItemFromName("Wooden Bow"));
     }
 
@@ -20,7 +20,7 @@ public class Mage extends Type{
         super("Mage",30,8,30);
         this.setMainWeapon(Item.getItemFromName("Magic Staff"));
         this.addIllegalWeapon(Item.getItemFromName("Sword"));
-        this.addIllegalWeapon(Item.getItemFromName("Club"));
+        this.addIllegalWeapon(Item.getItemFromName("Heavy Club"));
         this.addIllegalWeapon(Item.getItemFromName("Wooden Bow"));
     }
 }
