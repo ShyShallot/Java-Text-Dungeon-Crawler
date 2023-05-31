@@ -9,7 +9,6 @@ public class UINotifcation extends UIText{
     public UINotifcation(GamePanel gp, String text, int x, int y, int size, double seconds){
         super(gp,text,x,y,size);
         this.timeToShow = seconds;
-        gp.UINotifcations.add(this);
 
     }
 
@@ -20,9 +19,20 @@ public class UINotifcation extends UIText{
         if(!show){
             return;
         }
+        if(this.time > this.timeToShow*this.getGP().FPS){
+            this.destory();
+            return;
+        }
+        if(this.isCentered()){
+                //System.out.println("Centering Text: " + i);
+                int textLength = (int)gD.getFontMetrics(new Font("Arial", Font.PLAIN, this.fontSize())).stringWidth(this.getMessage());
+                //System.out.println(screenWidth + " " + textLength);
+                this.setX((int)((this.getGP().screenWidth-textLength)/2));
+        }
         gD.setFont(new Font("Arial", Font.PLAIN, this.fontSize()));
         gD.setColor(this.getColor());
         gD.drawString(this.getMessage(), this.xPos(), this.yPos());
+        this.incTime();
     }
 
     public void show(){

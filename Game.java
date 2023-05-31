@@ -59,7 +59,7 @@ class Game implements Runnable{
 		UISprite testSquare = new UISprite(Main.gp, 200, 200, 0,sheet,1.1);
 		testSquare.addAnimation("idle_00", spriteAnim);
 		testSquare.playSpriteAnimation("idle_00");*/
-		welcome.addAnimation("idle_00", new UIAnim(animFrames,true,false,16));
+		welcome.addAnimation("idle_00", new UIAnim(Main.gp,animFrames,true,false,16));
 		welcome.playAnimation("idle_00");
 		welcome.setCentered(true);
 		waitForInput("Enter");
@@ -314,8 +314,8 @@ class Game implements Runnable{
 		if(id == spellButton.ID()){
 			ArrayList<UIButton> buttons = createSpellButtons();
 			int spellID = waitForEitherButton(buttons);
-			System.out.println(spellID + "/" + Main.gp.UIButtons.size());
-			Spell spell = (Spell)Main.gp.UIButtons.get(spellID).getAccObject();
+			//System.out.println(spellID + "/" + Main.gp.getCreatedButtons().size());
+			Spell spell = (Spell)Main.gp.getCreatedButtons().get(spellID).getAccObject();
 			mainPlayer.setSpell(spell);
 			for(int i=0;i<buttons.size();i++){
 				buttons.get(i).destory();
@@ -325,7 +325,8 @@ class Game implements Runnable{
 		if(id == itemButton.ID()){
 			ArrayList<UIButton> buttons = createInventoryButtons();
 			int itemID = waitForEitherButton(buttons);
-			Item itemToUse = (Item)Main.gp.UIButtons.get(itemID).getAccObject();
+			//Item itemToUse = (Item)Main.gp.UIButtons.get(itemID).getAccObject();
+			Item itemToUse = Item.getItemFromName("Sword");
 			mainPlayer.setHand(itemToUse);
 			for(int i=0;i<buttons.size();i++){
 				buttons.get(i).destory();
@@ -644,7 +645,7 @@ class Game implements Runnable{
 			healthbarText.setParent(oppChild, "health_bar_text");
 			startX += opp.getWidth()/2 + (10+opp.getWidth()); 
 			int[][] idleAnim = {{-5,2},{-5,2},{-5,2},{5,-2},{5,-2},{5,-2}};
-			opp.addAnimation("idle_00", new UIAnim(idleAnim,13,true,1.0,0.8));
+			opp.addAnimation("idle_00", new UIAnim(Main.gp,idleAnim,13,true,1.0,0.8));
 			opp.playAnimation("idle_00");
 			currentRoom.activeNPCS.get(i).setGraphicParent(opp);
 		}

@@ -15,12 +15,11 @@ public class UIText extends UIAnimatable{
     private Object[] variableArray = new Object[0];
 
     public UIText(GamePanel gp, String text, int x, int y, int size){
-        super(gp,x,y);
+        super(gp,x,y,1);
         this.text = text;
         this.color = Color.white;
         this.fontSize = size;
         this.isCentered = false;
-        gp.UITexts.add(this);
     }
 
     public UIText(GamePanel gp, String text, int x , int y, int size, Object... vars){
@@ -76,6 +75,10 @@ public class UIText extends UIAnimatable{
             }
         }
         this.finalText = replacedText;
+        if(this.isCentered){
+            int textLength = (int)gD.getFontMetrics(new Font("Arial", Font.PLAIN, this.fontSize())).stringWidth(this.getMessage());  // get the length of the text in pixels
+            this.setX((int)((this.getGP().screenWidth-textLength)/2));
+        }
         gD.setFont(new Font("Arial", Font.PLAIN, this.fontSize));
         gD.setColor(this.color);
         gD.drawString(replacedText, this.xPos(), this.yPos());

@@ -8,11 +8,11 @@ public class UISpriteAnim {
     private int speed; // 1 is every frame, 2 is every other frame, 3 is 1/3 of all frames and so on
 
 
-    public UISpriteAnim(int[] anim, boolean looping, int animSpeed){
+    public UISpriteAnim(GamePanel gp,int[] anim, boolean looping, int animSpeed){
         this.animation = anim;
         this.loop = looping;
-        if(animSpeed > Main.gp.FPS){
-            animSpeed = Main.gp.FPS;
+        if(animSpeed > gp.FPS){
+            animSpeed = gp.FPS;
         }
         this.speed = animSpeed;
     }

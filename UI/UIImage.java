@@ -12,11 +12,10 @@ public class UIImage extends UIAnimatable{
 
 
     public UIImage(GamePanel gp, BufferedImage image, int x, int y, int xScale, int yScale){
-        super(gp,x,y);
+        super(gp,x,y,1);
         this.image = image;
         this.xScale = xScale;
         this.yScale = yScale;
-        gp.UIImages.add(this);
     }
 
     public void draw(Graphics2D gD){

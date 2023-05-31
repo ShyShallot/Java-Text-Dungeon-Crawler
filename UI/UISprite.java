@@ -10,10 +10,9 @@ public class UISprite extends UIAnimatable{
     private double scale = 1.0;
     
     public UISprite(GamePanel gp, int x, int y, int spriteIndex, UISpriteSheet parent, double scale){
-        super(gp,x,y);
+        super(gp,x,y,2);
         this.sprite = parent.getSprite(spriteIndex);
         this.parentSheet = parent;
-        gp.UISprites.add(this);
         this.scale = scale;
     }
 
@@ -46,14 +45,14 @@ public class UISprite extends UIAnimatable{
     }
 
     public void playSpriteAnimation(String ref){
-        if(Main.gp.spriteQueue.containsKey(this)){
+        if(this.getGP().spriteQueue.containsKey(this)){
             return;
         }
         if(!this.spriteAnimList.containsAnim(ref)){
             return;
         }
         UISpriteAnim anim = this.spriteAnimList.getAnimation(ref);
-        Main.gp.spriteQueue.put(this,anim);
+        this.getGP().spriteQueue.put(this,anim);
     }
 
     public double getScale(){

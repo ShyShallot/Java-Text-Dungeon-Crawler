@@ -32,17 +32,9 @@ public class GamePanel extends JPanel implements Runnable{
     HashMap<String,int[]> positionBaseTable = new HashMap<>();
     
     ArrayList<UI> AllUIElems = new ArrayList<>();
-    ArrayList<UIImage> UIImages = new ArrayList<>();
-    ArrayList<UINotifcation> UINotifcations = new ArrayList<>();
-    ArrayList<UIText> UITexts = new ArrayList<>();
-    ArrayList<UIButton> UIButtons = new ArrayList<>();
-    ArrayList<UIGraphicButton> UIGraphicButtons = new ArrayList<>();
-    ArrayList<UISquare> UISquares = new ArrayList<>();
-    ArrayList<UISprite> UISprites = new ArrayList<>();
     HashMap<UIAnimatable, UIAnim> animationQeue = new HashMap<>();
     HashMap<UISprite, UISpriteAnim> spriteQueue = new HashMap<>();
     ArrayList<QueuedText> TextNotifQueue = new ArrayList<>();
-    ArrayList<UIOverlay> UIOverlays = new ArrayList<>();
 
     //private JTextArea textArea = new JTextArea(15, 30);
     //private TextAreaOutputStream taOutputStream = new TextAreaOutputStream(textArea, "Test");
@@ -50,8 +42,9 @@ public class GamePanel extends JPanel implements Runnable{
     Scanner input = new Scanner(System.in);
     Game game = new Game();
 
-    public UIText fpsDisplay;
-    public UIOverlay debugText;
+    private UIText fpsDisplay;
+    private UIOverlay debugText;
+    
 
     Thread drawThread;
     Thread gameThread;
@@ -136,167 +129,21 @@ public class GamePanel extends JPanel implements Runnable{
         this.repaint();
         super.paintComponent(g);
 
-        for(int i=0;i<UISquares.size();i++){
-            UISquare square = UISquares.get(i);
-            if(square.isDead()){
-                UISquares.remove(i);
-                i--;
-                continue;
-            }
-            square.draw(gD);
-        }
-
-        for(int i=0;i<UIButtons.size();i++){
-            UIButton UIButton = UIButtons.get(i);
-            if(UIButton.isDead()){
-                //System.out.println(this.getComponentCount());
-                this.remove(UIButton.getJButton());
-                //System.out.println(this.getComponentCount());
-                UIButtons.remove(i);
-                this.repaint();
-                i--;
-                continue;
-            }
-            if(UIButton.isHidden()){
-                if(UIButton.getJButton() != null){
-                    this.remove(UIButton.getJButton());
-                }
-                continue;
-            }
-            if(UIButton.getJButton() != null){
-                if(UIButton.xPos() != UIButton.getJButton().getX() || UIButton.yPos() != UIButton.getJButton().getY()){ // idk if this ever gets called, but just incase if the positions of the physical button and the button class are desynced
-                    this.remove(UIButton.getJButton());
-                    UIButton.getJButton().setBounds(UIButton.xPos(),UIButton.yPos(),UIButton.width(),UIButton.height());
-                    this.add(UIButton.getJButton());
+        for(int i=6;i>=0;i--){
+            for(int y=0;y<AllUIElems.size();y++){
+                UI elem = AllUIElems.get(y);
+                if(elem.layer != i){
                     continue;
                 }
-                continue;
-            }
-            //System.out.println("Creating Button: " + i);
-            JButton button = new JButton(UIButton.message());
-            button.setBounds(UIButton.xPos(), UIButton.yPos(), (int)(UIButton.width()*UIButton.getScale()), (int)(UIButton.height()*UIButton.getScale()));
-            button.setVerticalAlignment(SwingConstants.CENTER);
-            button.setBackground(UIButton.getColor());
-            button.setFont(new Font("Arial", Font.PLAIN,UIButton.getTextSize()));
-            button.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e){
-                    System.out.println("BUTTON!");
-                    Game.buttonPressed(UIButton);
-                    UIButton.activated = true;
+                if(elem.isDead()){
+                    elem.destory();
+                    AllUIElems.remove(y);
+                    continue;
                 }
-            });
-            UIButton.setJButton(button);
-            this.add(button);
-        }
-
-        for(int i=0;i<UIGraphicButtons.size();i++){
-            if(UIGraphicButtons.get(i).isDead()){
-                this.remove(UIGraphicButtons.get(i).getJButton());
-                UIGraphicButtons.remove(i);
-                this.repaint();
-                i--;
-                continue;
-            }
-            if(i >= UIGraphicButtons.size()){
-                continue;
-            }
-            if(UIGraphicButtons.get(i).isHidden() || UIGraphicButtons.get(i).getJButton() != null){
-                continue;
-            }
-            //System.out.println("Creating G Button: " + i);
-            UIGraphicButton UIGButton = UIGraphicButtons.get(i);
-            JButton button = new JButton();
-            button.setBounds(UIGButton.xPos(), UIGButton.yPos(), (int)(UIGButton.width()*UIGButton.getScale()), (int)(UIGButton.height()*UIGButton.getScale())); // set the bounds of the button by the scale defined when created
-            button.setIcon(new ImageIcon(UIGButton.getImage().getImage().getScaledInstance((int)(UIGButton.getImage().getIconWidth()*UIGButton.getScale()),(int)(UIGButton.getImage().getIconHeight()*UIGButton.getScale()), Image.SCALE_SMOOTH))); // Scale Image
-            button.setBackground(UIGButton.getColor());
-            button.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e){
-                    System.out.println("BUTTON!");
-                    Game.buttonPressed(UIGButton);
-                    UIGButton.activated = true;
+                if(elem.isHidden()){
+                    continue;
                 }
-            });
-            this.add(button);
-            UIGButton.setJButton(button);
-        }
-
-        for(int i=0;i<UIImages.size();i++){
-            if(UIImages.get(i).isDead()){
-                UIImages.remove(i);
-                i--;
-                continue;
-            }
-            UIImages.get(i).draw(gD);
-        }
-
-        for(int i=0;i<UISprites.size();i++){
-            if(UISprites.get(i).isDead()){
-                UISprites.remove(i);
-                i--;
-                continue;
-            }
-            UISprites.get(i).draw(gD);
-        }
-
-        //System.out.println(UITexts.size());
-        for(int i=0;i<UITexts.size();i++){
-            UIText curText = UITexts.get(i);
-            if(curText.isDead()){
-                UITexts.remove(i);
-                i--;
-                continue;
-            }
-            if(curText.isHidden()){
-                continue;
-            }
-            //System.out.println(curText.xPos());
-            if(curText.isCentered()){
-                //System.out.println("Centering Text: " + i);
-                int textLength = (int)gD.getFontMetrics(new Font("Arial", Font.PLAIN, curText.fontSize())).stringWidth(curText.getMessage());  // get the length of the text in pixels
-                //System.out.println(screenWidth + " " + textLength);
-                curText.setX((int)((screenWidth-textLength)/2));
-            }
-            curText.draw(gD);
-        }
-
-        for(int i=0;i<UINotifcations.size();i++){
-            if(UINotifcations.get(i).isDead()){
-                UINotifcations.remove(i);
-                i--;
-                continue;
-            }
-            UINotifcation notif = UINotifcations.get(i);
-            CusLib.DebugOutputLn("Time Left: " + (notif.timeToShow() - (notif.time()/FPS)) + " Seconds.");
-            if(notif.time() > notif.timeToShow()*FPS){ // Convert timeToShow which is in seconds to frames by multiplying by our FPS, ex: 4 seconds which is 4*60 = 240 frames
-                notif.destory();
-                continue;
-            }
-            if(notif.isCentered()){
-                //System.out.println("Centering Text: " + i);
-                int textLength = (int)gD.getFontMetrics(new Font("Arial", Font.PLAIN, notif.fontSize())).stringWidth(notif.getMessage());
-                //System.out.println(screenWidth + " " + textLength);
-                notif.setX((int)((screenWidth-textLength)/2));
-            }
-            notif.draw(gD);
-            notif.incTime();
-        }
-
-        int[][] layers = new int[7][UIOverlays.size()]; 
-        for(int i=0;i<UIOverlays.size();i++){
-            UIOverlay overlay = UIOverlays.get(i);
-            if(overlay.isDead()){
-                UIOverlays.remove(i);
-                i--;
-                continue;
-            }
-            if(overlay.isHidden()){
-                continue;
-            }
-            layers[overlay.getLayer()][i] = i;
-        }
-        for(int i=layers.length-1;i>=0;i--){
-            for(int y=0;y<layers[i].length;y++){
-                UIOverlays.get(layers[i][y]).draw(gD);
+                elem.draw(gD);
             }
         }
 
@@ -346,19 +193,22 @@ public class GamePanel extends JPanel implements Runnable{
 
         checkTextQueue(gD);
         if(drawCount == FPS){ // this happens every second, not frame
-            for(UIButton button : UIButtons){
+            /*for(UIButton button : UIButtons){
                 if(button.activated){
                     button.activated = false;
                 }
-            }
+            }*/
             drawCount = 0;
         }
     }
 
     public ArrayList<UIButton> getCreatedButtons(){ // to combine UIButtons and UIGraphicButtons
         ArrayList<UIButton> allButtons = new ArrayList<>();
-        allButtons.addAll(UIButtons);
-        allButtons.addAll(UIGraphicButtons);
+        for(UI elem : AllUIElems){
+            if(elem.getClass().getName().equals("UIButton") || elem.getClass().getName().equals("UIGraphicButton")){
+                allButtons.add((UIButton)elem);
+            }
+        }
         return allButtons;
     }
 

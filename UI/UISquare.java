@@ -7,11 +7,10 @@ public class UISquare extends UIAnimatable {
     private Color color;
     
     public UISquare(GamePanel gp, int x, int y, int width, int height, Color color){
-        super(gp,x,y);
+        super(gp,x,y,3);
         this.width = width;
         this.height = height;
         this.color = color;
-        gp.UISquares.add(this);
     }
 
     public UISquare(GamePanel gp, int x, int y, int width, Color color){

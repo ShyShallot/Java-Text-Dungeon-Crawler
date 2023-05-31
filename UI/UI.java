@@ -1,3 +1,5 @@
+import java.awt.Graphics2D;
+import java.rmi.UnexpectedException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,17 +13,37 @@ public class UI{
     private int id;
     private UI parent;
     private HashMap<String, UI> children = new HashMap<>(); // we use a hashmap for the children for string ref
+    int layer;
 
-    public UI(GamePanel gp, int x, int y){
+    public UI(GamePanel gp, int x, int y, int layer){
+        if(layer < 0 || layer > 6){
+            System.out.println("ERROR! UI Layer is not within a valid range (0-6)!");
+            System.exit(9);
+        }
         this.gp = gp;
         this.x = x;
         this.y = y;
-        if(Main.gp != null){
-            this.id = Main.gp.AllUIElems.size();
-            Main.gp.AllUIElems.add(this);
+        if(this.getGP() != null){
+            this.id = this.getGP().AllUIElems.size();
+            this.getGP().AllUIElems.add(this);
         } else {
             this.id = 0;
         }
+    }
+
+    public void draw(Graphics2D gD){
+
+    }
+
+    public int getLayer(){
+        return this.layer;
+    }
+
+    public void setLayer(int newLayer){
+        if(layer > 6){
+            layer = 6;
+        }
+        this.layer = newLayer;
     }
 
     public int xPos(){

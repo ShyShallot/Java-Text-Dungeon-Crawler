@@ -11,35 +11,18 @@ import javax.swing.ImageIcon;
 
 public class UIOverlay extends UI{
     
-    private int layer;
     private BufferedImage image;
     private float opacity = 1f;
 
     public UIOverlay(GamePanel gp, String image, int layer){
-        super(gp,0,0);
-        if(layer > 6){
-            layer = 6;
-        }
+        super(gp,0,0,layer);
         try{
             File img = new File(image);
             this.image = ImageIO.read(img);
-            this.layer = layer;
-            Main.gp.UIOverlays.add(this);
         } catch (IOException e){
             e.printStackTrace();
         }
         
-    }
-
-    public int getLayer(){
-        return this.layer;
-    }
-
-    public void setLayer(int newLayer){
-        if(layer > 6){
-            layer = 6;
-        }
-        this.layer = newLayer;
     }
 
     public BufferedImage getImage(){

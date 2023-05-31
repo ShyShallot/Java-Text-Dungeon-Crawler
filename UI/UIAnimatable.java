@@ -3,8 +3,8 @@ public class UIAnimatable extends UI { // this is just a UI class that allows fo
     private UIAnimList animList = new UIAnimList();
     private boolean isAnimPlaying;
 
-    public UIAnimatable(GamePanel  gp, int x, int y){
-        super(gp,x,y);
+    public UIAnimatable(GamePanel  gp, int x, int y, int layer){
+        super(gp,x,y, layer);
     }
 
     public void addAnimation(String ref, UIAnim anim){
@@ -20,7 +20,7 @@ public class UIAnimatable extends UI { // this is just a UI class that allows fo
     }
 
     public void playAnimation(String ref){
-        if(Main.gp.animationQeue.containsKey(this)){
+        if(this.getGP().animationQeue.containsKey(this)){
             return;
         }
         this.baseX = this.xPos();
@@ -32,12 +32,12 @@ public class UIAnimatable extends UI { // this is just a UI class that allows fo
             return;
         }
         UIAnim anim = this.animList.getAnimation(ref);
-        Main.gp.animationQeue.put(this,anim);
+        this.getGP().animationQeue.put(this,anim);
         this.isAnimPlaying = true;
     }
 
     public void stopAnimation(){
-        Main.gp.animationQeue.remove(this);
+        this.getGP().animationQeue.remove(this);
         this.setPos(baseX, baseY);
     }
 }

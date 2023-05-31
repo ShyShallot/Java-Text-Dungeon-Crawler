@@ -14,23 +14,23 @@ public class UIAnim {
     private boolean isAdditive = false; // if true we add the value of each keyframe to the current position instead of setting it to that
 
 
-    public UIAnim(int[][] anim, boolean looping, boolean additive, int animSpeed){
+    public UIAnim(GamePanel gp, int[][] anim, boolean looping, boolean additive, int animSpeed){
         this.animation = anim;
         this.loop = looping;
-        if(animSpeed > Main.gp.FPS){ // we cant have an animation that has a speed greater than our fps
-            animSpeed = Main.gp.FPS;
+        if(animSpeed > gp.FPS){ // we cant have an animation that has a speed greater than our fps
+            animSpeed = gp.FPS;
         }
         this.speed = animSpeed;
         this.isAdditive = additive;
     }
 
-    public UIAnim(int[][] anim, boolean looping, boolean additive, int animSpeed, double scale){
-        this(anim,looping,additive,animSpeed);
+    public UIAnim(GamePanel gp, int[][] anim, boolean looping, boolean additive, int animSpeed, double scale){
+        this(gp,anim,looping,additive,animSpeed);
         this.scale = scale;
     }
 
-    public UIAnim(int[][] anim, int animSpeed, boolean additive, double scale, double randomFreq){
-        this(anim,true,additive,animSpeed,scale);
+    public UIAnim(GamePanel gp, int[][] anim, int animSpeed, boolean additive, double scale, double randomFreq){
+        this(gp, anim,true,additive,animSpeed,scale);
         this.random = true;
         if(randomFreq > 1.0){
             randomFreq = 1.0;
