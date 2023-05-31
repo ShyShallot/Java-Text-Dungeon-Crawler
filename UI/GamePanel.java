@@ -34,7 +34,7 @@ public class GamePanel extends JPanel implements Runnable{
     ArrayList<UI> AllUIElems = new ArrayList<>();
     HashMap<UIAnimatable, UIAnim> animationQeue = new HashMap<>();
     HashMap<UISprite, UISpriteAnim> spriteQueue = new HashMap<>();
-    ArrayList<QueuedText> TextNotifQueue = new ArrayList<>();
+    LinkedList<QueuedText> TextNotifQueue = new LinkedList<>();
 
     //private JTextArea textArea = new JTextArea(15, 30);
     //private TextAreaOutputStream taOutputStream = new TextAreaOutputStream(textArea, "Test");
@@ -193,11 +193,11 @@ public class GamePanel extends JPanel implements Runnable{
 
         checkTextQueue(gD);
         if(drawCount == FPS){ // this happens every second, not frame
-            /*for(UIButton button : UIButtons){
+            for(UIButton button : getCreatedButtons()){
                 if(button.activated){
                     button.activated = false;
                 }
-            }*/
+            }
             drawCount = 0;
         }
     }
@@ -213,11 +213,13 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void checkTextQueue(Graphics2D gD){
+        int textSafeBounds = 25;
+        int finalScreenWidth = screenWidth - textSafeBounds;
+        int[] basePos = positionBaseTable.get("notif_area"); // base position of the text event area
         for(int i=0;i<TextNotifQueue.size();i++){
             QueuedText textContainer = TextNotifQueue.get(i);
             UIText text = textContainer.getText();
             int position = textContainer.getQueuePosition(); // position in queue, used for the ypos
-            int[] basePos = positionBaseTable.get("notif_area"); // base position of the text event area
             if(position > 4){ // make sure that we never display more than 5 text. since positions in queue start at 0
                 break;
             }
@@ -232,8 +234,7 @@ public class GamePanel extends JPanel implements Runnable{
             if(secondsLeft <= 2){ // when there is x amount of seconds left, start fading out our text
                 text.setColor(new Color(text.getColor().getRed(),text.getColor().getGreen(),text.getColor().getBlue(),(int)(255*((double)secondsLeft/(double)7))));
             }
-            int textSafeBounds = 25;
-            int finalScreenWidth = screenWidth - textSafeBounds;
+            
             if(basePos[0]+textWidth > finalScreenWidth){ // https://www.desmos.com/calculator/p4ml6y4m0m
                 /*int a = basePos[0]; //Figuring out the conversion from desmos to reasonable java code
                 int b = textWidth;
